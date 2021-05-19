@@ -1,15 +1,14 @@
-from os import kill
-
+import string
 import it_core_news_lg
 import requests
-import os
 import json
 import time
+
 import spacy
 from pymongo import MongoClient
-
-
-
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.stem import SnowballStemmer
 
 # To set your environment variables in your terminal run the following line:
 # export 'BEARER_TOKEN'='<your_bearer_token>'
@@ -41,7 +40,6 @@ def make_query(keywords = "", language = "it", place = "italia", place_country='
         query['query'] += " place_country:" + place_country
         query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         query['expansions'] = 'geo.place_id'
-        query['max_results'] = '20'
 
 
     return query
@@ -61,6 +59,12 @@ def connect_to_endpoint(url, headers, params):
 
 
 def main():
+    nltk.download('stopwords')
+    nltk.download('brown')
+    nltk.download('names')
+    nltk.download('wordnet')
+    nltk.download('averaged_perceptron_tagger')
+    nltk.download('universal_tagset')
     headers = create_headers(bearer_token)
     q = make_query("#palestina")
     json_response = connect_to_endpoint(search_url, headers, q)
@@ -78,7 +82,7 @@ def remake(response, query):
             print(json.dumps(json_response, indent=4, sort_keys=True))
             time.sleep(2)
             save_on_db(json_response)
-            remake(json_response, query)
+            #remake(json_response, query)
 
 
 def save_on_db(tweets={}):
@@ -91,7 +95,8 @@ def save_on_db(tweets={}):
             continue
         post['_id'] = t['id']
         post['raw_text'] = t['text']
-        post['processed test'] = process(t['text'])
+        post['spacy processed text'] = spacy_process2(t['text'])
+        #post['nltk processed text'] = nltk_process(t['text'])
         if 'geo' in t:
             post['geo_id'] = t['geo']['place_id']
             for p in tweets['includes']['places']:
@@ -100,10 +105,46 @@ def save_on_db(tweets={}):
                     post['city'] = p['full_name']
                     break
 
-            collection.insert_one(post)
+        collection.insert_one(post)
 
 
-def process(tweet):
+def spacy_process2(tweet):
+    nlp = spacy.load("it_core_news_lg")
+    doc = nlp(tweet)
+
+    customize_stop_words = [
+        'no',
+        'non',
+        'Non'
+    ]
+
+    for w in customize_stop_words:
+        nlp.vocab[w].is_stop = False
+    result = []
+
+    filtered_sentence = []
+    for word in doc:
+        lexeme = nlp.vocab[word.lemma_]
+        if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
+            filtered_sentence.append(word)
+
+
+
+
+
+    # # Remove punctuation
+    # punctuations = "?:!.,;\""
+    # for word in filtered_sentence:
+    #     if word.text in punctuations:
+    #         filtered_sentence.remove(word)
+
+    for token in filtered_sentence:
+        result.append(token.lemma_ + " : " + token.pos_)
+
+    return result
+
+
+def spacy_process(tweet):
     nlp = it_core_news_lg.load()
     customize_stop_words = [
         'no',
@@ -133,7 +174,22 @@ def process(tweet):
         if word in punctuations:
             filtered_sentence.remove(word)
 
+
     return filtered_sentence
+
+# def nltk_process(tweet):
+#     nltk_stop_words = nltk.corpus.stopwords.words('italian')
+#     normalized_tokens = normalise(word_tokenize(tweet), verbose=False)
+#     normalized_tokens_no_punct = [t for t in normalized_tokens if t.text not in string.punctuation]
+#     text_without_stop_words = [t for t in normalized_tokens_no_punct if t not in nltk_stop_words]
+#
+#     stemmer_snowball = SnowballStemmer('italian')
+#     result = []
+#     for word in text_without_stop_words:
+#         result.append(stemmer_snowball.stem(word))
+#     return result
+
+
 
 
 if __name__ == "__main__":
