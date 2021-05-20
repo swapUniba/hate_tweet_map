@@ -94,7 +94,9 @@ def save_on_db(tweets={}):
         post['_id'] = t['id']
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        post['spacy processed text'] = spacy_process(t['text'])
+        spacy_processed_text, spacy_entites = spacy_process(t['text'])
+        post['spacy processed text'] = spacy_processed_text
+        post['spacy entities'] = spacy_entites
         post['tag'] = tag(t['text'])
         post['metrics'] = t['public_metrics']
 
@@ -150,7 +152,8 @@ def spacy_process(tweet):
 
     for w in customize_stop_words:
         nlp.vocab[w].is_stop = False
-    result = []
+
+    lemmas_with_postag = []
 
     filtered_sentence = []
     for word in doc:
@@ -159,9 +162,14 @@ def spacy_process(tweet):
             filtered_sentence.append(word)
 
     for token in filtered_sentence:
-        result.append(token.lemma_ + " : " + token.pos_)
+        lemmas_with_postag.append(token.lemma_ + " : " + token.pos_)
 
-    return result
+    entities = []
+
+    for ent in doc.ents:
+        entities.append(ent.text + " : " + ent.label_)
+
+    return lemmas_with_postag, entities
 
 
 def tag(raw_tweet):
