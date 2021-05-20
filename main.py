@@ -43,6 +43,7 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
         query['query'] += " place_country:" + place_country
         query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         query['expansions'] = 'geo.place_id'
+        query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
 
     return query
 
@@ -91,10 +92,33 @@ def save_on_db(tweets={}):
         if collection.count_documents({"_id": t['id']}) != 0:
             continue
         post['_id'] = t['id']
+        post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        post['spacy processed text'] = spacy_process2(t['text'])
-        post['tag'] = tag2(t['text'])
-        # post['nltk processed text'] = nltk_process(t['text'])
+        post['spacy processed text'] = spacy_process(t['text'])
+        post['tag'] = tag(t['text'])
+        post['metrics'] = t['public_metrics']
+
+        if 'entities' in t:
+            if 'hashtag' in t['entities']:
+                hashtags = ""
+                for hashtag in t['entities']['hashtags']:
+                    hashtags += " " + hashtag['tag']
+                post['hashtags'] = hashtags
+
+            if 'mentions' in t['entities']:
+                mentions = ""
+                for mention in t['entities']['mentions']:
+                    mentions += " " + mention['username']
+                post['mentions'] = mentions
+
+            if 'urls' in t['entities']:
+                urls = ""
+                for url in t['entities']['urls']:
+                    urls += " " + url['url']
+                post['urls'] = urls
+
+        if 'context_annotations' in t:
+            post['twitter_context_annotations'] = t['context_annotations']
         if 'geo' in t:
             post['geo_id'] = t['geo']['place_id']
             for p in tweets['includes']['places']:
@@ -106,14 +130,14 @@ def save_on_db(tweets={}):
         collection.insert_one(post)
 
 
-def spacy_process2(tweet):
-    config = {
-        "moves": None,
-        "update_with_oracle_cut_size": 100,
-        "model": DEFAULT_NER_MODEL,
-    }
+def spacy_process(tweet):
+    # config = {
+    #     "moves": None,
+    #     "update_with_oracle_cut_size": 100,
+    #     "model": DEFAULT_NER_MODEL,
+    # }
     nlp = spacy.load("it_core_news_lg")
-    nlp.add_pipe("ner", config=config)
+    # nlp.add_pipe("ner", config=config)
 
     doc = nlp(tweet)
 
@@ -140,68 +164,7 @@ def spacy_process2(tweet):
     return result
 
 
-def spacy_process(tweet):
-    nlp = it_core_news_lg.load()
-    customize_stop_words = [
-        'no',
-        'non',
-        'Non'
-    ]
-
-    for w in customize_stop_words:
-        nlp.vocab[w].is_stop = False
-
-    doc = nlp(tweet)
-
-    lemma_list = []
-    for token in doc:
-        lemma_list.append(token.lemma_)
-
-    # Filter the stopword
-    filtered_sentence = []
-    for word in lemma_list:
-        lexeme = nlp.vocab[word]
-        if lexeme.is_stop == False:
-            filtered_sentence.append(word)
-
-    # Remove punctuation
-    punctuations = "?:!.,;"
-    for word in filtered_sentence:
-        if word in punctuations:
-            filtered_sentence.remove(word)
-
-    return filtered_sentence
-
-
-# def nltk_process(tweet):
-#     nltk_stop_words = nltk.corpus.stopwords.words('italian')
-#     normalized_tokens = normalise(word_tokenize(tweet), verbose=False)
-#     normalized_tokens_no_punct = [t for t in normalized_tokens if t.text not in string.punctuation]
-#     text_without_stop_words = [t for t in normalized_tokens_no_punct if t not in nltk_stop_words]
-#
-#     stemmer_snowball = SnowballStemmer('italian')
-#     result = []
-#     for word in text_without_stop_words:
-#         result.append(stemmer_snowball.stem(word))
-#     return result
-
-#
-# def tag(lemmas=[]):
-#     tagme.GCUBE_TOKEN = "7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462"
-#
-#     annotations = []
-#     for word in lemmas:
-#         lemma = word.split(":")
-#         annotations.append(tagme.annotate(lemma[0], lang="it"))
-#
-#     # Print annotations with a score higher than 0.1
-#     result = []
-#     for ann in annotations:
-#         for a in ann.get_annotations(0.1):
-#             result.append(a.entity_title + " : " + a.entity_id.__str__())
-#     return result
-
-def tag2(raw_tweet):
+def tag(raw_tweet):
     MyTagMe.GCUBE_TOKEN = "7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462"
 
     annotations = MyTagMe.annotate(raw_tweet, lang="it", is_twitter_text=True)
