@@ -185,7 +185,7 @@ def title_to_uri(entity_title, lang=DEFAULT_LANG):
     return WIKIPEDIA_URI_BASE.format(lang, normalize_title(entity_title))
 
 
-def annotate(text, is_twitter_text = False, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_TAG_API,
+def annotate(text, is_twitter_text=False, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_TAG_API,
              long_text=DEFAULT_LONG_TEXT):
     '''
     Annotate a text, linking it to Wikipedia entities.

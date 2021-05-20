@@ -94,9 +94,9 @@ def save_on_db(tweets={}):
         post['_id'] = t['id']
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        spacy_processed_text, spacy_entites = spacy_process(t['text'])
+        spacy_processed_text, spacy_entities, raw_text_without_stopwords = spacy_process(t['text'])
         post['spacy processed text'] = spacy_processed_text
-        post['spacy entities'] = spacy_entites
+        post['spacy entities'] = spacy_entities
         post['tag'] = tag(t['text'])
         post['metrics'] = t['public_metrics']
 
@@ -169,7 +169,12 @@ def spacy_process(tweet):
     for ent in doc.ents:
         entities.append(ent.text + " : " + ent.label_)
 
-    return lemmas_with_postag, entities
+    # tweet_without_stopwords = ""
+
+    # for word in filtered_sentence:
+        # tweet_without_stopwords += word.text + " "
+
+    return lemmas_with_postag, entities #, tweet_without_stopwords
 
 
 def tag(raw_tweet):
@@ -177,10 +182,10 @@ def tag(raw_tweet):
 
     annotations = MyTagMe.annotate(raw_tweet, lang="it", is_twitter_text=True)
 
-    # Print annotations with a score higher than 0.1
+    # Print annotations with a score higher than 0.2
     result = []
     for ann in annotations.get_annotations(0.1):
-        result.append(ann.entity_id.__str__() + " : " + ann.entity_title + " : " + ann.uri(lang="it"))
+        result.append(ann.mention + " : " + ann.entity_id.__str__() + " : " + ann.entity_title + " : " + ann.uri(lang="it"))
     return result
 
 
