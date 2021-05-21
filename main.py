@@ -20,7 +20,7 @@ def next_page(next_token="", query={}):
     return query
 
 
-def make_query(keywords="", language="it", place="italia", place_country='IT', user="", n_results=20, context_annotations=True):
+def make_query(keywords="", language="it", place="italia", place_country='IT', user="", n_results=20, context_annotations=False):
     # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
     # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
     query = {}
@@ -90,21 +90,20 @@ def save_on_db(tweets={}):
     client = MongoClient('mongodb://localhost:27017/')
     db = client.hatemap
     collection = db.tweets
-    post = {}
     for t in tweets['data']:
         if collection.count_documents({"_id": t['id']}) != 0:
             continue
-        post['_id'] = t['id']
-        post['author_id'] = t['id']
-        post['raw_text'] = t['text']
+        post = {'_id': t['id'], 'author_id': t['id'], 'raw_text': t['text']}
         if 'referenced_tweets' in t:
             for rft in t['referenced_tweets']:
-                post['referenced_tweet'] = rft['id']
-                break
-            for p in tweets['includes']['tweets']:
-                if p['id'] == post['referenced_tweet']:
-                    post['raw_text'] = p['text']
+                if rft['type'] == 'retweeted':
+                    post['referenced_tweet'] = rft['id']
+                    for p in tweets['includes']['tweets']:
+                        if p['id'] == post['referenced_tweet']:
+                            post['raw_text'] = p['text']
+                            break
                     break
+
         spacy_processed_text, spacy_entities, sentiment_analyze = spacy_process(post['raw_text'])
         post['spacy_processed text'] = spacy_processed_text
         post['spacy_entities'] = spacy_entities
