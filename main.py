@@ -40,9 +40,6 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
         query['tweet.fields'] = 'author_id' + ',public_metrics,entities'
         if context_annotations:
             query['tweet.fields'] += ',context_annotations'
-        else:
-            query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
-
         query['max_results'] = str(n_results)
 
     return query
