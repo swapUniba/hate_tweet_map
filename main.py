@@ -88,7 +88,15 @@ def save_on_db(tweets={}):
         post['_id'] = t['id']
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        spacy_processed_text, spacy_entities, sentiment_analyze = spacy_process(t['text'])
+        if 'referenced_tweets' in t:
+            for rft in t['referenced_tweets']:
+                post['referenced_tweet'] = rft['id']
+                break
+            for p in tweets['includes']['tweets']:
+                if p['id'] == post['referenced_tweet']:
+                    post['raw_text'] = p['text']
+                    break
+        spacy_processed_text, spacy_entities, sentiment_analyze = spacy_process(post['raw_text'])
         post['spacy_processed text'] = spacy_processed_text
         post['spacy_entities'] = spacy_entities
         post['tag'] = tag(t['text'])
@@ -122,14 +130,6 @@ def save_on_db(tweets={}):
                 if p['id'] == post['geo_id']:
                     post['country'] = p['country']
                     post['city'] = p['full_name']
-                    break
-        if 'referenced_tweets' in t:
-            for rft in t['referenced_tweets']:
-                post['referenced_tweet'] = rft['id']
-                break
-            for p in tweets['includes']['tweets']:
-                if p['id'] == post['referenced_tweet']:
-                    post['raw_text'] = p['text']
                     break
         collection.insert_one(post)
 
