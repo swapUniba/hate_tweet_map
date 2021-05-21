@@ -1,16 +1,10 @@
-import string
-import it_core_news_lg
 import requests
 import json
 import time
-from spacy.pipeline.ner import DEFAULT_NER_MODEL
+from feel_it import EmotionClassifier, SentimentClassifier
 
 import spacy
 from pymongo import MongoClient
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.stem import SnowballStemmer
-# import tagme
 import MyTagMe
 
 # To set your environment variables in your terminal run the following line:
@@ -66,8 +60,8 @@ def main():
     q = make_query("#palestina")
     json_response = connect_to_endpoint(search_url, headers, q)
     print(json.dumps(json_response, indent=4, sort_keys=True))
-    time.sleep(2)
     save_on_db(json_response)
+    time.sleep(1)
     remake(json_response, q)
 
 
@@ -78,8 +72,8 @@ def remake(response, query):
             json_response = connect_to_endpoint(search_url, headers,
                                                 next_page(next_token=response["meta"]["next_token"], query=query))
             print(json.dumps(json_response, indent=4, sort_keys=True))
-            time.sleep(2)
             save_on_db(json_response)
+            time.sleep(1)
             # remake(json_response, query)
 
 
@@ -94,11 +88,12 @@ def save_on_db(tweets={}):
         post['_id'] = t['id']
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        spacy_processed_text, spacy_entities = spacy_process(t['text'])
+        spacy_processed_text, spacy_entities, sentiment_analyze = spacy_process(t['text'])
         post['spacy processed text'] = spacy_processed_text
         post['spacy entities'] = spacy_entities
         post['tag'] = tag(t['text'])
         post['metrics'] = t['public_metrics']
+        post['sentiment'] = sentiment_analyze
 
         if 'entities' in t:
             if 'hashtag' in t['entities']:
@@ -139,6 +134,7 @@ def spacy_process(tweet):
     #     "model": DEFAULT_NER_MODEL,
     # }
     nlp = spacy.load("it_core_news_lg")
+    # nlp.add_pipe('spacytextblob')
     # nlp.add_pipe("ner", config=config)
 
     doc = nlp(tweet)
@@ -172,9 +168,12 @@ def spacy_process(tweet):
     # tweet_without_stopwords = ""
 
     # for word in filtered_sentence:
-        # tweet_without_stopwords += word.text + " "
-
-    return lemmas_with_postag, entities #, tweet_without_stopwords
+    # tweet_without_stopwords += word.text + " "
+    emotion_classifier = EmotionClassifier()
+    sentiment_classifier = SentimentClassifier()
+    list = [tweet]
+    sentiment_analyse = {'emotion': emotion_classifier.predict(list), 'sentiment': sentiment_classifier.predict(list)}
+    return lemmas_with_postag, entities, sentiment_analyse  # , tweet_without_stopwords
 
 
 def tag(raw_tweet):
@@ -185,7 +184,8 @@ def tag(raw_tweet):
     # Print annotations with a score higher than 0.2
     result = []
     for ann in annotations.get_annotations(0.1):
-        result.append(ann.mention + " : " + ann.entity_id.__str__() + " : " + ann.entity_title + " : " + ann.uri(lang="it"))
+        result.append(
+            ann.mention + " : " + ann.entity_id.__str__() + " : " + ann.entity_title + " : " + ann.uri(lang="it"))
     return result
 
 
