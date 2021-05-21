@@ -20,7 +20,7 @@ def next_page(next_token="", query={}):
     return query
 
 
-def make_query(keywords="", language="it", place="italia", place_country='IT', user="", n_results=20):
+def make_query(keywords="", language="it", place="italia", place_country='IT', user="", n_results=20, context_annotations=True):
     # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
     # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
     query = {}
@@ -37,7 +37,12 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
         query['query'] += " place_country:" + place_country
         query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         query['expansions'] = 'geo.place_id,referenced_tweets.id'
-        query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
+        query['tweet.fields'] = 'author_id' + ',public_metrics,entities'
+        if context_annotations:
+            query['tweet.fields'] += ',context_annotations'
+        else:
+            query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
+
         query['max_results'] = str(n_results)
 
     return query
