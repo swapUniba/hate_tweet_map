@@ -43,6 +43,7 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
     return query
 
 
+
 def create_headers(bearer_token):
     headers = {"Authorization": "Bearer {}".format(bearer_token)}
     return headers
@@ -58,12 +59,13 @@ def connect_to_endpoint(url, headers, params):
 
 def main():
     headers = create_headers(bearer_token)
-    q = make_query("#palestina")
+    n_results = 20
+    q = make_query("#palestina", n_results=n_results)
     json_response = connect_to_endpoint(search_url, headers, q)
     print(json.dumps(json_response, indent=4, sort_keys=True))
     save_on_db(json_response)
     time.sleep(1)
-    remake(json_response, q)
+    remake(json_response, q, n_result=n_results)
 
 
 def remake(response, query, result_obtained_yet=0, n_result=50):
