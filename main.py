@@ -36,7 +36,7 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
         # query['place'] = place
         query['query'] += " place_country:" + place_country
         query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
-        query['expansions'] = 'geo.place_id'
+        query['expansions'] = 'geo.place_id,referenced_tweets.id'
         query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
 
     return query
@@ -89,8 +89,8 @@ def save_on_db(tweets={}):
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
         spacy_processed_text, spacy_entities, sentiment_analyze = spacy_process(t['text'])
-        post['spacy processed text'] = spacy_processed_text
-        post['spacy entities'] = spacy_entities
+        post['spacy_processed text'] = spacy_processed_text
+        post['spacy_entities'] = spacy_entities
         post['tag'] = tag(t['text'])
         post['metrics'] = t['public_metrics']
         post['sentiment'] = sentiment_analyze
@@ -123,7 +123,14 @@ def save_on_db(tweets={}):
                     post['country'] = p['country']
                     post['city'] = p['full_name']
                     break
-
+        if 'referenced_tweets' in t:
+            for rft in t['referenced_tweets']:
+                post['referenced_tweet'] = rft['id']
+                break
+            for p in tweets['includes']['tweets']:
+                if p['id'] == post['referenced_tweet']:
+                    post['raw_text'] = p['text']
+                    break
         collection.insert_one(post)
 
 
