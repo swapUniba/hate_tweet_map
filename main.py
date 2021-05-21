@@ -94,7 +94,7 @@ def save_on_db(tweets={}):
         post['_id'] = t['id']
         post['author_id'] = t['id']
         post['raw_text'] = t['text']
-        spacy_processed_text, spacy_entities, raw_text_without_stopwords = spacy_process(t['text'])
+        spacy_processed_text, spacy_entities = spacy_process(t['text'])
         post['spacy processed text'] = spacy_processed_text
         post['spacy entities'] = spacy_entities
         post['tag'] = tag(t['text'])
@@ -162,7 +162,7 @@ def spacy_process(tweet):
             filtered_sentence.append(word)
 
     for token in filtered_sentence:
-        lemmas_with_postag.append(token.lemma_ + " : " + token.pos_)
+        lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " MORPH : " + token.morph.__str__())
 
     entities = []
 
