@@ -20,7 +20,7 @@ def next_page(next_token="", query={}):
     return query
 
 
-def make_query(keywords="", language="it", place="italia", place_country='IT', user=""):
+def make_query(keywords="", language="it", place="italia", place_country='IT', user="", n_results=20):
     # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
     # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
     query = {}
@@ -38,6 +38,7 @@ def make_query(keywords="", language="it", place="italia", place_country='IT', u
         query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         query['expansions'] = 'geo.place_id,referenced_tweets.id'
         query['tweet.fields'] = 'author_id' + ',public_metrics,context_annotations,entities'
+        query['max_results'] = str(n_results)
 
     return query
 
@@ -65,16 +66,20 @@ def main():
     remake(json_response, q)
 
 
-def remake(response, query):
+def remake(response, query, result_obtained_yet=0, n_result=50):
     if "meta" in response:
-        if "next_token" in response['meta']:
-            headers = create_headers(bearer_token)
-            json_response = connect_to_endpoint(search_url, headers,
-                                                next_page(next_token=response["meta"]["next_token"], query=query))
-            print(json.dumps(json_response, indent=4, sort_keys=True))
-            save_on_db(json_response)
-            time.sleep(1)
-            # remake(json_response, query)
+        result_obtained_yet += int(response['meta']['result_count'])
+        if result_obtained_yet < n_result:
+            if "next_token" in response['meta']:
+                results_to_request = n_result - result_obtained_yet
+                query['max_results'] = str(results_to_request)
+                headers = create_headers(bearer_token)
+                time.sleep(0.5)
+                json_response = connect_to_endpoint(search_url, headers,
+                                                    next_page(next_token=response["meta"]["next_token"], query=query))
+                print(json.dumps(json_response, indent=4, sort_keys=True))
+                save_on_db(json_response)
+                remake(json_response, query, result_obtained_yet,n_result)
 
 
 def save_on_db(tweets={}):
