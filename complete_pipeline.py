@@ -5,11 +5,16 @@ import spacy
 from DataBase import DataBase
 from EntityLinker import EntityLinker
 from TwitterSearch import TwitterSearch
+import time
+import util
+
 
 nlp = spacy.load("it_core_news_lg")
 
 
 def main():
+    start = time.time()
+
     print("[1/7] Configuring twitter API...")
     twitter_search = TwitterSearch()
 
@@ -18,7 +23,7 @@ def main():
     mongo_db = DataBase()
 
     print("[3/7] pre processing tweets...")
-    pre_processed_tweets = pre_process_response(twitter_results)
+    pre_processed_tweets = util.pre_process_response(twitter_results)
     new_tweet = mongo_db.delete_tweets_already_saved(pre_processed_tweets)
 
     tag_me = EntityLinker()
@@ -46,10 +51,12 @@ def main():
             futures.append(executor.submit(link_entity(t, tag_me)))
 
     print("[7/7] saving on db...")
-    if len(new_tweet) > 0:
-        mongo_db.save(new_tweet)
 
-    print("done")
+    if len(new_tweet) > 0:
+        mongo_db.save_many(new_tweet)
+
+    end = time.time()
+    print("done in: {}".format(end-start))
 
 
 def link_entity(t, tag_me):
@@ -94,54 +101,6 @@ def process_text_with_spacy(tweet):
 
     tweet['spacy_processed_text'] = lemmas_with_postag
     tweet['spacy_entities'] = entities
-
-
-def pre_process_response(twitter_results=[]):
-    tweets_processed = []
-    for tweets in twitter_results:
-        for t in tweets['data']:
-            post = {'_id': t['id'], 'author_id': t['id'], 'raw_text': t['text']}
-            if 'referenced_tweets' in t:
-                for rft in t['referenced_tweets']:
-                    if rft['type'] == 'retweeted':
-                        post['referenced_tweet'] = rft['id']
-                        for p in tweets['includes']['tweets']:
-                            if p['id'] == post['referenced_tweet']:
-                                post['raw_text'] = p['text']
-                                break
-                        break
-
-            post['metrics'] = t['public_metrics']
-            if 'entities' in t:
-                if 'hashtag' in t['entities']:
-                    hashtags = ""
-                    for hashtag in t['entities']['hashtags']:
-                        hashtags += " " + hashtag['tag']
-                    post['hashtags'] = hashtags
-
-                if 'mentions' in t['entities']:
-                    mentions = ""
-                    for mention in t['entities']['mentions']:
-                        mentions += " " + mention['username']
-                    post['mentions'] = mentions
-
-                if 'urls' in t['entities']:
-                    urls = ""
-                    for url in t['entities']['urls']:
-                        urls += " " + url['url']
-                    post['urls'] = urls
-
-            if 'context_annotations' in t:
-                post['twitter_context_annotations'] = t['context_annotations']
-            if 'geo' in t:
-                post['geo_id'] = t['geo']['place_id']
-                for p in tweets['includes']['places']:
-                    if p['id'] == post['geo_id']:
-                        post['country'] = p['country']
-                        post['city'] = p['full_name']
-                        break
-            tweets_processed.append(post)
-    return tweets_processed
 
 
 if __name__ == "__main__":
