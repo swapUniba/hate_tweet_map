@@ -5,7 +5,8 @@ import spacy
 from DataBase import DataBase
 from EntityLinker import EntityLinker
 from TwitterSearch import TwitterSearch
-import multiprocessing
+
+nlp = spacy.load("it_core_news_lg")
 
 
 def main():
@@ -122,7 +123,6 @@ def pre_process_response(twitter_results=[]):
 
 
 def spacy_process(tweet):
-    nlp = spacy.load("it_core_news_lg")
     doc = nlp(tweet)
     customize_stop_words = [
         'no',
