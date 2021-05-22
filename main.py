@@ -1,68 +1,76 @@
-import requests
-import json
-import time
+import concurrent
+from concurrent.futures import ThreadPoolExecutor
 from feel_it import EmotionClassifier, SentimentClassifier
-
 import spacy
-from pymongo import MongoClient
-from yaml import BaseLoader
-
-import MyTagMe
-
-import yaml
-
+from DataBase import DataBase
 from EntityLinker import EntityLinker
 from TwitterSearch import TwitterSearch
-
-
-class DataBase:
-
-    def __init__(self):
-        with open("config.yml", "r") as yamlfile:
-            cfg = yaml.load(yamlfile, Loader=BaseLoader)
-
-            self.__mongo_db_url = cfg['mongodb']['url']
-            self.__mongo_db_database_name = cfg['mongodb']['database']
-            self.__mongo_db_collection_name = cfg['mongodb']['collection']
-
-    def delete_tweets_already_saved(self, twitter_results=[]):
-        client = MongoClient(self.__mongo_db_url)
-        db = client.get_database(self.__mongo_db_database_name)
-        collection = db.get_collection(self.__mongo_db_collection_name)
-        for response in twitter_results:
-            for tweet in response['data']:
-                if collection.count_documents({"_id": tweet['id']}) > 0:
-                    response['data'].remove(tweet)
-        return twitter_results
-
-    def save(self, tweets=[]):
-        client = MongoClient(self.__mongo_db_url)
-        db = client.get_database(self.__mongo_db_database_name)
-        collection = db.get_collection(self.__mongo_db_collection_name)
-        collection.insert_many(tweets)
+import multiprocessing
 
 
 def main():
+    print("[1/7] Configuring twitter API...")
     twitter_search = TwitterSearch()
+
+    print("[2/7] Searching for tweets...")
     twitter_results = twitter_search.search()
     mongo_db = DataBase()
-    twitter_results = mongo_db.delete_tweets_already_saved(twitter_results)
+
+    print("[3/7] pre processing tweets...")
     pre_processed_tweets = pre_process_response(twitter_results)
+    new_tweet = mongo_db.delete_tweets_already_saved(pre_processed_tweets)
+
     tag_me = EntityLinker()
-    for t in pre_processed_tweets:
-        text = t['raw_text']
-        spacy_processed_text, spacy_entities = spacy_process(text)
-        t['spacy_processed_text'] = spacy_processed_text
-        t['spacy_entities'] = spacy_entities
+    print("[4/7] performing natural language processing operation...")
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for tweet in new_tweet:
+            futures.append(executor.submit(spacy_processing_text([tweet])))
+
+    print("[5/7] performing sentiment analyses...")
+    if len(new_tweet) > 0:
         emotion_classifier = EmotionClassifier()
         sentiment_classifier = SentimentClassifier()
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for tweet in new_tweet:
+            futures.append(executor.submit(sentiment_analyzer(emotion_classifier, [tweet], sentiment_classifier)))
+
+    print("[6/7] performing entity linking...")
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        for t in new_tweet:
+            futures.append(executor.submit(entity_linking(t, tag_me)))
+
+    print("[7/7] saving on db...")
+    if len(new_tweet) > 0:
+        mongo_db.save(new_tweet)
+
+    print("done")
+
+
+def entity_linking(t, tag_me):
+    t['tags'] = tag_me.tag(t['raw_text'])
+
+
+def sentiment_analyzer(emotion_classifier, new_tweet, sentiment_classifier):
+    for t in new_tweet:
+        text = t['raw_text']
         hold_list = [text]
         sentiment_analyses = {'emotion': emotion_classifier.predict(hold_list),
                               'sentiment': sentiment_classifier.predict(hold_list)}
 
         t['sentiment'] = sentiment_analyses
-        t['tags'] = tag_me.tag(text)
-    mongo_db.save(pre_processed_tweets)
+
+
+def spacy_processing_text(new_tweet):
+    for t in new_tweet:
+        text = t['raw_text']
+        spacy_processed_text, spacy_entities = spacy_process(text)
+        t['spacy_processed_text'] = spacy_processed_text
+        t['spacy_entities'] = spacy_entities
 
 
 def pre_process_response(twitter_results=[]):
