@@ -1,0 +1,22 @@
+mongodb:
+    url: mongodb://localhost:27017/
+    database: hatemap
+    collection: tweets4
+tagme:
+    token: 7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462
+    lang: it
+    is_twitter: False
+    rho_value: 0.15
+twitter:
+    configuration:
+        barer_token: AAAAAAAAAAAAAAAAAAAAAAPtPgEAAAAAoVlZ4I0szkcu4dL%2Bhqif%2F%2BF45Oo%3DJbvSo773bskLu1GexDv9Dq1HjuSjfSwfxgLdDXEdlPO5mKyE6G
+        end_point: https://api.twitter.com/2/tweets/search/all
+    search:
+        keyword: palestina
+        user:
+        lang: it
+        place_country: IT
+        context_annotations: False
+        n_results: 20
+
+
