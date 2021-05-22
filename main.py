@@ -27,7 +27,7 @@ def main():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
         for tweet in new_tweet:
-            futures.append(executor.submit(spacy_processing_text([tweet])))
+            futures.append(executor.submit(process_text_with_spacy(tweet)))
 
     print("[5/7] performing sentiment analyses...")
     if len(new_tweet) > 0:
@@ -37,13 +37,13 @@ def main():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
         for tweet in new_tweet:
-            futures.append(executor.submit(sentiment_analyzer(emotion_classifier, [tweet], sentiment_classifier)))
+            futures.append(executor.submit(analyze_sentiment(tweet, emotion_classifier, sentiment_classifier)))
 
     print("[6/7] performing entity linking...")
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
         for t in new_tweet:
-            futures.append(executor.submit(entity_linking(t, tag_me)))
+            futures.append(executor.submit(link_entity(t, tag_me)))
 
     print("[7/7] saving on db...")
     if len(new_tweet) > 0:
@@ -52,26 +52,48 @@ def main():
     print("done")
 
 
-def entity_linking(t, tag_me):
+def link_entity(t, tag_me):
     t['tags'] = tag_me.tag(t['raw_text'])
 
 
-def sentiment_analyzer(emotion_classifier, new_tweet, sentiment_classifier):
-    for t in new_tweet:
-        text = t['raw_text']
-        hold_list = [text]
-        sentiment_analyses = {'emotion': emotion_classifier.predict(hold_list),
-                              'sentiment': sentiment_classifier.predict(hold_list)}
+def analyze_sentiment(tweet, emotion_classifier, sentiment_classifier):
+    text = tweet['raw_text']
+    hold_list = [text]
+    sentiment_analyses = {'emotion': emotion_classifier.predict(hold_list),
+                          'sentiment': sentiment_classifier.predict(hold_list)}
 
-        t['sentiment'] = sentiment_analyses
+    tweet['sentiment'] = sentiment_analyses
 
 
-def spacy_processing_text(new_tweet):
-    for t in new_tweet:
-        text = t['raw_text']
-        spacy_processed_text, spacy_entities = spacy_process(text)
-        t['spacy_processed_text'] = spacy_processed_text
-        t['spacy_entities'] = spacy_entities
+def process_text_with_spacy(tweet):
+    doc = nlp(tweet['raw_text'])
+    customize_stop_words = [
+        'no',
+        'non',
+        'Non',
+        'No'
+    ]
+
+    for w in customize_stop_words:
+        nlp.vocab[w].is_stop = False
+
+    lemmas_with_postag = []
+    filtered_sentence = []
+    for word in doc:
+        lexeme = nlp.vocab[word.lemma_]
+        if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
+            filtered_sentence.append(word)
+
+    for token in filtered_sentence:
+        lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " MORPH : " + token.morph.__str__())
+
+    entities = []
+
+    for ent in doc.ents:
+        entities.append(ent.text + " : " + ent.label_)
+
+    tweet['spacy_processed_text'] = lemmas_with_postag
+    tweet['spacy_entities'] = entities
 
 
 def pre_process_response(twitter_results=[]):
@@ -120,36 +142,6 @@ def pre_process_response(twitter_results=[]):
                         break
             tweets_processed.append(post)
     return tweets_processed
-
-
-def spacy_process(tweet):
-    doc = nlp(tweet)
-    customize_stop_words = [
-        'no',
-        'non',
-        'Non',
-        'No'
-    ]
-
-    for w in customize_stop_words:
-        nlp.vocab[w].is_stop = False
-
-    lemmas_with_postag = []
-    filtered_sentence = []
-    for word in doc:
-        lexeme = nlp.vocab[word.lemma_]
-        if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
-            filtered_sentence.append(word)
-
-    for token in filtered_sentence:
-        lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " MORPH : " + token.morph.__str__())
-
-    entities = []
-
-    for ent in doc.ents:
-        entities.append(ent.text + " : " + ent.label_)
-
-    return lemmas_with_postag, entities
 
 
 if __name__ == "__main__":
