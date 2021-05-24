@@ -1,4 +1,7 @@
-def pre_process_response(twitter_results=[]):
+import geocoder
+
+
+def pre_process_response(twitter_results: []):
     tweets_processed = []
     for tweets in twitter_results:
         for t in tweets['data']:
@@ -41,7 +44,14 @@ def pre_process_response(twitter_results=[]):
                     if p['id'] == post['geo_id']:
                         post['country'] = p['country']
                         post['city'] = p['full_name']
+                        latitude, longitude = get_coordinates(post['city'] + "," + post['country'])
+                        post["coordinates"] = str(latitude) + "," + str(longitude)
                         break
             post['processed'] = str(False)
             tweets_processed.append(post)
     return tweets_processed
+
+
+def get_coordinates(address: ""):
+    g = geocoder.osm(address)
+    return g.osm['y'], g.osm['x']
