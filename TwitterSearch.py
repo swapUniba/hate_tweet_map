@@ -95,6 +95,10 @@ class TwitterSearch:
             if result_obtained_yet < int(self.__twitter_n_results):
                 if "next_token" in response['meta']:
                     results_to_request = int(self.__twitter_n_results) - result_obtained_yet
+                    if results_to_request < 10:
+                        results_to_request = 10
+                    if results_to_request > 500:
+                        results_to_request = 500
                     self.__query['max_results'] = str(results_to_request)
                     time.sleep(0.5)
                     self.__next_page(next_token=response["meta"]["next_token"])

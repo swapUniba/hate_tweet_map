@@ -1,57 +1,57 @@
 import geocoder
+from tqdm import tqdm
 
 
-def pre_process_response(twitter_results: []):
-    tweets_processed = []
-    for tweets in twitter_results:
-        for t in tweets['data']:
-            post = {'_id': t['id'], 'author_id': t['author_id'], 'raw_text': t['text']}
-            if 'referenced_tweets' in t:
-                for rft in t['referenced_tweets']:
-                    if rft['type'] == 'retweeted':
-                        post['referenced_tweet'] = rft['id']
-                        for p in tweets['includes']['tweets']:
-                            if p['id'] == post['referenced_tweet']:
-                                post['raw_text'] = p['text']
-                                break
+def pre_process_response(tweet: {}, includes: {}):
+    post = {'_id': tweet['id'], 'author_id': tweet['author_id'], 'raw_text': tweet['text']}
+    if 'referenced_tweets' in tweet:
+        for rft in tweet['referenced_tweets']:
+            if rft['type'] == 'retweeted':
+                post['referenced_tweet'] = rft['id']
+                for p in includes['tweets']:
+                    if p['id'] == post['referenced_tweet']:
+                        post['raw_text'] = p['text']
                         break
+                break
 
-            post['metrics'] = t['public_metrics']
-            if 'entities' in t:
-                if 'hashtag' in t['entities']:
-                    hashtags = ""
-                    for hashtag in t['entities']['hashtags']:
-                        hashtags += " " + hashtag['tag']
-                    post['hashtags'] = hashtags
+    post['metrics'] = tweet['public_metrics']
+    if 'entities' in tweet:
+        if 'hashtag' in tweet['entities']:
+            hashtags = ""
+            for hashtag in tweet['entities']['hashtags']:
+                hashtags += " " + hashtag['tag']
+            post['hashtags'] = hashtags
 
-                if 'mentions' in t['entities']:
-                    mentions = ""
-                    for mention in t['entities']['mentions']:
-                        mentions += " " + mention['username']
-                    post['mentions'] = mentions
+        if 'mentions' in tweet['entities']:
+            mentions = ""
+            for mention in tweet['entities']['mentions']:
+                mentions += " " + mention['username']
+            post['mentions'] = mentions
 
-                if 'urls' in t['entities']:
-                    urls = ""
-                    for url in t['entities']['urls']:
-                        urls += " " + url['url']
-                    post['urls'] = urls
+        if 'urls' in tweet['entities']:
+            urls = ""
+            for url in tweet['entities']['urls']:
+                urls += " " + url['url']
+            post['urls'] = urls
 
-            if 'context_annotations' in t:
-                post['twitter_context_annotations'] = t['context_annotations']
-            if 'geo' in t:
-                post['geo_id'] = t['geo']['place_id']
-                for p in tweets['includes']['places']:
-                    if p['id'] == post['geo_id']:
-                        post['country'] = p['country']
-                        post['city'] = p['full_name']
-                        latitude, longitude = get_coordinates(post['city'] + "," + post['country'])
-                        post["coordinates"] = str(latitude) + "," + str(longitude)
-                        break
-            post['processed'] = str(False)
-            tweets_processed.append(post)
-    return tweets_processed
+    if 'context_annotations' in tweet:
+        post['twitter_context_annotations'] = tweet['context_annotations']
+    if 'geo' in tweet:
+        post['geo_id'] = tweet['geo']['place_id']
+        for p in includes['places']:
+            if p['id'] == post['geo_id']:
+                post['country'] = p['country']
+                post['city'] = p['full_name']
+                latitude, longitude = get_coordinates(post['city'] + "," + post['country'])
+                post["coordinates"] = str(latitude) + "," + str(longitude)
+                break
+    post['processed'] = str(False)
+    return post
 
 
 def get_coordinates(address: ""):
     g = geocoder.osm(address)
-    return g.osm['y'], g.osm['x']
+    if g.ok :
+        return g.osm['y'], g.osm['x']
+    else:
+        return "", ""

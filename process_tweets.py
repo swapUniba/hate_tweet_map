@@ -1,5 +1,8 @@
 import concurrent
+import json
 from concurrent.futures import ThreadPoolExecutor
+
+import requests
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
 from DataBase import DataBase
@@ -8,7 +11,6 @@ from TwitterSearch import TwitterSearch
 import time
 import util
 from tqdm import tqdm
-
 
 nlp = spacy.load("it_core_news_lg")
 
@@ -34,26 +36,45 @@ def main():
         futures = []
         for tweet in tqdm(twitter_to_process):
             futures.append(executor.submit(process_text_with_spacy(tweet)))
-            futures.append(executor.submit(analyze_sentiment(tweet, emotion_classifier, sentiment_classifier)))
+            futures.append(executor.submit(feel_it_analyze_sentiment(tweet, emotion_classifier, sentiment_classifier)))
+            futures.append(executor.submit(sentit_analyze_sentiment(tweet)))
             futures.append(executor.submit(link_entity(tweet, tag_me)))
             tweet['processed'] = str(True)
             mongo_db.update_one(tweet)
 
     end = time.time()
-    print("done in: {}".format(end-start))
+    print("done in: {}".format(end - start))
 
 
 def link_entity(t, tag_me):
     t['tags'] = tag_me.tag(t['raw_text'])
 
 
-def analyze_sentiment(tweet, emotion_classifier, sentiment_classifier):
+def sentit_analyze_sentiment(tweet):
+    data = "{\"texts\": [{\"id\": \"1\", \"text\": \""
+    data += tweet['raw_text'] + "\"}]}"
+    url = "http://193.204.187.210:9009/sentipolc/v1/classify"
+    json_response = requests.post(url, data=data.replace("\n", "").encode('utf-8')).json()
+    if 'results' in json_response:
+        sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
+                              'polarity': json_response['results'][0]['polarity']}
+        if 'sentiment' not in tweet:
+            tweet['sentiment'] = {}
+            tweet['sentiment']['sent-it'] = sentiment_analyses
+        else:
+            tweet['sentiment']['sent-it'] = sentiment_analyses
+
+def feel_it_analyze_sentiment(tweet: {}, emotion_classifier, sentiment_classifier):
     text = tweet['raw_text']
     hold_list = [text]
     sentiment_analyses = {'emotion': emotion_classifier.predict(hold_list),
                           'sentiment': sentiment_classifier.predict(hold_list)}
 
-    tweet['sentiment'] = sentiment_analyses
+    if 'sentiment' not in tweet:
+        tweet['sentiment'] = {}
+        tweet['sentiment']['mila'] = sentiment_analyses
+    else:
+        tweet['sentiment']['mila'] = sentiment_analyses
 
 
 def process_text_with_spacy(tweet):
