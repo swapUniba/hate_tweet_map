@@ -5,7 +5,7 @@ def pre_process_response(twitter_results: []):
     tweets_processed = []
     for tweets in twitter_results:
         for t in tweets['data']:
-            post = {'_id': t['id'], 'author_id': t['id'], 'raw_text': t['text']}
+            post = {'_id': t['id'], 'author_id': t['author_id'], 'raw_text': t['text']}
             if 'referenced_tweets' in t:
                 for rft in t['referenced_tweets']:
                     if rft['type'] == 'retweeted':

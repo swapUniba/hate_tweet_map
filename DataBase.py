@@ -34,11 +34,12 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def save_many(self, tweets=[]):
-        client = MongoClient(self.__mongo_db_url)
-        db = client.get_database(self.__mongo_db_database_name)
-        collection = db.get_collection(self.__mongo_db_collection_name)
-        collection.insert_many(tweets)
+    def save_many(self, tweets: []):
+        if len(tweets) != 0:
+            client = MongoClient(self.__mongo_db_url)
+            db = client.get_database(self.__mongo_db_database_name)
+            collection = db.get_collection(self.__mongo_db_collection_name)
+            collection.insert_many(tweets)
 
     def update_one(self, tweet):
         client = MongoClient(self.__mongo_db_url)
