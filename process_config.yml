@@ -1,0 +1,19 @@
+mongodb:
+    url: mongodb://localhost:27017/
+    database: hatemap
+    collection: tweets2
+analyzes:
+    nlp: False
+    tagme:
+        enabled: True
+        token: 7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462
+        lang: it
+        is_twitter: True
+        rho_value: 0.15
+    sentiment_analyze:
+        sent_it: True
+        feel_it: False
+    geocoding: True
+    analyze_all_tweets: True
+
+

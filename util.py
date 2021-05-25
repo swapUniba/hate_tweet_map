@@ -47,25 +47,16 @@ def pre_process_response(tweet: {}, includes: {}):
             if p['id'] == post['geo_id']:
                 post['country'] = p['country']
                 post['city'] = p['full_name']
-                latitude, longitude = get_osm_coordinates(post['city'] + "," + post['country'])
+                # latitude, longitude = get_osm_coordinates(post['city'] + "," + post['country'])
                 # latitude, longitude = get_openstack_coordinates(post['city'] ,post['country'])
 
-                post["coordinates"] = str(latitude) + "," + str(longitude)
+                # post["coordinates"] = str(latitude) + "," + str(longitude)
                 break
     post['processed'] = str(False)
     return post
 
 
-def get_osm_coordinates(address: ""):
-    try:
-        g = geocoder.osm(address)
-        if g.ok :
-            return g.osm['y'], g.osm['x']
-        else:
-            return "", ""
-    except:
-        time.sleep(0.5)
-        return get_osm_coordinates()
+
 
 
 def get_openstack_coordinates(query, region):
