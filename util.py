@@ -1,3 +1,8 @@
+import http
+import json
+import time
+import urllib
+
 import geocoder
 from tqdm import tqdm
 
@@ -42,16 +47,48 @@ def pre_process_response(tweet: {}, includes: {}):
             if p['id'] == post['geo_id']:
                 post['country'] = p['country']
                 post['city'] = p['full_name']
-                latitude, longitude = get_coordinates(post['city'] + "," + post['country'])
+                latitude, longitude = get_osm_coordinates(post['city'] + "," + post['country'])
+                # latitude, longitude = get_openstack_coordinates(post['city'] ,post['country'])
+
                 post["coordinates"] = str(latitude) + "," + str(longitude)
                 break
     post['processed'] = str(False)
     return post
 
 
-def get_coordinates(address: ""):
-    g = geocoder.osm(address)
-    if g.ok :
-        return g.osm['y'], g.osm['x']
-    else:
-        return "", ""
+def get_osm_coordinates(address: ""):
+    try:
+        g = geocoder.osm(address)
+        if g.ok :
+            return g.osm['y'], g.osm['x']
+        else:
+            return "", ""
+    except:
+        time.sleep(0.5)
+        return get_osm_coordinates()
+
+
+def get_openstack_coordinates(query, region):
+    conn = http.client.HTTPConnection('api.positionstack.com')
+
+    params = urllib.parse.urlencode({
+        'access_key': 'e312d9e11a7a630e41d196cdde9ba5dd',
+        'query': query,
+        'region': region,
+        'limit': 1,
+        'output': 'json'
+    })
+
+    conn.request('GET', '/v1/forward?{}'.format(params))
+
+    res = conn.getresponse()
+    data = res.read().decode('utf-8')
+    json_r = json.loads(data)
+
+    if json_r:
+        if 'data' in json_r:
+            d = json_r['data']
+            if len(d) > 0:
+                if len(d[0]) > 0:
+                    return d[0]['latitude'], d[0]['longitude']
+    return "",""

@@ -1,6 +1,7 @@
 import concurrent
 import json
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, Future, as_completed
+from typing import Dict, List
 
 import requests
 from feel_it import EmotionClassifier, SentimentClassifier
@@ -13,6 +14,8 @@ import util
 from tqdm import tqdm
 
 nlp = spacy.load("it_core_news_lg")
+emotion_classifier = EmotionClassifier()
+sentiment_classifier = SentimentClassifier()
 
 
 def main():
@@ -21,64 +24,79 @@ def main():
     print("[1/3] retrieving tweets to process from  database...")
 
     mongo_db = DataBase()
-    twitter_to_process = mongo_db.extract_tweets_to_process()
+    tweets_to_process = mongo_db.extract_tweets_to_process()
 
     print("[2/3] instantiating necessary modules...")
-
-    if len(twitter_to_process) > 0:
-        emotion_classifier = EmotionClassifier()
-        sentiment_classifier = SentimentClassifier()
-        tag_me = EntityLinker()
 
     print("[3/3] processing tweets...")
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = []
-        for tweet in tqdm(twitter_to_process):
-            futures.append(executor.submit(process_text_with_spacy(tweet)))
-            futures.append(executor.submit(feel_it_analyze_sentiment(tweet, emotion_classifier, sentiment_classifier)))
-            futures.append(executor.submit(sentit_analyze_sentiment(tweet)))
-            futures.append(executor.submit(link_entity(tweet, tag_me)))
-            tweet['processed'] = str(True)
-            mongo_db.update_one(tweet)
+        for tweet in tweets_to_process:
+            fut = executor.submit(process, tweet)
+            fut.add_done_callback(finalize_process)
+            futures.append(fut)
+
+        for job in tqdm(as_completed(futures), total=len(futures)):
+            pass
 
     end = time.time()
     print("done in: {}".format(end - start))
 
 
-def link_entity(t, tag_me):
-    t['tags'] = tag_me.tag(t['raw_text'])
+def finalize_process(fut: Future):
+    tweet, spacy, link, sentit = fut.result()
+    fell_it = feel_it_analyze_sentiment(tweet['raw_text'])
+    tweet['spacy'] = spacy
+    tweet['tags'] = link
+    tweet['sentiment'] = {}
+    tweet['sentiment']['sent-it'] = sentit
+    tweet['sentiment']['feel-it'] = fell_it
+    tweet['processed'] = str(True)
+    mongo_db = DataBase()
+    mongo_db.update_one(tweet)
 
 
-def sentit_analyze_sentiment(tweet):
+def process(tweet: {}):
+    text = tweet['raw_text']
+    return tweet, process_text_with_spacy(text), link_entity(text), sentit_analyze_sentiment(text)
+
+
+def link_entity(tweet: ""):
+    tag_me = EntityLinker()
+    t = {'tag_me': tag_me.tag(tweet)}
+    return t
+
+
+def sentit_analyze_sentiment(tweet: ""):
     data = "{\"texts\": [{\"id\": \"1\", \"text\": \""
-    data += tweet['raw_text'] + "\"}]}"
+    data += tweet + "\"}]}"
     url = "http://193.204.187.210:9009/sentipolc/v1/classify"
     json_response = requests.post(url, data=data.replace("\n", "").encode('utf-8')).json()
     if 'results' in json_response:
         sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
                               'polarity': json_response['results'][0]['polarity']}
-        if 'sentiment' not in tweet:
-            tweet['sentiment'] = {}
-            tweet['sentiment']['sent-it'] = sentiment_analyses
-        else:
-            tweet['sentiment']['sent-it'] = sentiment_analyses
+        d = {'done': str(True), 'sentiment': sentiment_analyses}
 
-def feel_it_analyze_sentiment(tweet: {}, emotion_classifier, sentiment_classifier):
-    text = tweet['raw_text']
-    hold_list = [text]
-    sentiment_analyses = {'emotion': emotion_classifier.predict(hold_list),
-                          'sentiment': sentiment_classifier.predict(hold_list)}
-
-    if 'sentiment' not in tweet:
-        tweet['sentiment'] = {}
-        tweet['sentiment']['mila'] = sentiment_analyses
-    else:
-        tweet['sentiment']['mila'] = sentiment_analyses
+        return d
+    return {'done': str(False)}
 
 
-def process_text_with_spacy(tweet):
-    doc = nlp(tweet['raw_text'])
+def feel_it_analyze_sentiment(tweet: ""):
+    hold_list = [tweet]
+    try:
+        sentiment_analyses: dict[str, str] = {'emotion': emotion_classifier.predict(hold_list)[0],
+                                              'sentiment': sentiment_classifier.predict(hold_list)[0]}
+        d = {'done': str(True), 'sentiment': sentiment_analyses}
+    except:
+        time.sleep(0.01)
+        return feel_it_analyze_sentiment(tweet)
+
+    return d
+
+
+def process_text_with_spacy(tweet: ""):
+    doc = nlp(tweet)
     customize_stop_words = [
         'no',
         'non',
@@ -104,8 +122,7 @@ def process_text_with_spacy(tweet):
     for ent in doc.ents:
         entities.append(ent.text + " : " + ent.label_)
 
-    tweet['spacy_processed_text'] = lemmas_with_postag
-    tweet['spacy_entities'] = entities
+    return {'processed_text': lemmas_with_postag, 'entities': entities}
 
 
 if __name__ == "__main__":

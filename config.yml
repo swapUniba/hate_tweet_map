@@ -1,7 +1,7 @@
 mongodb:
     url: mongodb://localhost:27017/
     database: hatemap
-    collection: tweets2
+    collection: tweets4
 tagme:
     token: 7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462
     lang: it

@@ -7,6 +7,9 @@ from yaml import BaseLoader
 
 class TwitterSearch:
 
+    def get_max_result(self):
+        return self.__twitter_n_results
+
     def __init__(self):
         self.responses = []
         with open("config.yml", "r") as ymlfile:
