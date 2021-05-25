@@ -70,9 +70,9 @@ def link_entity(tweet: ""):
 
 def sentit_analyze_sentiment(tweet: ""):
     data = "{\"texts\": [{\"id\": \"1\", \"text\": \""
-    data += tweet + "\"}]}"
+    data += tweet.replace("\n", "").replace("\"", "").replace("\r", "") + "\"}]}"
     url = "http://193.204.187.210:9009/sentipolc/v1/classify"
-    json_response = requests.post(url, data=data.replace("\n", "").encode('utf-8')).json()
+    json_response = requests.post(url, data=data.encode('utf-8')).json()
     if 'results' in json_response:
         sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
                               'polarity': json_response['results'][0]['polarity']}
