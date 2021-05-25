@@ -1,12 +1,7 @@
 mongodb:
     url: mongodb://localhost:27017/
     database: hatemap
-    collection: tweets3
-tagme:
-    token: 7f5391f2-142e-4fd5-9cc9-56e91c4c9add-843339462
-    lang: it
-    is_twitter: True
-    rho_value: 0.15
+    collection: tweets2
 twitter:
     configuration:
         barer_token: AAAAAAAAAAAAAAAAAAAAAAPtPgEAAAAAoVlZ4I0szkcu4dL%2Bhqif%2F%2BF45Oo%3DJbvSo773bskLu1GexDv9Dq1HjuSjfSwfxgLdDXEdlPO5mKyE6G
@@ -18,7 +13,7 @@ twitter:
         # enter the keyword/s to search for on twitter. It's also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.
         # the AND operator is handle by a space, so to search "Joe AND Trump" just write "Joe Trump", the OR operator is "OR".
         # for example: "Joe Biden", "Biden OR Trump", "(Biden OR Trump) whitehouse" (the last query means: "(Biden OR Trump) AND whitehouse").
-        keyword: sole
+        keyword: palestina
 
         # enter the username or the user id to search for tweets of a specific user.
         user:
@@ -48,5 +43,3 @@ twitter:
                 latitude:
                 # 16km
                 radius:
-
-

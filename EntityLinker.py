@@ -7,13 +7,13 @@ import MyTagMe
 class EntityLinker:
 
     def __init__(self):
-        with open("config.yml", "r") as yamlfile:
+        with open("process_config.yml", "r") as yamlfile:
             cfg = yaml.load(yamlfile, Loader=BaseLoader)
 
-            self.__tagme_token = cfg['tagme']['token']
-            self.__tagme_lang = cfg['tagme']['lang']
-            self.__tagme_is_twitter = cfg['tagme']['is_twitter']
-            self.__tagme_rho = cfg['tagme']['rho_value']
+            self.__tagme_token = cfg['analyzes']['tagme']['token']
+            self.__tagme_lang = cfg['analyzes']['tagme']['lang']
+            self.__tagme_is_twitter = cfg['analyzes']['tagme']['is_twitter']
+            self.__tagme_rho = cfg['analyzes']['tagme']['rho_value']
 
     def tag(self, raw_tweet):
         MyTagMe.GCUBE_TOKEN = self.__tagme_token

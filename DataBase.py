@@ -6,7 +6,7 @@ from yaml import BaseLoader
 class DataBase:
 
     def __init__(self):
-        with open("config.yml", "r") as yamlfile:
+        with open("process_config.yml", "r") as yamlfile:
             cfg = yaml.load(yamlfile, Loader=BaseLoader)
 
             self.__mongo_db_url = cfg['mongodb']['url']
@@ -24,11 +24,22 @@ class DataBase:
             new_tweet.append(tweet)
         return new_tweet
 
-    def extract_tweets_to_process(self):
+    def find_by_id(self, id):
+        query = {'_id': id}
+        for tweet in self.__collection.find(query):
+            return tweet
+
+    def extract_tweets_not_processed(self):
 
         query = {'processed': str(False)}
         result = []
         for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_all_tweets(self):
+        result = []
+        for tweet in self.__collection.find():
             result.append(tweet)
         return result
 
