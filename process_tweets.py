@@ -73,18 +73,6 @@ class Process:
             else:
                 self.log.info("SENT-IT PHASE: NO TWEETS FOUND TO PROCESS")
 
-        # 2.2 nlp analyses:
-        if self.nlp:
-            if self.all_tweets:
-                tweets_to_nlp = mongo_db.extract_all_tweets()
-            else:
-                tweets_to_nlp = mongo_db.extract_new_tweets_to_nlp()
-            if len(tweets_to_nlp) > 0:
-                self.nlp = spacy.load('it_core_news_lg')
-                self.process(tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE")
-            else:
-                self.log.info("SPACY PHASE: NO TWEETS FOUND TO PROCESS")
-
         # 2.3 tag analyses:
         if self.tag_me:
             if self.all_tweets:
@@ -136,6 +124,18 @@ class Process:
                     mongo_db.update_one(tweet)
             else:
                 self.log.info("FEEL-IT PHASE: NO TWEETS FOUND TO PROCESS")
+
+                # 2.2 nlp analyses:
+        if self.nlp:
+            if self.all_tweets:
+                tweets_to_nlp = mongo_db.extract_all_tweets()
+            else:
+                tweets_to_nlp = mongo_db.extract_new_tweets_to_nlp()
+            if len(tweets_to_nlp) > 0:
+                self.nlp = spacy.load('it_core_news_lg')
+                self.process(tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE")
+            else:
+                self.log.info("SPACY PHASE: NO TWEETS FOUND TO PROCESS")
 
         end = time.time()
         self.log.info("DONE IN: {}".format(end - start))

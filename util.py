@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 
 def pre_process_response(tweet: {}, includes: {}):
-    post = {'_id': tweet['id'], 'author_id': tweet['author_id'], 'raw_text': tweet['text']}
+    post = {'_id': tweet['id'], 'author_id': tweet['author_id'], 'raw_text': tweet['text'], 'created_at': tweet['created_at']}
     if 'referenced_tweets' in tweet:
         for rft in tweet['referenced_tweets']:
             if rft['type'] == 'retweeted':
