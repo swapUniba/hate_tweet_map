@@ -22,6 +22,7 @@ class TwitterSearch:
                 raise ValueError(
                     'Impostare un valore per almeno uno dei due perametri [user], [keyword]')
 
+
             self.__twitter_lang = str(cfg['twitter']['search']['lang'])
             self.__twitter_place_country = str(cfg['twitter']['search']["geo"]['place_country'])
             self.__twitter_place = str(cfg['twitter']['search']["geo"]['place'])
@@ -29,6 +30,8 @@ class TwitterSearch:
             self.__twitter_point_radius = str(cfg['twitter']['search']["geo"]['point_radius']['longitude']) + " " + str(
                 cfg['twitter']['search']["geo"]['point_radius']['latitude']) + " " + str(
                 cfg['twitter']['search']["geo"]['point_radius']['radius'])
+            self.__twitter_start_time = str(cfg['twitter']['search']['time']['start_time'])
+            self.__twitter_end_time = str(cfg['twitter']['search']['time']['end_time'])
 
             if self.__twitter_place and self.__twitter_place.strip():
                 check.append(True)
@@ -81,9 +84,13 @@ class TwitterSearch:
 
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         self.__query['expansions'] = 'geo.place_id,referenced_tweets.id'
-        self.__query['tweet.fields'] = 'author_id' + ',public_metrics,entities'
+        self.__query['tweet.fields'] = 'author_id' + ',public_metrics,entities,created_at'
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
+        if self.__twitter_start_time and self.__twitter_start_time.strip():
+            self.__query['start_time'] = self.__twitter_start_time
+        if self.__twitter_end_time and self.__twitter_end_time.strip():
+            self.__query['end_time'] = self.__twitter_end_time
 
     def __connect_to_endpoint(self):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)

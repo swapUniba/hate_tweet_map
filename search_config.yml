@@ -26,8 +26,18 @@ twitter:
         context_annotations: True
 
         # the max results of tweets for the first page
-        n_results: 500
-
+        n_results: 10
+        # please see here for information about time fields: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-all
+        # you can set:
+            # 1. only start_time: if you specify only start time but no end time, end time will be assumed to be current time (-30 sec). (see https://twittercommunity.com/t/twitter-api-v2-search-endpoint-what-is-start-time-and-end-time-actual-default/152679)
+            # 2. only end_time: If you specify only end time, start time will be assumed 30 days before the end time specified. (see https://twittercommunity.com/t/twitter-api-v2-search-endpoint-what-is-start-time-and-end-time-actual-default/152679)
+            # 3. both: the tweets in the range specified
+            # 4. none: By default, a request will return Tweets from up to 30 days ago if you do not include this parameters. (see https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-all)
+        time:
+            # format: YYYY-MM-DDTHH:mm:ssZ (ISO 8601/RFC 3339)
+            # example value: 2018-10-19T07:20:50.52+00:00
+            start_time:
+            end_time:
         # geo parameter.
         # only one of the following fields could be set
         geo:
