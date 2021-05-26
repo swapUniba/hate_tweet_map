@@ -8,7 +8,7 @@ class EntityLinker:
 
     def __init__(self):
         with open("process_config.yml", "r") as yamlfile:
-            cfg = yaml.load(yamlfile, Loader=BaseLoader)
+            cfg = yaml.safe_load(yamlfile)
 
             self.__tagme_token = cfg['analyzes']['tagme']['token']
             self.__tagme_lang = cfg['analyzes']['tagme']['lang']

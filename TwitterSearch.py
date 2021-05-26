@@ -13,7 +13,7 @@ class TwitterSearch:
     def __init__(self):
         self.responses = []
         with open("search_config.yml", "r") as ymlfile:
-            cfg = yaml.load(ymlfile, Loader=BaseLoader)
+            cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = str(cfg['twitter']['search']['keyword'])
             self.__twitter_user = str(cfg['twitter']['search']['user'])

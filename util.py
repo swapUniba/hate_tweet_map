@@ -52,7 +52,7 @@ def pre_process_response(tweet: {}, includes: {}):
 
                 # post["coordinates"] = str(latitude) + "," + str(longitude)
                 break
-    post['processed'] = str(False)
+    post['processed'] = False
     return post
 
 

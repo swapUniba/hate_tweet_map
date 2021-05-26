@@ -7,7 +7,7 @@ class DataBase:
 
     def __init__(self):
         with open("process_config.yml", "r") as yamlfile:
-            cfg = yaml.load(yamlfile, Loader=BaseLoader)
+            cfg = yaml.safe_load(yamlfile)
 
             self.__mongo_db_url = cfg['mongodb']['url']
             self.__mongo_db_database_name = cfg['mongodb']['database']
@@ -40,6 +40,49 @@ class DataBase:
     def extract_all_tweets(self):
         result = []
         for tweet in self.__collection.find():
+            result.append(tweet)
+        return result
+
+    def extract_all_tweets_to_geo(self):
+        result = []
+        query = {"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_new_tweets_to_geo(self):
+        result = []
+        query = {"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}, {"processed": False},
+                          {"coordinates": {"$exists": False}}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_new_tweets_to_nlp(self):
+        result = []
+        query = {"processed": False}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_new_tweets_to_sentit(self):
+        result = []
+        query = {"$and": [{"sentiment.sent-it": {"$exists": False}}, {"processed": False}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_new_tweets_to_tag(self):
+        result = []
+        query = {"$and": [{"sentiment.tags.tag_me": {"$exists": False}}, {"processed": False}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_new_tweets_to_feel_it(self):
+        result = []
+        query = {"$and": [{"sentiment.feel-it": {"$exists": False}}, {"processed": False}]}
+        for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
 
