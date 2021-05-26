@@ -21,16 +21,17 @@ def main():
     print("[3/3] pre-processing tweets...")
 
     for response in twitter_results:
-        print("[3/3] pre-processing tweets: {}".format(len(response['data'])))
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            for tweet in (response['data']):
-                futures = []
-                if not mongo_db.is_in(tweet['id']):
-                    future = executor.submit(pre_process, tweet, response)
-                    future.add_done_callback(save)
-                    futures.append(future)
-            for job in tqdm(as_completed(futures), total=len(futures)):
-                pass
+        if 'data' in response:
+            print("[3/3] pre-processing tweets: {}".format(len(response['data'])))
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                for tweet in (response['data']):
+                    futures = []
+                    if not mongo_db.is_in(tweet['id']):
+                        future = executor.submit(pre_process, tweet, response)
+                        future.add_done_callback(save)
+                        futures.append(future)
+                for job in tqdm(as_completed(futures), total=len(futures)):
+                    pass
 
     end = time.time()
     print("done in: {}".format(end - start))
