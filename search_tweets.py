@@ -1,4 +1,5 @@
 import concurrent
+import logging
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed
 
 from tqdm import tqdm
@@ -10,19 +11,20 @@ import util
 
 
 def main():
+    logging.basicConfig()
+    log = logging.getLogger("SEARCH")
+    log.setLevel(logging.INFO)
     start = time.time()
 
-    print("[1/3] Configuring twitter API...")
+    log.info("LOADING CONFIGURATION")
     twitter_search = TwitterSearch()
 
-    print("[2/3] Searching for tweets...")
+    log.info("SEARCH FOR TWEETS")
     twitter_results = twitter_search.search()
     mongo_db = DataBase()
-    print("[3/3] pre-processing tweets...")
-
+    log.info("SAVING TWEETS")
     for response in twitter_results:
         if 'data' in response:
-            print("[3/3] pre-processing tweets: {}".format(len(response['data'])))
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 for tweet in (response['data']):
                     futures = []
@@ -30,11 +32,8 @@ def main():
                         future = executor.submit(pre_process, tweet, response)
                         future.add_done_callback(save)
                         futures.append(future)
-                for job in tqdm(as_completed(futures), total=len(futures)):
-                    pass
-
     end = time.time()
-    print("done in: {}".format(end - start))
+    log.info("DONE IN: {}".format(end - start))
 
 
 def save(future: Future):

@@ -13,7 +13,7 @@ twitter:
         # enter the keyword/s to search for on twitter. It's also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.
         # the AND operator is handle by a space, so to search "Joe AND Trump" just write "Joe Trump", the OR operator is "OR".
         # for example: "Joe Biden", "Biden OR Trump", "(Biden OR Trump) whitehouse" (the last query means: "(Biden OR Trump) AND whitehouse").
-        keyword: sole mare
+        keyword: palestina
 
         # enter the username or the user id to search for tweets of a specific user.
         user:
@@ -26,10 +26,10 @@ twitter:
         context_annotations: True
 
         # the max results of tweets
-        n_results: 500
+        n_results: 510
         # possible value: True/False
         # if this field is set to True the value on n_result it automatically overwrite and set to 500.
-        all_tweets: False
+        all_tweets: True
         # please see here for information about time fields: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-all
         # you can set:
             # 1. only start_time: if you specify only start time but no end time, end time will be assumed to be current time (-30 sec). (see https://twittercommunity.com/t/twitter-api-v2-search-endpoint-what-is-start-time-and-end-time-actual-default/152679)

@@ -6,7 +6,6 @@ import requests
 import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
-from yaml import BaseLoader
 
 from DataBase import DataBase
 from EntityLinker import EntityLinker
@@ -18,9 +17,7 @@ import logging
 class Process:
 
     def __init__(self):
-        self.todo_parallel = []
         self.all_tweets = False
-        self.todo_after = []
         self.feel_it = False
         self.nlp = False
         self.sent_it = False

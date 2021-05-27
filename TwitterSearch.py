@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 import requests
 import yaml
@@ -11,6 +12,8 @@ class TwitterSearch:
         return self.__twitter_n_results
 
     def __init__(self):
+        self.log = logging.getLogger("SEARCH")
+        self.log.setLevel(logging.INFO)
         self.responses = []
         with open("search_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
@@ -111,13 +114,14 @@ class TwitterSearch:
 
     def __connect_to_endpoint(self):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
-        print(response.status_code)
+        self.log.info("RECEIVED VALID RESPONSE")
         if response.status_code != 200:
             raise Exception(response.status_code, response.text)
         return response.json()
 
     def __remake(self, response, result_obtained_yet=0):
         if "meta" in response:
+            self.log.info("RECEIVED: {} TWEETS".format(response['meta']['result_count']))
             if "next_token" in response['meta']:
                 if self.__twitter_n_results:
                     if not self.__twitter_all_tweets:
@@ -129,21 +133,25 @@ class TwitterSearch:
                             results_to_request = 10
                         if results_to_request > 500:
                             results_to_request = 500
+                        self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
                         self.__query['max_results'] = results_to_request
                     else:
+                        self.log.info("ASKING FOR NEXT PAGE")
                         self.__query['max_results'] = str(500)
 
                 time.sleep(0.5)
                 self.__next_page(next_token=response["meta"]["next_token"])
                 json_response = self.__connect_to_endpoint()
                 self.responses.append(json_response)
-                print(json.dumps(json_response, indent=4, sort_keys=True))
+                #print(json.dumps(json_response, indent=4, sort_keys=True))
                 self.__remake(json_response, result_obtained_yet)
+            else:
+                self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
 
         json_response = self.__connect_to_endpoint()
-        print(json.dumps(json_response, indent=4, sort_keys=True))
+        #print(json.dumps(json_response, indent=4, sort_keys=True))
         self.responses.append(json_response)
         #time.sleep(1)
         self.__remake(json_response)
