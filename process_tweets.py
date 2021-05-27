@@ -57,7 +57,7 @@ class Process:
 
         # 1. extracting tweet in according to configuration
 
-        mongo_db = DataBase()
+        mongo_db = DataBase("process_config.yml")
 
         if self.sent_it:
             if self.all_tweets:
@@ -150,7 +150,7 @@ class Process:
             tweet['processed'] = True
         elif process_id == 1:
             tweet['tags'] = result
-        mongo_db = DataBase()
+        mongo_db = DataBase("process_config.yml")
         mongo_db.update_one(tweet)
 
     def link_entity(self, tweet_text: "", tweet: {}):

@@ -5,8 +5,8 @@ from yaml import BaseLoader
 
 class DataBase:
 
-    def __init__(self):
-        with open("process_config.yml", "r") as yamlfile:
+    def __init__(self, file_path = ""):
+        with open(file_path, "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
             self.__mongo_db_url = cfg['mongodb']['url']

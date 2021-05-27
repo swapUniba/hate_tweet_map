@@ -1,7 +1,7 @@
 mongodb:
     url: mongodb://localhost:27017/
     database: hatemap
-    collection: tweets3
+    collection: all_tweets
 analyzes:
     nlp: True
     tagme:

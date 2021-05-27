@@ -5,6 +5,9 @@ import requests
 import yaml
 from yaml import BaseLoader
 
+import util
+from DataBase import DataBase
+
 
 class TwitterSearch:
 
@@ -14,7 +17,7 @@ class TwitterSearch:
     def __init__(self):
         self.log = logging.getLogger("SEARCH")
         self.log.setLevel(logging.INFO)
-        self.responses = []
+        self.responses = {}
         with open("search_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
@@ -37,19 +40,19 @@ class TwitterSearch:
             self.__twitter_end_time = cfg['twitter']['search']['time']['end_time']
 
             if self.__twitter_point_radius_longitude:
-                if not(self.__twitter_point_radius_radius and self.__twitter_point_radius_latitude):
+                if not (self.__twitter_point_radius_radius and self.__twitter_point_radius_latitude):
                     raise ValueError(
                         'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
 
             if self.__twitter_point_radius_latitude:
-                if not(self.__twitter_point_radius_radius and self.__twitter_point_radius_longitude):
+                if not (self.__twitter_point_radius_radius and self.__twitter_point_radius_longitude):
                     raise ValueError(
                         'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
 
             if self.__twitter_point_radius_radius:
                 if not (self.__twitter_point_radius_latitude and self.__twitter_point_radius_longitude):
                     raise ValueError(
-                            'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
+                        'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
 
             if self.__twitter_place:
                 check.append(True)
@@ -97,14 +100,22 @@ class TwitterSearch:
         if self.__twitter_n_results:
             if self.__twitter_n_results > 500 or self.__twitter_all_tweets:
                 self.__query['max_results'] = str(500)
+            else:
+                self.__query['max_results'] = str(self.__twitter_n_results)
+        elif self.__twitter_all_tweets:
+            self.__query['max_results'] = str(500)
+
+
         if self.__twitter_bounding_box:
             self.__query['query'] += " bounding_box:" + "[" + self.__twitter_bounding_box + "]"
         elif self.__twitter_point_radius_longitude:
             self.__query['query'] += " point_radius:" + "[" + str(self.__twitter_point_radius_longitude) + " " + str(
                 self.__twitter_point_radius_latitude) + " " + self.__twitter_point_radius_radius + "]"
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
-        self.__query['expansions'] = 'geo.place_id,referenced_tweets.id'
-        self.__query['tweet.fields'] = 'author_id' + ',public_metrics,entities,created_at'
+        self.__query['expansions'] = 'author_id,geo.place_id,referenced_tweets.id'
+        self.__query['tweet.fields'] = 'public_metrics,entities,created_at'
+        self.__query['user.fields'] = 'username'
+
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
         if self.__twitter_start_time:
@@ -119,9 +130,11 @@ class TwitterSearch:
             raise Exception(response.status_code, response.text)
         return response.json()
 
-    def __remake(self, response, result_obtained_yet=0):
+    def __remake(self, result_obtained_yet=0):
+        response = self.responses = self.__connect_to_endpoint()
         if "meta" in response:
             self.log.info("RECEIVED: {} TWEETS".format(response['meta']['result_count']))
+            self.save()
             if "next_token" in response['meta']:
                 if self.__twitter_n_results:
                     if not self.__twitter_all_tweets:
@@ -135,24 +148,31 @@ class TwitterSearch:
                             results_to_request = 500
                         self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
                         self.__query['max_results'] = results_to_request
-                    else:
-                        self.log.info("ASKING FOR NEXT PAGE")
-                        self.__query['max_results'] = str(500)
+                elif self.__twitter_all_tweets:
+                    self.log.info("ASKING FOR NEXT PAGE")
+                    self.__query['max_results'] = str(500)
 
-                time.sleep(0.5)
+                # time.sleep(0.2)
                 self.__next_page(next_token=response["meta"]["next_token"])
                 json_response = self.__connect_to_endpoint()
-                self.responses.append(json_response)
-                #print(json.dumps(json_response, indent=4, sort_keys=True))
-                self.__remake(json_response, result_obtained_yet)
+                self.responses = json_response
+                self.save()
+                # print(json.dumps(json_response, indent=4, sort_keys=True))
+                self.__remake(result_obtained_yet)
             else:
                 self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
 
-        json_response = self.__connect_to_endpoint()
-        #print(json.dumps(json_response, indent=4, sort_keys=True))
-        self.responses.append(json_response)
-        #time.sleep(1)
-        self.__remake(json_response)
-        return self.responses
+        #self.responses = self.__connect_to_endpoint()
+        # print(json.dumps(self.responses, indent=4, sort_keys=True))
+        #self.save()
+        self.__remake()
+
+    def save(self):
+        self.log.info("SAVING TWEETS")
+        mongo_db = DataBase("search_config.yml")
+        for tweet in (self.responses['data']):
+            if not mongo_db.is_in(tweet['id']):
+                t = util.pre_process_response(tweet, self.responses['includes'])
+                mongo_db.save_one(t)

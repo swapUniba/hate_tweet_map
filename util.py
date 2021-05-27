@@ -8,36 +8,46 @@ from tqdm import tqdm
 
 
 def pre_process_response(tweet: {}, includes: {}):
-    post = {'_id': tweet['id'], 'author_id': tweet['author_id'], 'raw_text': tweet['text'], 'created_at': tweet['created_at']}
+    post = {'_id': tweet['id'], 'raw_text': tweet['text'], 'author_id': tweet['author_id']}
+    for u in includes['users']:
+        if u['id'] == post['author_id']:
+            post['author_name'] = u['name']
+            post['author_username'] = u['username']
+            break
+    post['created_at'] = tweet['created_at']
     if 'referenced_tweets' in tweet:
         for rft in tweet['referenced_tweets']:
+            post['referenced_tweet'] = {'id': rft['id'], 'type': rft['type']}
             if rft['type'] == 'retweeted':
-                post['referenced_tweet'] = rft['id']
                 for p in includes['tweets']:
                     if p['id'] == post['referenced_tweet']:
                         post['raw_text'] = p['text']
                         break
+
                 break
 
     post['metrics'] = tweet['public_metrics']
     if 'entities' in tweet:
+        ent = {}
         if 'hashtag' in tweet['entities']:
-            hashtags = ""
+            hashtags = []
             for hashtag in tweet['entities']['hashtags']:
-                hashtags += " " + hashtag['tag']
-            post['hashtags'] = hashtags
+                hashtags.append(hashtag['tag'])
+            ent['hashtags'] = hashtags
 
         if 'mentions' in tweet['entities']:
-            mentions = ""
+            mentions = []
             for mention in tweet['entities']['mentions']:
-                mentions += " " + mention['username']
-            post['mentions'] = mentions
+                mentions.append(mention['username'])
+            ent['mentions'] = mentions
 
         if 'urls' in tweet['entities']:
-            urls = ""
+            urls = []
             for url in tweet['entities']['urls']:
-                urls += " " + url['url']
-            post['urls'] = urls
+                urls.append(url['url'])
+            ent['urls'] = urls
+
+        post['twitter_entities'] = ent
 
     if 'context_annotations' in tweet:
         post['twitter_context_annotations'] = tweet['context_annotations']
