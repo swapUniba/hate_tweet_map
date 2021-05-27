@@ -26,10 +26,10 @@ twitter:
         context_annotations: True
 
         # the max results of tweets
-        n_results: 20
+        n_results:
         # possible value: True/False
         # if this field is set to True the value on n_result it automatically overwrite and set to 500.
-        all_tweets: False
+        all_tweets: True
         # please see here for information about time fields: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-all
         # you can set:
             # 1. only start_time: if you specify only start time but no end time, end time will be assumed to be current time (-30 sec). (see https://twittercommunity.com/t/twitter-api-v2-search-endpoint-what-is-start-time-and-end-time-actual-default/152679)

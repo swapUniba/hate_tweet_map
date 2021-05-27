@@ -1,8 +1,15 @@
+import concurrent
+from concurrent import futures
 import json
 import logging
+import math
 import time
+import winsound
+from datetime import datetime, timezone
+
 import requests
 import yaml
+from tqdm import tqdm
 from yaml import BaseLoader
 
 import util
@@ -15,9 +22,12 @@ class TwitterSearch:
         return self.__twitter_n_results
 
     def __init__(self):
+        self.total_result = 0
+
         self.log = logging.getLogger("SEARCH")
         self.log.setLevel(logging.INFO)
-        self.responses = {}
+        logging.basicConfig()
+        self.response = {}
         with open("search_config.yml", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
@@ -105,7 +115,6 @@ class TwitterSearch:
         elif self.__twitter_all_tweets:
             self.__query['max_results'] = str(500)
 
-
         if self.__twitter_bounding_box:
             self.__query['query'] += " bounding_box:" + "[" + self.__twitter_bounding_box + "]"
         elif self.__twitter_point_radius_longitude:
@@ -123,22 +132,85 @@ class TwitterSearch:
         if self.__twitter_end_time:
             self.__query['end_time'] = str(self.__twitter_end_time)
 
+    # def test(self):
+    #     with concurrent.futures.ThreadPoolExecutor() as executor:
+    #         for i in (0, 300):
+    #             executor.submit(self.__test_connect_to_endpoint)
+    #
+    # def __test_connect_to_endpoint(self):
+    #     response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
+    #     if response.status_code == 200:
+    #         t = response.headers.get('date')
+    #         # self.log.info("RECEIVED VALID RESPONSE")
+    #         return response.json()
+    #     if response.status_code == 429:
+    #         frequency = 2500  # Set Frequency To 2500 Hertz
+    #         duration = 3000  # Set Duration To 1000 ms == 1 second
+    #         # winsound.Beep(frequency, duration)
+    #         self.log.info("RATE LIMITS REACHED: WAITING")
+    #         now = time.time()
+    #         now_date = datetime.fromtimestamp(now, timezone.utc)
+    #         reset = float(response.headers.get("x-rate-limit-reset"))
+    #         reset_date = datetime.fromtimestamp(reset, timezone.utc)
+    #         sec_to_reset = (reset_date - now_date).total_seconds()
+    #         for i in tqdm(range(0, math.floor(sec_to_reset)), desc="WAITING FOR (in sec)", leave=True):
+    #             time.sleep(1)
+    #         return self.__connect_to_endpoint()
+    #     if response.status_code == 503:
+    #         self.log.warning(
+    #             "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
+    #                                                                                        response.text))
+    #         self.log.warning("WAITING FOR 1 MINUTE BEFORE RESEND THE REQUEST")
+    #         for i in tqdm(range(0, 60), desc="WAITING FOR (in sec)", leave=True):
+    #             time.sleep(1)
+    #         self.log.warning("RESENDING THE REQUEST")
+    #         return self.__connect_to_endpoint()
+    #     else:
+    #         self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
+    #         raise Exception(response.status_code, response.text)
+
     def __connect_to_endpoint(self):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
-        self.log.info("RECEIVED VALID RESPONSE")
-        if response.status_code != 200:
+        if response.status_code == 200:
+            t = response.headers.get('date')
+            self.log.info("RECEIVED VALID RESPONSE")
+            return response.json()
+        if response.status_code == 429:
+            frequency = 2500  # Set Frequency To 2500 Hertz
+            duration = 3000  # Set Duration To 1000 ms == 1 second
+            winsound.Beep(frequency, duration)
+            self.log.info("RATE LIMITS REACHED: WAITING")
+            now = time.time()
+            now_date = datetime.fromtimestamp(now, timezone.utc)
+            reset = float(response.headers.get("x-rate-limit-reset"))
+            reset_date = datetime.fromtimestamp(reset, timezone.utc)
+            sec_to_reset = (reset_date - now_date).total_seconds()
+            for i in tqdm(range(0, math.floor(sec_to_reset)), desc="WAITING FOR (in sec)", leave=True):
+                time.sleep(1)
+            return self.__connect_to_endpoint()
+        if response.status_code == 503:
+            self.log.warning(
+                "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
+                                                                                           response.text))
+            self.log.warning("WAITING FOR 1 MINUTE BEFORE RESEND THE REQUEST")
+            for i in tqdm(range(0, 60), desc="WAITING FOR (in sec)", leave=True):
+                time.sleep(1)
+            self.log.warning("RESENDING THE REQUEST")
+            return self.__connect_to_endpoint()
+        else:
+            self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
-        return response.json()
 
     def __remake(self, result_obtained_yet=0):
-        response = self.responses = self.__connect_to_endpoint()
-        if "meta" in response:
-            self.log.info("RECEIVED: {} TWEETS".format(response['meta']['result_count']))
+        self.response = self.__connect_to_endpoint()
+        while "meta" in self.response:
+            self.log.info("RECEIVED: {} TWEETS".format(self.response['meta']['result_count']))
             self.save()
-            if "next_token" in response['meta']:
+            self.total_result += self.response['meta']['result_count']
+            if "next_token" in self.response['meta']:
                 if self.__twitter_n_results:
                     if not self.__twitter_all_tweets:
-                        result_obtained_yet += int(response['meta']['result_count'])
+                        result_obtained_yet += int(self.response['meta']['result_count'])
                         results_to_request = self.__twitter_n_results - result_obtained_yet
                         if results_to_request <= 0:
                             return
@@ -152,27 +224,19 @@ class TwitterSearch:
                     self.log.info("ASKING FOR NEXT PAGE")
                     self.__query['max_results'] = str(500)
 
-                # time.sleep(0.2)
-                self.__next_page(next_token=response["meta"]["next_token"])
-                json_response = self.__connect_to_endpoint()
-                self.responses = json_response
-                self.save()
-                # print(json.dumps(json_response, indent=4, sort_keys=True))
-                self.__remake(result_obtained_yet)
-            else:
-                self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
+                self.__next_page(next_token=self.response["meta"]["next_token"])
+                self.response = self.__connect_to_endpoint()
+        self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
 
-        #self.responses = self.__connect_to_endpoint()
-        # print(json.dumps(self.responses, indent=4, sort_keys=True))
-        #self.save()
         self.__remake()
+        return self.total_result
 
     def save(self):
         self.log.info("SAVING TWEETS")
         mongo_db = DataBase("search_config.yml")
-        for tweet in (self.responses['data']):
+        for tweet in (self.response['data']):
             if not mongo_db.is_in(tweet['id']):
-                t = util.pre_process_response(tweet, self.responses['includes'])
+                t = util.pre_process_response(tweet, self.response['includes'])
                 mongo_db.save_one(t)

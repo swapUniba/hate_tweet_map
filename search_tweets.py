@@ -1,13 +1,6 @@
-import concurrent
 import logging
-from concurrent.futures import ThreadPoolExecutor, Future, as_completed
-
-from tqdm import tqdm
-
-from DataBase import DataBase
 from TwitterSearch import TwitterSearch
 import time
-import util
 
 
 def main():
@@ -20,11 +13,12 @@ def main():
     twitter_search = TwitterSearch()
 
     log.info("SEARCH FOR TWEETS")
-    twitter_search.search()
+    n_tweets = twitter_search.search()
+
+    log.info("TWEETS FOUND AND SAVED SUCCESSFULLY: {}".format(n_tweets))
 
     end = time.time()
     log.info("DONE IN: {}".format(end - start))
-
 
 
 if __name__ == "__main__":

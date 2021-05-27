@@ -19,12 +19,14 @@ def pre_process_response(tweet: {}, includes: {}):
         for rft in tweet['referenced_tweets']:
             post['referenced_tweet'] = {'id': rft['id'], 'type': rft['type']}
             if rft['type'] == 'retweeted':
+                post['complete_text'] = False
                 for p in includes['tweets']:
-                    if p['id'] == post['referenced_tweet']:
+                    if p['id'] == post['referenced_tweet']["id"]:
                         post['raw_text'] = p['text']
+                        post['complete_text'] = True
                         break
 
-                break
+                #break
 
     post['metrics'] = tweet['public_metrics']
     if 'entities' in tweet:
