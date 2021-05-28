@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+
 from TwitterSearch import TwitterSearch
 import time
 
@@ -8,6 +10,8 @@ def main():
     log = logging.getLogger("SEARCH")
     log.setLevel(logging.INFO)
     start = time.time()
+    log.info(datetime.fromtimestamp(start))
+
 
     log.info("LOADING CONFIGURATION")
     twitter_search = TwitterSearch()

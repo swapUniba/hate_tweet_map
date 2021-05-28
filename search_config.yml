@@ -1,7 +1,7 @@
 mongodb:
     url: mongodb://localhost:27017/
     database: hatemap
-    collection: all_tweets2
+    collection: all_tweets3
 twitter:
     configuration:
         barer_token: AAAAAAAAAAAAAAAAAAAAAAPtPgEAAAAAoVlZ4I0szkcu4dL%2Bhqif%2F%2BF45Oo%3DJbvSo773bskLu1GexDv9Dq1HjuSjfSwfxgLdDXEdlPO5mKyE6G

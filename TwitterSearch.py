@@ -5,6 +5,7 @@ import logging
 import math
 import time
 import winsound
+from concurrent.futures import Future
 from datetime import datetime, timezone
 
 import requests
@@ -22,6 +23,7 @@ class TwitterSearch:
         return self.__twitter_n_results
 
     def __init__(self):
+        self._all = []
         self.total_result = 0
 
         self.log = logging.getLogger("SEARCH")
@@ -185,7 +187,7 @@ class TwitterSearch:
             reset = float(response.headers.get("x-rate-limit-reset"))
             reset_date = datetime.fromtimestamp(reset, timezone.utc)
             sec_to_reset = (reset_date - now_date).total_seconds()
-            for i in tqdm(range(0, math.floor(sec_to_reset)), desc="WAITING FOR (in sec)", leave=True):
+            for i in tqdm(range(0, math.floor(sec_to_reset)+1), desc="WAITING FOR (in sec)", leave=True):
                 time.sleep(1)
             return self.__connect_to_endpoint()
         if response.status_code == 503:
@@ -236,7 +238,23 @@ class TwitterSearch:
     def save(self):
         self.log.info("SAVING TWEETS")
         mongo_db = DataBase("search_config.yml")
-        for tweet in (self.response['data']):
-            if not mongo_db.is_in(tweet['id']):
-                t = util.pre_process_response(tweet, self.response['includes'])
-                mongo_db.save_one(t)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
+            for tweet in (self.response['data']):
+                if not mongo_db.is_in(tweet['id']):
+                    fut = executor.submit(util.pre_process_response,tweet, self.response['includes'])
+                    fut.add_done_callback(self.save_)
+                    futures.append(fut)
+
+                    #t = util.pre_process_response(tweet, self.response['includes'])
+                    #mongo_db.save_one(t)
+        mongo_db.save_many(self._all)
+        self._all = []
+
+    def save_(self, fut: Future):
+        self._all.append(fut.result())
+        # tweet = fut.result()
+        # mongo_db = DataBase("search_config.yml")
+        # mongo_db.save_one(tweet)
+
+
