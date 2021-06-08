@@ -14,7 +14,6 @@ class TwitterSearchTestCase(unittest.TestCase):
 
         # self.twitter_research.search()
 
-    @unittest.skip
     def test429Error(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from Twitter. """
         """ In this case the search() method wait for the reset of the rate limit and then resend the request."""
