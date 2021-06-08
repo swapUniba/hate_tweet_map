@@ -19,10 +19,8 @@ from DataBase import DataBase
 
 class TwitterSearch:
 
-    def get_max_result(self):
-        return self.__twitter_n_results
-
-    def __init__(self):
+    def __init__(self, mongodb: DataBase):
+        self.mongodb = mongodb
         self._all = []
         self.total_result = 0
 
@@ -52,19 +50,17 @@ class TwitterSearch:
             self.__twitter_end_time = cfg['twitter']['search']['time']['end_time']
 
             if self.__twitter_point_radius_longitude:
-                if not (self.__twitter_point_radius_radius and self.__twitter_point_radius_latitude):
-                    raise ValueError(
-                        'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
-
-            if self.__twitter_point_radius_latitude:
-                if not (self.__twitter_point_radius_radius and self.__twitter_point_radius_longitude):
-                    raise ValueError(
-                        'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
-
+                check.append(True)
             if self.__twitter_point_radius_radius:
-                if not (self.__twitter_point_radius_latitude and self.__twitter_point_radius_longitude):
-                    raise ValueError(
-                        'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
+                check.append(True)
+            if self.__twitter_point_radius_latitude:
+                check.append(True)
+
+            if 1 < check.count(True) < 3:
+                raise ValueError(
+                    'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
+
+            check = []
 
             if self.__twitter_place:
                 check.append(True)
@@ -134,42 +130,65 @@ class TwitterSearch:
         if self.__twitter_end_time:
             self.__query['end_time'] = str(self.__twitter_end_time)
 
-    # def test(self):
-    #     with concurrent.futures.ThreadPoolExecutor() as executor:
-    #         for i in (0, 300):
-    #             executor.submit(self.__test_connect_to_endpoint)
-    #
-    # def __test_connect_to_endpoint(self):
-    #     response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
-    #     if response.status_code == 200:
-    #         t = response.headers.get('date')
-    #         # self.log.info("RECEIVED VALID RESPONSE")
-    #         return response.json()
-    #     if response.status_code == 429:
-    #         frequency = 2500  # Set Frequency To 2500 Hertz
-    #         duration = 3000  # Set Duration To 1000 ms == 1 second
-    #         # winsound.Beep(frequency, duration)
-    #         self.log.info("RATE LIMITS REACHED: WAITING")
-    #         now = time.time()
-    #         now_date = datetime.fromtimestamp(now, timezone.utc)
-    #         reset = float(response.headers.get("x-rate-limit-reset"))
-    #         reset_date = datetime.fromtimestamp(reset, timezone.utc)
-    #         sec_to_reset = (reset_date - now_date).total_seconds()
-    #         for i in tqdm(range(0, math.floor(sec_to_reset)), desc="WAITING FOR (in sec)", leave=True):
-    #             time.sleep(1)
-    #         return self.__connect_to_endpoint()
-    #     if response.status_code == 503:
-    #         self.log.warning(
-    #             "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
-    #                                                                                        response.text))
-    #         self.log.warning("WAITING FOR 1 MINUTE BEFORE RESEND THE REQUEST")
-    #         for i in tqdm(range(0, 60), desc="WAITING FOR (in sec)", leave=True):
-    #             time.sleep(1)
-    #         self.log.warning("RESENDING THE REQUEST")
-    #         return self.__connect_to_endpoint()
-    #     else:
-    #         self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
-    #         raise Exception(response.status_code, response.text)
+    @property
+    def twitter_lang(self):
+        return self.__twitter_lang
+
+    @property
+    def twitter_place_country(self):
+        return self.__twitter_place_country
+
+    @property
+    def twitter_point_radius_radius(self):
+        return self.__twitter_point_radius_radius
+
+    @property
+    def twitter_point_radius_longitude(self):
+        return self.__twitter_point_radius_longitude
+
+    @property
+    def twitter_point_radius_latitude(self):
+        return self.__twitter_point_radius_latitude
+
+    @property
+    def twitter_place(self):
+        return self.__twitter_place
+
+    @property
+    def twitter_start_time(self):
+        return self.__twitter_start_time
+
+    @property
+    def twitter_end_time(self):
+        return self.__twitter_end_time
+
+    @property
+    def twitter_bounding_box(self):
+        return self.__twitter_bounding_box
+
+    @property
+    def twitter_context_annotation(self):
+        return self.twitter_context_annotation
+
+    @property
+    def twitter_n_results(self):
+        return self.__twitter_n_results
+
+    @property
+    def twitter_all_results(self):
+        return self.__twitter_all_tweets
+
+    @property
+    def twitter_end_point(self):
+        return self.__twitter_end_point
+
+    @property
+    def twitter_key_word(self):
+        return self.__twitter_keyword
+
+    @property
+    def twitter_user(self):
+        return self.__twitter_user
 
     def __connect_to_endpoint(self):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
@@ -187,7 +206,7 @@ class TwitterSearch:
             reset = float(response.headers.get("x-rate-limit-reset"))
             reset_date = datetime.fromtimestamp(reset, timezone.utc)
             sec_to_reset = (reset_date - now_date).total_seconds()
-            for i in tqdm(range(0, math.floor(sec_to_reset)+1), desc="WAITING FOR (in sec)", leave=True):
+            for i in tqdm(range(0, math.floor(sec_to_reset) + 1), desc="WAITING FOR (in sec)", leave=True):
                 time.sleep(1)
             return self.__connect_to_endpoint()
         if response.status_code == 503:
@@ -237,24 +256,15 @@ class TwitterSearch:
 
     def save(self):
         self.log.info("SAVING TWEETS")
-        mongo_db = DataBase("search_config.yml")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
             for tweet in (self.response['data']):
-                if not mongo_db.is_in(tweet['id']):
-                    fut = executor.submit(util.pre_process_response,tweet, self.response['includes'])
+                if not self.mongodb.is_in(tweet['id']):
+                    fut = executor.submit(util.pre_process_response, tweet, self.response['includes'])
                     fut.add_done_callback(self.save_)
                     futures.append(fut)
-
-                    #t = util.pre_process_response(tweet, self.response['includes'])
-                    #mongo_db.save_one(t)
-        mongo_db.save_many(self._all)
+        self.mongodb.save_many(self._all)
         self._all = []
 
     def save_(self, fut: Future):
         self._all.append(fut.result())
-        # tweet = fut.result()
-        # mongo_db = DataBase("search_config.yml")
-        # mongo_db.save_one(tweet)
-
-
