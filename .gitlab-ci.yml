@@ -30,8 +30,6 @@ test:
   script:
     - pytest --junitxml=report.xml
     - python setup.py test
-    - pip install tox flake8  # you can also use tox
-    - tox -e py36,flake8
   artifacts:
     when: always
     reports:
