@@ -4,7 +4,7 @@ import json
 import logging
 import math
 import time
-import winsound
+#from winsound import Beep
 from concurrent.futures import Future
 from datetime import datetime, timezone
 
@@ -199,7 +199,7 @@ class TwitterSearch:
         if response.status_code == 429:
             frequency = 2500  # Set Frequency To 2500 Hertz
             duration = 3000  # Set Duration To 1000 ms == 1 second
-            winsound.Beep(frequency, duration)
+#            Beep(frequency, duration)
             self.log.info("RATE LIMITS REACHED: WAITING")
             now = time.time()
             now_date = datetime.fromtimestamp(now, timezone.utc)
