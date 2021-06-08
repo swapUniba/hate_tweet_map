@@ -1,6 +1,5 @@
 import yaml
 from pymongo import MongoClient
-from yaml import BaseLoader
 
 
 class DataBase:
