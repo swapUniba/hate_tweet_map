@@ -10,7 +10,6 @@ class TwitterSearchTestCase(unittest.TestCase):
 
     def setUp(self):
         self.db = MagicMock(DataBase)
-        self.twitter_research = TwitterSearch(self.db)
 
     def test429Error(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
@@ -20,8 +19,8 @@ class TwitterSearchTestCase(unittest.TestCase):
         twitter_research = TwitterSearch(self.db)
         with patch.object(twitter_research, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=20)):
             for i in range(0, 3):
-                self.twitter_research.search()
-        self.assertEqual(self.twitter_research.total_result, 60)
+                twitter_research.search()
+        self.assertEqual(twitter_research.total_result, 60)
 
     def testMaxResult(self):
         """ Test the correct behavior when asking for a specific_n result number. """
