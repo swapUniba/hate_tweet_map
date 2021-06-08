@@ -39,19 +39,19 @@ run:
   script:
     - python setup.py bdist_wheel
     # an alternative approach is to install and run:
-    - pip install dist/*
+ #   - pip install dist/*
     # run the command here
   artifacts:
     paths:
       - dist/*.whl
 
-pages:
-  script:
-    - pip install sphinx sphinx-rtd-theme
-    - mkdir doc; cd doc ; make html
-    - mv build/html/ ../public/
-  artifacts:
-    paths:
-      - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#pages:
+#  script:
+#    - pip install sphinx sphinx-rtd-theme
+#    - mkdir doc; cd doc ; make html
+#    - mv build/html/ ../public/
+#  artifacts:
+#    paths:
+#      - public
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
