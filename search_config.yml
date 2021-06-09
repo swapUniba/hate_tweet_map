@@ -26,7 +26,7 @@ twitter:
         context_annotations: True
 
         # the max results of tweets
-        n_results: 20
+        n_results: 500
         # possible value: True/False
         # if this field is set to True the value on n_result it automatically overwrite and set to 500.
         all_tweets: False

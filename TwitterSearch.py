@@ -168,7 +168,7 @@ class TwitterSearch:
 
     @property
     def twitter_context_annotation(self):
-        return self.twitter_context_annotation
+        return self.__twitter_context_annotations
 
     @property
     def twitter_n_results(self):

@@ -1,6 +1,8 @@
 import unittest
 from unittest import mock
 from unittest.mock import MagicMock, patch, PropertyMock
+
+import util
 from DataBase import DataBase
 from TwitterSearch import TwitterSearch
 
@@ -17,7 +19,8 @@ class TwitterSearchTestCase(unittest.TestCase):
         """ In this case the search() method wait for the reset of the rate limit and then resend the request."""
         """ WARNING: TIME EXPENSIVE TEST: 15min needed """
         twitter_research = TwitterSearch(self.db)
-        with patch.object(twitter_research, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=20)):
+        with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
+                          new_callable=PropertyMock(return_value=20)):
             for i in range(0, 3):
                 twitter_research.search()
         self.assertEqual(twitter_research.total_result, 60)
