@@ -82,7 +82,6 @@ class TwitterSearch:
             self.__twitter_end_point = cfg['twitter']['configuration']['end_point']
 
         self.__headers = {"Authorization": "Bearer {}".format(self.__twitter_barer_token)}
-        self.__build_query()
 
     def __next_page(self, next_token=""):
         if next_token != "":
@@ -170,9 +169,9 @@ class TwitterSearch:
     def twitter_context_annotation(self):
         return self.__twitter_context_annotations
 
-    @property
-    def twitter_n_results(self):
-        return self.__twitter_n_results
+#    @property
+#    def twitter_n_results(self):
+#        return self.__twitter_n_results
 
     @property
     def twitter_all_results(self):
@@ -250,7 +249,7 @@ class TwitterSearch:
         self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
-
+        self.__build_query()
         self.__remake()
         return self.total_result
 
