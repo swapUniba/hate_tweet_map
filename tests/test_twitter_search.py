@@ -1,6 +1,10 @@
+import logging
+import time
 import unittest
 from unittest import mock
 from unittest.mock import MagicMock, patch, PropertyMock
+
+from tqdm import tqdm
 
 import util
 from DataBase import DataBase
@@ -13,17 +17,36 @@ class TwitterSearchTestCase(unittest.TestCase):
     def setUp(self):
         self.db = MagicMock(DataBase)
 
-    def test429Error(self):
+    def test429Error1Second(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
         Twitter. """
-        """ In this case the search() method wait for the reset of the rate limit and then resend the request."""
-        """ WARNING: TIME EXPENSIVE TEST: 15min needed """
+        """ In this case the search() method send more than one rewuest per second, so twitter get 429 error. """
+        """ In this case we wait for 2 second before resend the request """
         twitter_research = TwitterSearch(self.db)
         with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
                           new_callable=PropertyMock(return_value=20)):
+            twitter_research.save = MagicMock()
             for i in range(0, 3):
                 twitter_research.search()
         self.assertEqual(twitter_research.total_result, 60)
+
+    def test429Error300request(self):
+        """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
+        Twitter. """
+        """ In this case the search() method send more than one rewuest per second, so twitter get 429 error. """
+        """ In this case we wait for 2 second before resend the request """
+        """ WARNING: TIME EXPENSIVE TEST: 20-25min needed """
+        twitter_research = TwitterSearch(self.db)
+        with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
+                          new_callable=PropertyMock(return_value=10)):
+            twitter_research.save = MagicMock()
+            logging.getLogger('SEARCH').propagate = False
+            with self.assertLogs('SEARCH', level='INFO') as cm:
+                for i in (tqdm(range(0, 301) , desc="NUMBER OF REQUEST", leave=True)):
+                    twitter_research.search()
+                    time.sleep(0.3)
+        self.assertTrue('INFO:SEARCH:RATE LIMITS REACHED: WAITING' in cm.output)
+        self.assertEqual(twitter_research.total_result, 3010)
 
     def testMaxResult(self):
         """ Test the correct behavior when asking for a specific_n result number. """

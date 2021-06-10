@@ -4,7 +4,7 @@ import json
 import logging
 import math
 import time
-#from winsound import Beep
+# from winsound import Beep
 from concurrent.futures import Future
 from datetime import datetime, timezone
 
@@ -33,7 +33,7 @@ class TwitterSearch:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
-            self.__twitter_user = cfg['twitter']['search']['user']
+            self.__twitter_user = str(cfg['twitter']['search']['user'])
 
             if not (self.__twitter_keyword or self.__twitter_user):
                 raise ValueError(
@@ -201,25 +201,29 @@ class TwitterSearch:
     def twitter_user(self):
         return self.__twitter_user
 
-    def __connect_to_endpoint(self):
+    def __connect_to_endpoint(self, retried=False):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
         if response.status_code == 200:
             t = response.headers.get('date')
             self.log.info("RECEIVED VALID RESPONSE")
             return response.json()
-        if response.status_code == 429:
-            frequency = 2500  # Set Frequency To 2500 Hertz
-            duration = 3000  # Set Duration To 1000 ms == 1 second
-#            Beep(frequency, duration)
+        if response.status_code == 429 and not retried:
+            self.log.debug("RETRY")
+            time.sleep(1)
+            return self.__connect_to_endpoint(retried=True)
+        elif response.status_code == 429 and retried:
+            #            frequency = 2500  # Set Frequency To 2500 Hertz
+            #            duration = 3000  # Set Duration To 1000 ms == 1 second
+            #            Beep(frequency, duration)
             self.log.info("RATE LIMITS REACHED: WAITING")
             now = time.time()
             now_date = datetime.fromtimestamp(now, timezone.utc)
             reset = float(response.headers.get("x-rate-limit-reset"))
             reset_date = datetime.fromtimestamp(reset, timezone.utc)
             sec_to_reset = (reset_date - now_date).total_seconds()
-            for i in tqdm(range(0, math.floor(sec_to_reset) + 1), desc="WAITING FOR (in sec)", leave=True):
+            for i in tqdm(range(0, math.floor(sec_to_reset) + 1), desc="WAITING FOR (in sec)", leave=True, position=0):
                 time.sleep(1)
-            return self.__connect_to_endpoint()
+            return self.__connect_to_endpoint(retried=True)
         if response.status_code == 503:
             self.log.warning(
                 "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
@@ -267,7 +271,6 @@ class TwitterSearch:
                 self.log.info("SEARCH FOR: {}".format(us))
                 self.__build_query(user=us)
                 self.__make()
-                time.sleep(1)
         else:
             self.__build_query()
             self.__make()
