@@ -82,6 +82,27 @@ class TwitterSearchTestCase(unittest.TestCase):
 
         self.assertEqual(mock_method.call_count, 2)
 
+    def testMultiUser(self):
+        users = ["eldesmarque", "GabrielChoulet", "JoArilenaStan"]
+        twitter_research = TwitterSearch(self.db)
+        with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
+                          new_callable=PropertyMock(return_value=10)):
+            with patch.object(twitter_research, '_TwitterSearch__multi_user',
+                              new_callable=PropertyMock(return_value=True)):
+                with patch.object(twitter_research, '_TwitterSearch__twitter_user',
+                                  new_callable=PropertyMock(return_value="eldesmarque, GabrielChoulet, JoArilenaStan")):
+                    with patch.object(twitter_research, '_TwitterSearch__users',
+                                      new_callable=PropertyMock(
+                                          return_value=users)):
+                        with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+                            twitter_research.save = MagicMock()
+                            with self.assertLogs('SEARCH', level='INFO') as cm:
+                                twitter_research.search()
+        self.assertTrue('INFO:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
+        self.assertTrue('INFO:SEARCH:SEARCH FOR: GabrielChoulet' in cm.output)
+        self.assertTrue('INFO:SEARCH:SEARCH FOR: JoArilenaStan' in cm.output)
+
 
 if __name__ == "__main__":
     unittest.main()  # run all tests

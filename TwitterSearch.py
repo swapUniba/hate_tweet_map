@@ -24,6 +24,7 @@ class TwitterSearch:
         self._all = []
         self.total_result = 0
         self.__multi_user = False
+        self.__users = []
 
         self.log = logging.getLogger("SEARCH")
         self.log.setLevel(logging.INFO)
@@ -262,6 +263,8 @@ class TwitterSearch:
 
                 self.__next_page(next_token=self.response["meta"]["next_token"])
                 self.response = self.__connect_to_endpoint()
+            else:
+                break
         self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
