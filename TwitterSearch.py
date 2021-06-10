@@ -23,6 +23,7 @@ class TwitterSearch:
         self.mongodb = mongodb
         self._all = []
         self.total_result = 0
+        self.__multi_user = False
 
         self.log = logging.getLogger("SEARCH")
         self.log.setLevel(logging.INFO)
@@ -34,10 +35,13 @@ class TwitterSearch:
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
             self.__twitter_user = cfg['twitter']['search']['user']
 
-            if not (self.__twitter_keyword and self.__twitter_keyword.strip()) and not (
-                    self.__twitter_user and self.__twitter_user.strip()):
+            if not (self.__twitter_keyword or self.__twitter_user):
                 raise ValueError(
                     'Impostare un valore per almeno uno dei due perametri [user], [keyword]')
+            if self.__twitter_user:
+                if "," in self.__twitter_user:
+                    self.__multi_user = True
+                    self.__users = self.__twitter_user.split(",")
 
             self.__twitter_lang = cfg['twitter']['search']['lang']
             self.__twitter_place_country = cfg['twitter']['search']["geo"]['place_country']
@@ -87,17 +91,25 @@ class TwitterSearch:
         if next_token != "":
             self.__query["next_token"] = next_token
 
-    def __build_query(self):
+    def __build_query(self, user=None):
         # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
         # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
         self.__query = {'query': ""}
+
         if self.__twitter_keyword:
             self.__query['query'] = str(self.__twitter_keyword)
-        if self.__twitter_user:
+        if not user:
+            if self.__twitter_user:
+                if self.__twitter_keyword:
+                    self.__query['query'] += " from: " + str(self.__twitter_user)
+                else:
+                    self.__query['query'] += "from: " + str(self.__twitter_user)
+        else:
             if self.__twitter_keyword:
-                self.__query['query'] += " from: " + str(self.__twitter_user)
+                self.__query['query'] += " from: " + str(user)
             else:
-                self.__query['query'] += "from: " + str(self.__twitter_user)
+                self.__query['query'] += "from: " + str(user)
+
         if self.__twitter_lang:
             self.__query['query'] += " lang:" + self.__twitter_lang
         if self.__twitter_place:
@@ -169,9 +181,9 @@ class TwitterSearch:
     def twitter_context_annotation(self):
         return self.__twitter_context_annotations
 
-#    @property
-#    def twitter_n_results(self):
-#        return self.__twitter_n_results
+    @property
+    def twitter_n_results(self):
+        return self.__twitter_n_results
 
     @property
     def twitter_all_results(self):
@@ -221,7 +233,7 @@ class TwitterSearch:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
 
-    def __remake(self, result_obtained_yet=0):
+    def __make(self, result_obtained_yet=0):
         self.response = self.__connect_to_endpoint()
         while "meta" in self.response:
             self.log.info("RECEIVED: {} TWEETS".format(self.response['meta']['result_count']))
@@ -249,8 +261,16 @@ class TwitterSearch:
         self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
-        self.__build_query()
-        self.__remake()
+        if self.__multi_user:
+            self.log.info("MULTI-USERS SEARCH")
+            for us in self.__users:
+                self.log.info("SEARCH FOR: {}".format(us))
+                self.__build_query(user=us)
+                self.__make()
+                time.sleep(1)
+        else:
+            self.__build_query()
+            self.__make()
         return self.total_result
 
     def save(self):
@@ -259,9 +279,13 @@ class TwitterSearch:
             futures = []
             for tweet in (self.response['data']):
                 if not self.mongodb.is_in(tweet['id']):
+                    self.log.setLevel(logging.DEBUG)
+                    self.log.debug(tweet)
                     fut = executor.submit(util.pre_process_response, tweet, self.response['includes'])
                     fut.add_done_callback(self.save_)
                     futures.append(fut)
+                else:
+                    self.total_result -= 1
         self.mongodb.save_many(self._all)
         self._all = []
 

@@ -76,11 +76,12 @@ def extract_entities(ent, tweet):
 
 
 def extract_mentions(ent, tweet):
-    if 'mentions' in tweet['entities']:
-        mentions = []
-        for mention in tweet['entities']['mentions']:
-            mentions.append(mention['username'])
-        if 'mentions' in ent:
-            ent['mentions'] += mentions
-        else:
-            ent['mentions'] = mentions
+    if 'entities' in tweet:
+        if 'mentions' in tweet['entities']:
+            mentions = []
+            for mention in tweet['entities']['mentions']:
+                mentions.append(mention['username'])
+            if 'mentions' in ent:
+                ent['mentions'] += mentions
+            else:
+                ent['mentions'] = mentions
