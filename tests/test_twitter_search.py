@@ -16,7 +16,7 @@ class TwitterSearchTestCase(unittest.TestCase):
 
     def setUp(self):
         self.db = MagicMock(DataBase)
-
+    @unittest.skip
     def test429Error1Second(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
         Twitter. """
@@ -29,7 +29,7 @@ class TwitterSearchTestCase(unittest.TestCase):
             for i in range(0, 3):
                 twitter_research.search()
         self.assertEqual(twitter_research.total_result, 60)
-
+    @unittest.skip
     def test429Error300request(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
         Twitter. """
@@ -42,7 +42,7 @@ class TwitterSearchTestCase(unittest.TestCase):
             twitter_research.save = MagicMock()
             logging.getLogger('SEARCH').propagate = False
             with self.assertLogs('SEARCH', level='INFO') as cm:
-                for i in (tqdm(range(0, 301) , desc="NUMBER OF REQUEST", leave=True)):
+                for i in (tqdm(range(0, 301), desc="NUMBER OF REQUEST", leave=True)):
                     twitter_research.search()
                     time.sleep(0.3)
         self.assertTrue('INFO:SEARCH:RATE LIMITS REACHED: WAITING' in cm.output)
