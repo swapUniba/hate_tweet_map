@@ -25,9 +25,17 @@ class TwitterSearchTestCase(unittest.TestCase):
         twitter_research = TwitterSearch(self.db)
         with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
                           new_callable=PropertyMock(return_value=20)):
-            twitter_research.save = MagicMock()
-            for i in range(0, 3):
-                twitter_research.search()
+            with patch.object(twitter_research, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                with patch.object(twitter_research, '_TwitterSearch__multi_user',
+                                  new_callable=PropertyMock(return_value=False)):
+                    with patch.object(twitter_research, '_TwitterSearch__twitter_user',
+                                      new_callable=PropertyMock(return_value=None)):
+                        with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+                            twitter_research.save = MagicMock()
+                            for i in range(0, 3):
+                                twitter_research.search()
+
         self.assertEqual(twitter_research.total_result, 60)
     @unittest.skip
     def test429Error300request(self):
@@ -39,12 +47,19 @@ class TwitterSearchTestCase(unittest.TestCase):
         twitter_research = TwitterSearch(self.db)
         with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
                           new_callable=PropertyMock(return_value=10)):
-            twitter_research.save = MagicMock()
-            logging.getLogger('SEARCH').propagate = False
-            with self.assertLogs('SEARCH', level='INFO') as cm:
-                for i in (tqdm(range(0, 301), desc="NUMBER OF REQUEST", leave=True)):
-                    twitter_research.search()
-                    time.sleep(0.3)
+            with patch.object(twitter_research, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                with patch.object(twitter_research, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                    with patch.object(twitter_research, '_TwitterSearch__twitter_user',
+                                      new_callable=PropertyMock(return_value=None)):
+                        with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+
+                            twitter_research.save = MagicMock()
+                            logging.getLogger('SEARCH').propagate = False
+                            with self.assertLogs('SEARCH', level='INFO') as cm:
+                                for i in (tqdm(range(0, 301), desc="NUMBER OF REQUEST", leave=True)):
+                                    twitter_research.search()
+                                    time.sleep(0.3)
         self.assertTrue('INFO:SEARCH:RATE LIMITS REACHED: WAITING' in cm.output)
         self.assertEqual(twitter_research.total_result, 3010)
 
@@ -58,9 +73,12 @@ class TwitterSearchTestCase(unittest.TestCase):
         thing = TwitterSearch(self.db)
         with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=520)):
             with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
-                mock_method.side_effect = [response1, response2]
-                thing.save = mock.Mock()
-                thing.search()
+                with patch.object(thing, '_TwitterSearch__multi_user',  new_callable=PropertyMock(return_value=False)):
+                    with patch.object(thing, '_TwitterSearch__twitter_user', new_callable=PropertyMock(return_value=None)):
+                        with patch.object(thing, '_TwitterSearch__twitter_keyword', new_callable=PropertyMock(return_value="Eurovision")):
+                            mock_method.side_effect = [response1, response2]
+                            thing.save = mock.Mock()
+                            thing.search()
 
         self.assertEqual(mock_method.call_count, 2)
 
