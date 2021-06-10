@@ -22,18 +22,19 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
-  - pip install pytest
+  - pip install pytest pytest-cov
   - pip install -r requirements.txt
 
 
 test:
   script:
-    - pytest --junitxml=report.xml
-    - python setup.py test
+    - pytest --junitxml=report.xml --cov=. tests/
+    - coverage xml
   artifacts:
     when: always
     reports:
       junit: report.xml
+      cobertura: coverage.xml
 
 run:
   script:
