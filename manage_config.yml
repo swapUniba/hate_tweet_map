@@ -3,7 +3,9 @@ mongodb:
     database: hatemap
     collection: all_tweets4
 #possible values: extract delete
-mode: delete
+mode: extract
+#json or csv (only with extract mode)
+format: csv
 criteria:
   #possible values: negative positive neutral
   sentiment:
