@@ -34,13 +34,13 @@ class TwitterSearch:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
-            self.__twitter_user = str(cfg['twitter']['search']['user'])
+            self.__twitter_user = cfg['twitter']['search']['user']
 
             if not (self.__twitter_keyword or self.__twitter_user):
                 raise ValueError(
                     'Impostare un valore per almeno uno dei due perametri [user], [keyword]')
             if self.__twitter_user:
-                if "," in self.__twitter_user:
+                if "," in str(self.__twitter_user):
                     self.__multi_user = True
                     self.__users = self.__twitter_user.split(",")
 
@@ -99,7 +99,7 @@ class TwitterSearch:
 
         if self.__twitter_keyword:
             self.__query['query'] = str(self.__twitter_keyword)
-        if not user:
+        if user is None:
             if self.__twitter_user:
                 if self.__twitter_keyword:
                     self.__query['query'] += " from: " + str(self.__twitter_user)
@@ -237,7 +237,7 @@ class TwitterSearch:
         else:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
-
+#Dal Daily Mail:uno #studio  del Saint Barnabas, NewJersey,dimostra che l'#idrossiclorochina aumenta del 200% le probabilità di sopravvivenza nei casi gravi di covid.Chi parlava un anno fa dell'idrossiclorochina e veniva spernacchiato?#DonaldTrump ovviamente.
     def __make(self, result_obtained_yet=0):
         self.response = self.__connect_to_endpoint()
         while "meta" in self.response:

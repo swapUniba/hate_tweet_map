@@ -98,3 +98,9 @@ class DataBase:
 
     def is_in(self, id: ""):
         return self.__collection.count_documents({"_id": id}) > 0
+
+    def delete_one(self, id: ""):
+        self.__collection.delete_one({"_id" : id})
+
+    def delete_more(self, query):
+        return self.__collection.delete_many(query).deleted_count
