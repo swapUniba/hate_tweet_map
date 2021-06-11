@@ -1,0 +1,15 @@
+mongodb:
+    url: mongodb://localhost:27017/
+    database: hatemap
+    collection: all_tweets4
+#possible values: extract delete
+mode: delete
+criteria:
+  #possible values: negative positive neutral
+  sentiment:
+  #a list of keywords separated by a comma
+  keywords:
+  #
+  postag: ADV
+  #a raw NoSql query
+  raw_query:

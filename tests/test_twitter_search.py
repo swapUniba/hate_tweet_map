@@ -37,6 +37,7 @@ class TwitterSearchTestCase(unittest.TestCase):
 
         self.assertEqual(twitter_research.total_result, 60)
 
+    @unittest.skip
     def test429Error300request(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
         Twitter. """
@@ -81,6 +82,28 @@ class TwitterSearchTestCase(unittest.TestCase):
                             thing.search()
 
         self.assertEqual(mock_method.call_count, 2)
+
+    # def test503Error(self):
+    #     """ Test the correct behavior when asking for a specific_n result number. """
+    #     """ In this case we are asking for 520 tweets, and we return as first result 500 tweets """
+    #     """ we check that er make exactly 2 requests. """
+    #
+    #     response1 = {'meta': {r'result_count': 500, 'next_token': 1}}
+    #     response2 = {'meta': {r'result_count': 20, 'next_token': 2}}
+    #     thing = TwitterSearch(self.db)
+    #     with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=520)):
+    #         with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+    #             with patch.object(thing, '_TwitterSearch__multi_user',
+    #                               new_callable=PropertyMock(return_value=False)):
+    #                 with patch.object(thing, '_TwitterSearch__twitter_user',
+    #                                   new_callable=PropertyMock(return_value=None)):
+    #                     with patch.object(thing, '_TwitterSearch__twitter_keyword',
+    #                                       new_callable=PropertyMock(return_value="Eurovision")):
+    #                         mock_method.side_effect = [response1, response2]
+    #                         thing.save = mock.Mock()
+    #                         thing.search()
+    #
+    #     self.assertEqual(mock_method.call_count, 2)
 
     def testMultiUser(self):
         users = ["eldesmarque", "GabrielChoulet", "JoArilenaStan"]
