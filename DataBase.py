@@ -112,6 +112,3 @@ class DataBase:
 
     def delete_more(self, query):
         return self.__collection.delete_many(query).deleted_count
-
-    def to_json(self, query):
-        return dumps(list(self.__collection.find(query)), indent=2)

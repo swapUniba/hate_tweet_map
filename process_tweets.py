@@ -175,8 +175,14 @@ class Process:
         url = "http://193.204.187.210:9009/sentipolc/v1/classify"
         json_response = requests.post(url, data=data.encode('utf-8')).json()
         if 'results' in json_response:
+            if json_response['results'][0]['polarity'] == "neg":
+                polarity = "negative"
+            elif json_response['results'][0]['polarity'] == "pos":
+                polarity = "positive"
+            else:
+                polarity = "neutral"
             sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
-                                  'sentiment': json_response['results'][0]['polarity']}
+                                  'sentiment': polarity}
 
             return 2, sentiment_analyses, tweet
         return 2, {}, tweet
