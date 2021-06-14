@@ -1,10 +1,12 @@
+from json import dumps
+
 import yaml
 from pymongo import MongoClient
 
 
 class DataBase:
 
-    def __init__(self, file_path = ""):
+    def __init__(self, file_path=""):
         with open(file_path, "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
@@ -27,6 +29,12 @@ class DataBase:
         query = {'_id': id}
         for tweet in self.__collection.find(query):
             return tweet
+
+    def extract(self, query):
+        result = []
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
 
     def extract_tweets_not_processed(self):
 
@@ -98,3 +106,9 @@ class DataBase:
 
     def is_in(self, id: ""):
         return self.__collection.count_documents({"_id": id}) > 0
+
+    def delete_one(self, id: ""):
+        self.__collection.delete_one({"_id": id})
+
+    def delete_more(self, query):
+        return self.__collection.delete_many(query).deleted_count

@@ -1,0 +1,21 @@
+mongodb:
+    url: mongodb://localhost:27017/
+    database: hatemap
+    collection: all_tweets4
+#possible values: extract delete
+mode: extract
+#json or csv (only with extract mode)
+format: json
+criteria:
+  #possible values: negative positive neutral
+  sentiment: negative
+  #a list of keywords separated by a comma
+  keywords:
+    words: covid
+    path:
+  #
+  postag: ADV
+  #a raw NoSql query
+  raw_query:
+  #possible value: and or. This field specify with which logical operator the fields must be connected
+  logical_operator: or

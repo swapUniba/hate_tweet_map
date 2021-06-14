@@ -20,11 +20,15 @@ class Process:
         self.all_tweets = False
         self.feel_it = False
         self.nlp = False
+        self.nlp_module = None
         self.sent_it = False
         self.geo = False
         self.tag_me = False
         self.emotion_classifier = None
         self.sentiment_classifier = None
+        # self.stopwords = None
+        # with open('stopwords.txt', 'r') as f:
+        #     self.stopwords = f.readlines()
         self.log = logging.getLogger('TWEETS PROCESSOR')
         self.log.setLevel(logging.INFO)
         self.load_configuration()
@@ -70,7 +74,7 @@ class Process:
             else:
                 self.log.info("SENT-IT PHASE: NO TWEETS FOUND TO PROCESS")
 
-        # 2.3 tag analyses:
+        # 2.2 tag analyses:
         if self.tag_me:
             if self.all_tweets:
                 tweets_to_tag = mongo_db.extract_all_tweets()
@@ -81,7 +85,7 @@ class Process:
             else:
                 self.log.info("ENTITY LINKING PHASE: NO TWEETS FOUND TO SENT TO TAG-ME")
 
-        # 2.4 geocode
+        # 2.3 geocode
         if self.geo:
             if self.all_tweets:
                 tweets_to_geo = mongo_db.extract_all_tweets_to_geo()
@@ -98,7 +102,7 @@ class Process:
                     mongo_db.update_one(tweet)
             else:
                 self.log.info("GEOCODING PHASE: NO TWEETS FOUND TO GEOCODE")
-
+        # 2.4 feel-it
         if self.feel_it:
             if self.all_tweets:
                 tweets_to_feel_it = mongo_db.extract_all_tweets()
@@ -122,20 +126,21 @@ class Process:
             else:
                 self.log.info("FEEL-IT PHASE: NO TWEETS FOUND TO PROCESS")
 
-                # 2.2 nlp analyses:
+        # 2.5 nlp analyses:
         if self.nlp:
             if self.all_tweets:
                 tweets_to_nlp = mongo_db.extract_all_tweets()
             else:
                 tweets_to_nlp = mongo_db.extract_new_tweets_to_nlp()
             if len(tweets_to_nlp) > 0:
-                self.nlp = spacy.load('it_core_news_lg')
+                self.nlp_module = spacy.load('it_core_news_lg')
                 self.process(tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE")
             else:
                 self.log.info("SPACY PHASE: NO TWEETS FOUND TO PROCESS")
 
         end = time.time()
         self.log.info("DONE IN: {}".format(end - start))
+
 
     def save(self, fut: Future):
         process_id, result, tweet = fut.result()
@@ -146,6 +151,12 @@ class Process:
                 tweet['sentiment'] = {}
                 tweet['sentiment']['sent-it'] = result
         elif process_id == 4:
+            # for s in self.stopwords:
+            #     for word in result['processed_text']:
+            #         if s in word:
+            #             mongo_db = DataBase("process_config.yml")
+            #             mongo_db.delete_one(tweet['_id'])
+            #             return
             tweet['spacy'] = result
             tweet['processed'] = True
         elif process_id == 1:
@@ -164,8 +175,14 @@ class Process:
         url = "http://193.204.187.210:9009/sentipolc/v1/classify"
         json_response = requests.post(url, data=data.encode('utf-8')).json()
         if 'results' in json_response:
+            if json_response['results'][0]['polarity'] == "neg":
+                polarity = "negative"
+            elif json_response['results'][0]['polarity'] == "pos":
+                polarity = "positive"
+            else:
+                polarity = "neutral"
             sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
-                                  'polarity': json_response['results'][0]['polarity']}
+                                  'sentiment': polarity}
 
             return 2, sentiment_analyses, tweet
         return 2, {}, tweet
@@ -182,7 +199,7 @@ class Process:
         return 3, sentiment_analyses, tweet
 
     def process_text_with_spacy(self, text_tweet: "", tweet: {}):
-        doc = self.nlp(text_tweet)
+        doc = self.nlp_module(text_tweet)
         customize_stop_words = [
             'no',
             'non',
@@ -191,12 +208,12 @@ class Process:
         ]
 
         for w in customize_stop_words:
-            self.nlp.vocab[w].is_stop = False
+            self.nlp_module.vocab[w].is_stop = False
 
         lemmas_with_postag = []
         filtered_sentence = []
         for word in doc:
-            lexeme = self.nlp.vocab[word.lemma_]
+            lexeme = self.nlp_module.vocab[word.lemma_]
             if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
                 filtered_sentence.append(word)
 
