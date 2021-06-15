@@ -56,3 +56,5 @@ twitter:
                 latitude:
                 # 16km
                 radius:
+        #Possible values: True/False. When is True only tweet that are not retweet are retrieved. default value: False.
+        filter_retweet: False

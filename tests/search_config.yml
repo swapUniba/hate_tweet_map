@@ -56,3 +56,4 @@ twitter:
                 latitude:
                 # 16km
                 radius:
+        filter_retweet:
