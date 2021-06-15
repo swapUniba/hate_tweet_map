@@ -8,6 +8,8 @@ def pre_process_response(tweet: {}, includes: {}):
             post['author_username'] = u['username']
             break
     post['created_at'] = tweet['created_at']
+    if "possibly_sensitive" in tweet:
+        post["possibly_sensitive"] = tweet["possibly_sensitive"]
     if 'referenced_tweets' in tweet:
         ref_tweets = []
         for rft in tweet['referenced_tweets']:
