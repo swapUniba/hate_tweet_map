@@ -14,7 +14,7 @@ class UtilTestCase(unittest.TestCase):
                               'Altınordu https://t.co/4KvvbmfvUV', 'author_id': '1402304961615179784',
                   'author_name': 'Aysıla Ünal', 'author_username': 'Ayslanal1',
                   'created_at': '2021-06-08T16:44:10.000Z',
-                  'referenced_tweet': {'id': '1396194560171290626', 'type': 'retweeted'},
+                  'referenced_tweets': [{'id': '1396194560171290626', 'type': 'retweeted'}],
                   'complete_text': True, 'twitter_entities': ent, 'twitter_context_annotations': [
                 {
                     'domain': {
@@ -1438,7 +1438,7 @@ class UtilTestCase(unittest.TestCase):
                   'author_id': '957784397566050304',
                   'author_name': 'Milan ESC', 'author_username': 'milan_esc',
                   'created_at': '2021-06-09T12:16:40.000Z',
-                  'referenced_tweet': {'id': '1402600151789850626', 'type': 'retweeted'},
+                  'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
                   'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
@@ -1457,7 +1457,7 @@ class UtilTestCase(unittest.TestCase):
                   'author_id': '957784397566050304',
                   'author_name': 'Milan ESC', 'author_username': 'milan_esc',
                   'created_at': '2021-06-09T12:16:40.000Z',
-                  'referenced_tweet': {'id': '1402600151789850626', 'type': 'retweeted'},
+                  'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
                   'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},

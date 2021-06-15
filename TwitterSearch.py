@@ -132,7 +132,7 @@ class TwitterSearch:
                 self.__twitter_point_radius_latitude) + " " + self.__twitter_point_radius_radius + "]"
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         self.__query['expansions'] = 'author_id,geo.place_id,referenced_tweets.id'
-        self.__query['tweet.fields'] = 'public_metrics,entities,created_at'
+        self.__query['tweet.fields'] = 'referenced_tweets,public_metrics,entities,created_at'
         self.__query['user.fields'] = 'username'
 
         if self.__twitter_context_annotations:
