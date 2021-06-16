@@ -26,7 +26,7 @@ twitter:
         context_annotations: True
 
         # the max results of tweets
-        n_results: 10
+        n_results: 100
         # possible value: True/False
         # if this field is set to True the value on n_result it automatically overwrite and set to 500.
         all_tweets: False
@@ -56,3 +56,5 @@ twitter:
                 latitude:
                 # 16km
                 radius:
+        #Possible values: True/False. When is True only tweet that are not retweet are retrieved. default value: False.
+        filter_retweet: False

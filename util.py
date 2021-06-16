@@ -8,23 +8,25 @@ def pre_process_response(tweet: {}, includes: {}):
             post['author_username'] = u['username']
             break
     post['created_at'] = tweet['created_at']
+    if "possibly_sensitive" in tweet:
+        post["possibly_sensitive"] = tweet["possibly_sensitive"]
     if 'referenced_tweets' in tweet:
+        ref_tweets = []
         for rft in tweet['referenced_tweets']:
-            post['referenced_tweet'] = {'id': rft['id'], 'type': rft['type']}
+            ref_tweets.append({'id': rft['id'], 'type': rft['type']})
             if rft['type'] == 'retweeted':
                 retweeted = True
+                ref_id = rft['id']
                 post['complete_text'] = False
                 for p in includes['tweets']:
-                    if p['id'] == post['referenced_tweet']["id"]:
+                    if p['id'] == ref_id:
                         post['raw_text'] = p['text']
                         post['complete_text'] = True
                         extract_context_annotation(post, p)
                         extract_entities(ent, p)
                         extract_mentions(ent, p)
-
-                        break  # ?
-
-                # break
+                        break
+        post["referenced_tweets"] = ref_tweets
     if not retweeted:
         extract_entities(ent, tweet)
         extract_context_annotation(post, tweet)

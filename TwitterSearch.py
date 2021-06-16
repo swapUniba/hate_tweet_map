@@ -83,8 +83,10 @@ class TwitterSearch:
             self.__twitter_context_annotations = cfg['twitter']['search']['context_annotations']
             self.__twitter_all_tweets = cfg['twitter']['search']['all_tweets']
             self.__twitter_n_results = cfg['twitter']['search']['n_results']
+            self.__twitter_filter_retweet = cfg['twitter']['search']['filter_retweet']
             self.__twitter_barer_token = cfg['twitter']['configuration']['barer_token']
             self.__twitter_end_point = cfg['twitter']['configuration']['end_point']
+
 
         self.__headers = {"Authorization": "Bearer {}".format(self.__twitter_barer_token)}
 
@@ -130,9 +132,11 @@ class TwitterSearch:
         elif self.__twitter_point_radius_longitude:
             self.__query['query'] += " point_radius:" + "[" + str(self.__twitter_point_radius_longitude) + " " + str(
                 self.__twitter_point_radius_latitude) + " " + self.__twitter_point_radius_radius + "]"
+        if self.__twitter_filter_retweet is True:
+            self.__query['query'] += " -is:retweet"
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         self.__query['expansions'] = 'author_id,geo.place_id,referenced_tweets.id'
-        self.__query['tweet.fields'] = 'public_metrics,entities,created_at'
+        self.__query['tweet.fields'] = 'referenced_tweets,public_metrics,entities,created_at,possibly_sensitive'
         self.__query['user.fields'] = 'username'
 
         if self.__twitter_context_annotations:
@@ -202,6 +206,10 @@ class TwitterSearch:
     def twitter_user(self):
         return self.__twitter_user
 
+    @property
+    def twitter_filter_retweet(self):
+        return self.__twitter_filter_retweet
+
     def __connect_to_endpoint(self, retried=False):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
         if response.status_code == 200:
@@ -237,7 +245,7 @@ class TwitterSearch:
         else:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
-#Dal Daily Mail:uno #studio  del Saint Barnabas, NewJersey,dimostra che l'#idrossiclorochina aumenta del 200% le probabilità di sopravvivenza nei casi gravi di covid.Chi parlava un anno fa dell'idrossiclorochina e veniva spernacchiato?#DonaldTrump ovviamente.
+
     def __make(self, result_obtained_yet=0):
         self.response = self.__connect_to_endpoint()
         while "meta" in self.response:
