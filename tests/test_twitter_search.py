@@ -27,8 +27,8 @@ class TwitterSearchTestCase(unittest.TestCase):
                           new_callable=PropertyMock(return_value=20)):
             with patch.object(twitter_research, '_TwitterSearch__multi_user',
                               new_callable=PropertyMock(return_value=False)):
-                with patch.object(twitter_research, '_TwitterSearch__twitter_user',
-                                  new_callable=PropertyMock(return_value=None)):
+                with patch.object(twitter_research, '_TwitterSearch__twitter_users',
+                                  new_callable=PropertyMock(return_value=[])):
                     with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
                                       new_callable=PropertyMock(return_value="Eurovision")):
                         twitter_research.save = MagicMock()
@@ -49,8 +49,8 @@ class TwitterSearchTestCase(unittest.TestCase):
                           new_callable=PropertyMock(return_value=10)):
             with patch.object(twitter_research, '_TwitterSearch__multi_user',
                               new_callable=PropertyMock(return_value=False)):
-                with patch.object(twitter_research, '_TwitterSearch__twitter_user',
-                                  new_callable=PropertyMock(return_value=None)):
+                with patch.object(twitter_research, '_TwitterSearch__twitter_users',
+                                  new_callable=PropertyMock(return_value=[])):
                     with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
                                       new_callable=PropertyMock(return_value="Eurovision")):
                         twitter_research.save = MagicMock()
@@ -67,14 +67,14 @@ class TwitterSearchTestCase(unittest.TestCase):
         """ In this case we are asking for 520 tweets, and we return as first result 500 tweets """
         """ we check that er make exactly 2 requests. """
 
-        response1 = {'meta': {r'result_count': 500, 'next_token': 1}}
-        response2 = {'meta': {r'result_count': 20, 'next_token': 2}}
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 20, 'next_token': 2}}
         thing = TwitterSearch(self.db)
         with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=520)):
             with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
                 with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
-                    with patch.object(thing, '_TwitterSearch__twitter_user',
-                                      new_callable=PropertyMock(return_value=None)):
+                    with patch.object(thing, '_TwitterSearch__twitter_users',
+                                      new_callable=PropertyMock(return_value=[])):
                         with patch.object(thing, '_TwitterSearch__twitter_keyword',
                                           new_callable=PropertyMock(return_value="Eurovision")):
                             mock_method.side_effect = [response1, response2]
@@ -104,6 +104,21 @@ class TwitterSearchTestCase(unittest.TestCase):
     #                         thing.search()
     #
     #     self.assertEqual(mock_method.call_count, 2)
+    def testOnlyUser(self):
+        twitter_research = TwitterSearch(self.db)
+        with patch.object(twitter_research, '_TwitterSearch__twitter_n_results',
+                          new_callable=PropertyMock(return_value=10)):
+            with patch.object(twitter_research, '_TwitterSearch__multi_user',
+                              new_callable=PropertyMock(return_value=False)):
+                with patch.object(twitter_research, '_TwitterSearch__twitter_users',
+                                  new_callable=PropertyMock(return_value=["eldesmarque"])):
+                    with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
+                                      new_callable=PropertyMock(return_value=None)):
+                        twitter_research.save = MagicMock()
+                        with self.assertLogs('SEARCH', level='INFO') as cm:
+                            twitter_research.search()
+        self.assertTrue('INFO:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
+        self.assertEqual(twitter_research.total_result, 10)
 
     def testMultiUser(self):
         users = ["eldesmarque", "GabrielChoulet", "JoArilenaStan"]
@@ -112,19 +127,164 @@ class TwitterSearchTestCase(unittest.TestCase):
                           new_callable=PropertyMock(return_value=10)):
             with patch.object(twitter_research, '_TwitterSearch__multi_user',
                               new_callable=PropertyMock(return_value=True)):
-                with patch.object(twitter_research, '_TwitterSearch__twitter_user',
-                                  new_callable=PropertyMock(return_value="eldesmarque, GabrielChoulet, JoArilenaStan")):
-                    with patch.object(twitter_research, '_TwitterSearch__users',
-                                      new_callable=PropertyMock(
-                                          return_value=users)):
-                        with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
-                                          new_callable=PropertyMock(return_value="Eurovision")):
-                            twitter_research.save = MagicMock()
-                            with self.assertLogs('SEARCH', level='INFO') as cm:
-                                twitter_research.search()
+                with patch.object(twitter_research, '_TwitterSearch__twitter_users',
+                                  new_callable=PropertyMock(return_value=users)):
+                    with patch.object(twitter_research, '_TwitterSearch__twitter_keyword',
+                                      new_callable=PropertyMock(return_value="Eurovision")):
+                        twitter_research.save = MagicMock()
+                        with self.assertLogs('SEARCH', level='INFO') as cm:
+                            twitter_research.search()
         self.assertTrue('INFO:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
         self.assertTrue('INFO:SEARCH:SEARCH FOR: GabrielChoulet' in cm.output)
         self.assertTrue('INFO:SEARCH:SEARCH FOR: JoArilenaStan' in cm.output)
+
+    def test_no_next_token(self):
+        """ Test the correct behavior when there is no next_token in the twitter response"""
+
+        response1 = {'meta': {'result_count': 500}}
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=520)):
+            with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                    with patch.object(thing, '_TwitterSearch__twitter_users',
+                                      new_callable=PropertyMock(return_value=[])):
+                        with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+                            with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                mock_method.side_effect = [response1]
+                                thing.save = mock.Mock()
+                                thing.search()
+
+        self.assertEqual(mock_method.call_count, 1)
+        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
+
+    def test_no_next_token_2calls(self):
+        """ Test the correct behavior when there is no next_token in the twitter response"""
+
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 10}}
+
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=520)):
+            with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                    with patch.object(thing, '_TwitterSearch__twitter_users',
+                                      new_callable=PropertyMock(return_value=[])):
+                        with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+                            with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                mock_method.side_effect = [response1, response2]
+                                thing.save = mock.Mock()
+                                thing.search()
+
+        self.assertEqual(mock_method.call_count, 2)
+        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
+
+    def test_all_tweets(self):
+        """ Test the correct behavior when all_tweets flag is set to True and n_results to some number """
+
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 500, 'next_token': 2}}
+        response3 = {'meta': {'result_count': 500, 'next_token': 3}}
+        response4 = {'meta': {'result_count': 500}}
+
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=10)):
+            with patch.object(thing, '_TwitterSearch__twitter_all_tweets', new_callable=PropertyMock(return_value=True)):
+                with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                    with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                        with patch.object(thing, '_TwitterSearch__twitter_users',
+                                          new_callable=PropertyMock(return_value=[])):
+                            with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                              new_callable=PropertyMock(return_value="Eurovision")):
+                                with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                    mock_method.side_effect = [response1, response2, response3, response4]
+                                    thing.save = mock.Mock()
+                                    thing.search()
+
+        self.assertEqual(mock_method.call_count, 4)
+        self.assertTrue("INFO:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
+        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
+
+
+    def test_all_tweets2(self):
+        """ Test the correct behavior when all_tweets flag is set to True"""
+
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 500, 'next_token': 2}}
+        response3 = {'meta': {'result_count': 500, 'next_token': 3}}
+        response4 = {'meta': {'result_count': 500}}
+
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_all_tweets', new_callable=PropertyMock(return_value=True)):
+            with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                    with patch.object(thing, '_TwitterSearch__twitter_users',
+                                      new_callable=PropertyMock(return_value=[])):
+                        with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                          new_callable=PropertyMock(return_value="Eurovision")):
+                            with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                mock_method.side_effect = [response1, response2, response3, response4]
+                                thing.save = mock.Mock()
+                                thing.search()
+
+        self.assertEqual(mock_method.call_count, 4)
+        self.assertTrue("INFO:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
+        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
+
+
+    def test_n_results_greater_than_500(self):
+        """ Test the correct behavior when all_tweets flag is set to True and n_results to some number """
+
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 500, 'next_token': 2}}
+        response3 = {'meta': {'result_count': 70, 'next_token': 2}}
+
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=1070)):
+            with patch.object(thing, '_TwitterSearch__twitter_all_tweets', new_callable=PropertyMock(return_value=False)):
+                with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                    with patch.object(thing, '_TwitterSearch__multi_user', new_callable=PropertyMock(return_value=False)):
+                        with patch.object(thing, '_TwitterSearch__twitter_users',
+                                          new_callable=PropertyMock(return_value=[])):
+                            with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                              new_callable=PropertyMock(return_value="Eurovision")):
+                                with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                    mock_method.side_effect = [response1, response2, response3]
+                                    thing.save = mock.Mock()
+                                    thing.search()
+
+        self.assertEqual(mock_method.call_count, 3)
+
+    def test_n_results_less_than_10(self):
+        """ Test the correct behavior when all_tweets flag is set to True and n_results to some number """
+
+        response1 = {'meta': {'result_count': 500, 'next_token': 1}}
+        response2 = {'meta': {'result_count': 500, 'next_token': 2}}
+        response3 = {'meta': {'result_count': 10, 'next_token': 2}}
+
+        thing = TwitterSearch(self.db)
+        with patch.object(thing, '_TwitterSearch__twitter_n_results', new_callable=PropertyMock(return_value=1008)):
+            with patch.object(thing, '_TwitterSearch__twitter_all_tweets',
+                              new_callable=PropertyMock(return_value=False)):
+                with patch.object(thing, '_TwitterSearch__connect_to_endpoint') as mock_method:
+                    with patch.object(thing, '_TwitterSearch__multi_user',
+                                      new_callable=PropertyMock(return_value=False)):
+                        with patch.object(thing, '_TwitterSearch__twitter_users',
+                                          new_callable=PropertyMock(return_value=[])):
+                            with patch.object(thing, '_TwitterSearch__twitter_keyword',
+                                              new_callable=PropertyMock(return_value="Eurovision")):
+                                with self.assertLogs('SEARCH', level='DEBUG') as cm:
+                                    mock_method.side_effect = [response1, response2, response3]
+                                    thing.save = mock.Mock()
+                                    thing.search()
+
+        self.assertEqual(mock_method.call_count, 3)
+
 
 
 if __name__ == "__main__":

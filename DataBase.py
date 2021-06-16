@@ -52,14 +52,14 @@ class DataBase:
 
     def extract_all_tweets_to_geo(self):
         result = []
-        query = {"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}
+        query = {"$or": [{"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}, {"user_location": {"$exists": True}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
 
     def extract_new_tweets_to_geo(self):
         result = []
-        query = {"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}, {"processed": False},
+        query = {"$and": [{"$or": [{"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}, {"user_location": {"$exists": True}}]}, {"processed": False},
                           {"coordinates": {"$exists": False}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)

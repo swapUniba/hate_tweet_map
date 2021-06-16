@@ -2,10 +2,12 @@ def pre_process_response(tweet: {}, includes: {}):
     ent = {}
     post = {'_id': tweet['id'], 'raw_text': tweet['text'], 'author_id': tweet['author_id']}
     retweeted = False
+    user_location = None
     for u in includes['users']:
         if u['id'] == post['author_id']:
             post['author_name'] = u['name']
             post['author_username'] = u['username']
+            user_location = u.get("location")
             break
     post['created_at'] = tweet['created_at']
     if "possibly_sensitive" in tweet:
@@ -33,18 +35,24 @@ def pre_process_response(tweet: {}, includes: {}):
 
     extract_mentions(ent, tweet)
     post['twitter_entities'] = ent
-
+    geo = {}
     if 'geo' in tweet:
-        post['geo_id'] = tweet['geo']['place_id']
+        geo['geo_id'] = tweet['geo']['place_id']
         for p in includes['places']:
-            if p['id'] == post['geo_id']:
-                post['country'] = p['country']
-                post['city'] = p['full_name']
+            if p['id'] == geo['geo_id']:
+                geo['country'] = p['country']
+                geo['city'] = p['full_name']
                 # latitude, longitude = get_osm_coordinates(post['city'] + "," + post['country'])
                 # latitude, longitude = get_openstack_coordinates(post['city'] ,post['country'])
 
                 # post["coordinates"] = str(latitude) + "," + str(longitude)
                 break
+        post["geo"] = geo
+    else:
+        if user_location is not None:
+            geo = {"user_location": user_location}
+            post["geo"] = geo
+
     post['metrics'] = tweet['public_metrics']
 
     post['processed'] = False

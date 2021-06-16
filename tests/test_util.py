@@ -764,11 +764,11 @@ class UtilTestCase(unittest.TestCase):
 
     def test_no_retweeted(self):
         ent = {'hashtags': ['Eurovision'], 'annotation': [{'normalized_text': 'Toñi Prieto',
-                                       'probability': 0.9891,
-                                       'type': 'Person'},
-                                      {'normalized_text': 'Ana Maria',
-                                       'probability': 0.9963,
-                                       'type': 'Person'}]}
+                                                           'probability': 0.9891,
+                                                           'type': 'Person'},
+                                                          {'normalized_text': 'Ana Maria',
+                                                           'probability': 0.9963,
+                                                           'type': 'Person'}]}
 
         result = {'_id': '1402586088523317249',
                   'raw_text': 'Mucha alegría veo con la salida de Toñi Prieto cuando Ana Maria también esta desde hace años en la delegación española de #Eurovision y siguieron los mismos resultados',
@@ -890,15 +890,15 @@ class UtilTestCase(unittest.TestCase):
 
     def test_geo(self):
         ent = {'hashtags': ['Eurovision'], 'annotation': [{'normalized_text': 'TVE',
-                                       'probability': 0.847,
-                                       'type': 'Organization'},
-                                      {'normalized_text': 'Ana Bordas Toñi '
-                                                          'Prieto',
-                                       'probability': 0.8826,
-                                       'type': 'Person'},
-                                      {'normalized_text': 'RTVE',
-                                       'probability': 0.5524,
-                                       'type': 'Organization'}]}
+                                                           'probability': 0.847,
+                                                           'type': 'Organization'},
+                                                          {'normalized_text': 'Ana Bordas Toñi '
+                                                                              'Prieto',
+                                                           'probability': 0.8826,
+                                                           'type': 'Person'},
+                                                          {'normalized_text': 'RTVE',
+                                                           'probability': 0.5524,
+                                                           'type': 'Organization'}]}
         result = {'_id': '1402573825569603584',
                   'raw_text': 'Contar la verdad de que TVE  no seguirá haciendo autocrítica,malas elecciones,pésimas '
                               'puestas en escena,mala gestión ,cumplir los deseos del artista,elección de buena '
@@ -912,8 +912,7 @@ class UtilTestCase(unittest.TestCase):
                       [{'domain': {'id': '118', 'name': 'Award Show',
                                    'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
                         'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
-                  'geo_id': 'a6a7a5f5b5f9a4c9',
-                  'country': 'Spagna', 'city': 'Tegueste, España',
+                  'geo': {'geo_id': 'a6a7a5f5b5f9a4c9', 'country': 'Spagna', 'city': 'Tegueste, España'},
                   'metrics': {'retweet_count': 0, 'reply_count': 0, 'like_count': 1, 'quote_count': 0},
                   'processed': False
                   }
@@ -1431,7 +1430,8 @@ class UtilTestCase(unittest.TestCase):
         self.assertDictEqual(result, util.pre_process_response(tweet, includes))
 
     def test_mention(self):
-        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['marlenasslave'], 'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf' ]}
+        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['marlenasslave'],
+               'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf']}
         result = {'_id': '1402600531240046596',
                   'raw_text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate '
                               '#damianodavid #Eurovision https://t.co/wBDwmCgVjf',
@@ -1440,17 +1440,54 @@ class UtilTestCase(unittest.TestCase):
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
-                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
+                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
+                                                                                       'name': 'Award Show',
+                                                                                       'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                            'entity': {'id': '1376864097594011648',
+                                                                                       'name': 'Eurovision 2021'}}],
                   'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
                   'processed': False
                   }
-        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'}, {'start': 94, 'end': 107, 'tag': 'damianodavid'}, {'start': 108, 'end': 119, 'tag': 'Eurovision'}], 'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]}, 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0}, 'id': '1402600531240046596', 'author_id': '957784397566050304', 'context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}], 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}], 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
-        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'}, {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'}, {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ], 'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'}, {'start': 75, 'end': 88, 'tag': 'damianodavid'}, {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [{'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf', 'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1', 'display_url': 'pic.twitter.com/wBDwmCgVjf'}, {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf', 'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1', 'display_url': 'pic.twitter.com/wBDwmCgVjf'}]}, 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1, 'quote_count': 0}, 'id': '1402600151789850626', 'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}], 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
+        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {
+            'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'}, {'start': 94, 'end': 107, 'tag': 'damianodavid'},
+                         {'start': 108, 'end': 119, 'tag': 'Eurovision'}],
+            'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]},
+                 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                 'id': '1402600531240046596', 'author_id': '957784397566050304', 'context_annotations': [{'domain': {
+                'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                                          'entity': {
+                                                                                                              'id': '1376864097594011648',
+                                                                                                              'name': 'Eurovision 2021'}}],
+                 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
+                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
+        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'},
+                              {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
+                              {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ],
+                    'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {
+                        'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'},
+                                     {'start': 75, 'end': 88, 'tag': 'damianodavid'},
+                                     {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'},
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'}]},
+                                'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1,
+                                                   'quote_count': 0}, 'id': '1402600151789850626',
+                                'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118',
+                                                                                                        'name': 'Award Show',
+                                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                             'entity': {
+                                                                                                 'id': '1376864097594011648',
+                                                                                                 'name': 'Eurovision 2021'}}],
+                                'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
         self.assertDictEqual(result, util.pre_process_response(tweet, includes))
 
     def test_mention2(self):
-        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'], 'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf' ]}
+        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
+               'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf']}
         result = {'_id': '1402600531240046596',
                   'raw_text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate '
                               '#damianodavid #Eurovision https://t.co/wBDwmCgVjf',
@@ -1459,14 +1496,177 @@ class UtilTestCase(unittest.TestCase):
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
-                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
+                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
+                                                                                       'name': 'Award Show',
+                                                                                       'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                            'entity': {'id': '1376864097594011648',
+                                                                                       'name': 'Eurovision 2021'}}],
                   'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
                   'processed': False
                   }
-        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'}, {'start': 94, 'end': 107, 'tag': 'damianodavid'}, {'start': 108, 'end': 119, 'tag': 'Eurovision'}], 'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]}, 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0}, 'id': '1402600531240046596', 'author_id': '957784397566050304', 'context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}], 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}], 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
-        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'}, {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'}, {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ], 'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'}, {'start': 75, 'end': 88, 'tag': 'damianodavid'}, {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [{'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf', 'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1', 'display_url': 'pic.twitter.com/wBDwmCgVjf'}, {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf', 'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1', 'display_url': 'pic.twitter.com/wBDwmCgVjf'}], 'mentions': [{'start': 3, 'end': 17, 'username': 'try'}]}, 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1, 'quote_count': 0}, 'id': '1402600151789850626', 'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'}, 'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}], 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
+        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {
+            'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'}, {'start': 94, 'end': 107, 'tag': 'damianodavid'},
+                         {'start': 108, 'end': 119, 'tag': 'Eurovision'}],
+            'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]},
+                 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                 'id': '1402600531240046596', 'author_id': '957784397566050304', 'context_annotations': [{'domain': {
+                'id': '118', 'name': 'Award Show', 'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                                          'entity': {
+                                                                                                              'id': '1376864097594011648',
+                                                                                                              'name': 'Eurovision 2021'}}],
+                 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
+                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
+        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'},
+                              {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
+                              {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ],
+                    'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {
+                        'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'},
+                                     {'start': 75, 'end': 88, 'tag': 'damianodavid'},
+                                     {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'},
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'}],
+                        'mentions': [{'start': 3, 'end': 17, 'username': 'try'}]},
+                                'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1,
+                                                   'quote_count': 0}, 'id': '1402600151789850626',
+                                'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118',
+                                                                                                        'name': 'Award Show',
+                                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                             'entity': {
+                                                                                                 'id': '1376864097594011648',
+                                                                                                 'name': 'Eurovision 2021'}}],
+                                'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
         self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+
+    def test_possibly_sensitive(self):
+        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
+               'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf']}
+        result = {'_id': '1402600531240046596',
+                  'raw_text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate '
+                              '#damianodavid #Eurovision https://t.co/wBDwmCgVjf',
+                  'author_id': '957784397566050304',
+                  'author_name': 'Milan ESC', 'author_username': 'milan_esc',
+                  'created_at': '2021-06-09T12:16:40.000Z',
+                  'possibly_sensitive': True,
+                  'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
+                  'complete_text': True,
+                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
+                                                                                       'name': 'Award Show',
+                                                                                       'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                            'entity': {'id': '1376864097594011648',
+                                                                                       'name': 'Eurovision 2021'}}],
+                  'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                  'processed': False
+                  }
+        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {
+            'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'},
+                         {'start': 94, 'end': 107, 'tag': 'damianodavid'},
+                         {'start': 108, 'end': 119, 'tag': 'Eurovision'}],
+            'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]},
+                 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                 'possibly_sensitive': True,
+                 'id': '1402600531240046596', 'author_id': '957784397566050304',
+                 'context_annotations': [{'domain': {
+                     'id': '118', 'name': 'Award Show',
+                     'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                     'entity': {
+                         'id': '1376864097594011648',
+                         'name': 'Eurovision 2021'}}],
+                 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
+                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
+        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'},
+                              {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
+                              {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ],
+                    'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {
+                        'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'},
+                                     {'start': 75, 'end': 88, 'tag': 'damianodavid'},
+                                     {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'},
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'}],
+                        'mentions': [{'start': 3, 'end': 17, 'username': 'try'}]},
+                                'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1,
+                                                   'quote_count': 0}, 'id': '1402600151789850626',
+                                'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118',
+                                                                                                        'name': 'Award Show',
+                                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                             'entity': {
+                                                                                                 'id': '1376864097594011648',
+                                                                                                 'name': 'Eurovision 2021'}}],
+                                'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
+        self.maxDiff = None
+        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+
+    def test_user_location(self):
+        ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
+               'urls': ['https://t.co/wBDwmCgVjf', 'https://t.co/wBDwmCgVjf']}
+        result = {'_id': '1402600531240046596',
+                  'raw_text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate '
+                              '#damianodavid #Eurovision https://t.co/wBDwmCgVjf',
+                  'author_id': '957784397566050304',
+                  'author_name': 'Milan ESC', 'author_username': 'milan_esc',
+                  'created_at': '2021-06-09T12:16:40.000Z',
+                  'possibly_sensitive': True,
+                  'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
+                  'complete_text': True,
+                  'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
+                                                                                       'name': 'Award Show',
+                                                                                       'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                            'entity': {'id': '1376864097594011648',
+                                                                                       'name': 'Eurovision 2021'}}],
+                  'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                  'geo': {'user_location': 'Bari,Italia'},
+                  'processed': False
+                  }
+        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {
+            'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'},
+                         {'start': 94, 'end': 107, 'tag': 'damianodavid'},
+                         {'start': 108, 'end': 119, 'tag': 'Eurovision'}],
+            'mentions': [{'start': 3, 'end': 17, 'username': 'marlenasslave'}]},
+                 'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
+                 'possibly_sensitive': True,
+                 'id': '1402600531240046596', 'author_id': '957784397566050304',
+                 'context_annotations': [{'domain': {
+                     'id': '118', 'name': 'Award Show',
+                     'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                     'entity': {
+                         'id': '1376864097594011648',
+                         'name': 'Eurovision 2021'}}],
+                 'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
+                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
+        includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc', "location": "Bari,Italia"},
+                              {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
+                              {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ],
+                    'tweets': [{'created_at': '2021-06-09T12:15:09.000Z', 'entities': {
+                        'hashtags': [{'start': 65, 'end': 74, 'tag': 'damikate'},
+                                     {'start': 75, 'end': 88, 'tag': 'damianodavid'},
+                                     {'start': 89, 'end': 100, 'tag': 'Eurovision'}], 'urls': [
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'},
+                            {'start': 101, 'end': 124, 'url': 'https://t.co/wBDwmCgVjf',
+                             'expanded_url': 'https://twitter.com/marlenasslave/status/1402600151789850626/photo/1',
+                             'display_url': 'pic.twitter.com/wBDwmCgVjf'}],
+                        'mentions': [{'start': 3, 'end': 17, 'username': 'try'}]},
+                                'public_metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 1,
+                                                   'quote_count': 0}, 'id': '1402600151789850626',
+                                'author_id': '1400076690773135362', 'context_annotations': [{'domain': {'id': '118',
+                                                                                                        'name': 'Award Show',
+                                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
+                                                                                             'entity': {
+                                                                                                 'id': '1376864097594011648',
+                                                                                                 'name': 'Eurovision 2021'}}],
+                                'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
+        self.maxDiff = None
+        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+
 
 if __name__ == "__main__":
     unittest.main()  # run all tests
