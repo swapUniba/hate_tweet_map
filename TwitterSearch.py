@@ -118,6 +118,8 @@ class TwitterSearch:
         if self.__twitter_n_results:
             if self.__twitter_n_results > 500 or self.__twitter_all_tweets:
                 self.__query['max_results'] = str(500)
+            elif self.__twitter_n_results < 10:
+                self.__query['max_results'] = str(10)
             else:
                 self.__query['max_results'] = str(self.__twitter_n_results)
         elif self.__twitter_all_tweets:
