@@ -93,8 +93,12 @@ class Process:
                 tweets_to_geo = mongo_db.extract_new_tweets_to_geo()
             if len(tweets_to_geo) > 0:
                 for tweet in tqdm(tweets_to_geo, desc="GEOCODING PHASE", leave=True):
-                    city = tweet['city']
-                    country = tweet['country']
+                    if "user_location" in tweet:
+                        usr_location = tweet["user_location"]
+                    else:
+                        city = tweet.get("city")
+                        country = tweet.get('country')
+
                     id, check, result, tweet = self.get_osm_coordinates(city, country, tweet)
                     if id == 5:
                         if check:
@@ -140,7 +144,6 @@ class Process:
 
         end = time.time()
         self.log.info("DONE IN: {}".format(end - start))
-
 
     def save(self, fut: Future):
         process_id, result, tweet = fut.result()
@@ -227,15 +230,18 @@ class Process:
 
         return 4, {'processed_text': lemmas_with_postag, 'entities': entities}, tweet
 
-    def get_osm_coordinates(self, city: "", country: "", tweet: {}):
-        try:
+    def get_osm_coordinates(self, tweet: {}, user_location=None, city=None, country=None):
+
+        g = {"ok": False}
+        if user_location is not None:
+            g = geocoder.osm(user_location)
+        elif city is not None and country is not None:
             g = geocoder.osm(city + "," + country)
-            if g.ok:
-                return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet
-            else:
-                return 5, False, {}, tweet
-        except Exception as e:
-            return self.get_osm_coordinates(city, country, tweet)
+
+        if g.ok:
+            return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet
+        else:
+            return 5, False, {}, tweet
 
 
 def main():

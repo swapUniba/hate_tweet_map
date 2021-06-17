@@ -24,7 +24,7 @@ class TwitterSearch:
         self._all = []
         self.total_result = 0
         self.__multi_user = False
-        self.__users = []
+        self.__twitter_users = []
 
         self.log = logging.getLogger("SEARCH")
         self.log.setLevel(logging.INFO)
@@ -34,15 +34,17 @@ class TwitterSearch:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
-            self.__twitter_user = cfg['twitter']['search']['user']
+            twitter_user = cfg['twitter']['search']['user']
 
-            if not (self.__twitter_keyword or self.__twitter_user):
+            if not (self.__twitter_keyword or twitter_user):
                 raise ValueError(
                     'Impostare un valore per almeno uno dei due perametri [user], [keyword]')
-            if self.__twitter_user:
-                if "," in str(self.__twitter_user):
+            if twitter_user:
+                if "," in str(twitter_user):
+                    self.__twitter_users = twitter_user.split(",")
                     self.__multi_user = True
-                    self.__users = self.__twitter_user.split(",")
+                else:
+                    self.__twitter_users = [twitter_user]
 
             self.__twitter_lang = cfg['twitter']['search']['lang']
             self.__twitter_place_country = cfg['twitter']['search']["geo"]['place_country']
@@ -101,13 +103,7 @@ class TwitterSearch:
 
         if self.__twitter_keyword:
             self.__query['query'] = str(self.__twitter_keyword)
-        if user is None:
-            if self.__twitter_user:
-                if self.__twitter_keyword:
-                    self.__query['query'] += " from: " + str(self.__twitter_user)
-                else:
-                    self.__query['query'] += "from: " + str(self.__twitter_user)
-        else:
+        if user is not None:
             if self.__twitter_keyword:
                 self.__query['query'] += " from: " + str(user)
             else:
@@ -122,6 +118,8 @@ class TwitterSearch:
         if self.__twitter_n_results:
             if self.__twitter_n_results > 500 or self.__twitter_all_tweets:
                 self.__query['max_results'] = str(500)
+            elif self.__twitter_n_results < 10:
+                self.__query['max_results'] = str(10)
             else:
                 self.__query['max_results'] = str(self.__twitter_n_results)
         elif self.__twitter_all_tweets:
@@ -137,7 +135,7 @@ class TwitterSearch:
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         self.__query['expansions'] = 'author_id,geo.place_id,referenced_tweets.id'
         self.__query['tweet.fields'] = 'referenced_tweets,public_metrics,entities,created_at,possibly_sensitive'
-        self.__query['user.fields'] = 'username'
+        self.__query['user.fields'] = 'username,location'
 
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
@@ -253,36 +251,35 @@ class TwitterSearch:
             self.save()
             self.total_result += self.response['meta']['result_count']
             if "next_token" in self.response['meta']:
-                if self.__twitter_n_results:
-                    if not self.__twitter_all_tweets:
-                        result_obtained_yet += int(self.response['meta']['result_count'])
-                        results_to_request = self.__twitter_n_results - result_obtained_yet
-                        if results_to_request <= 0:
-                            return
-                        if results_to_request < 10:
-                            results_to_request = 10
-                        if results_to_request > 500:
-                            results_to_request = 500
-                        self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
-                        self.__query['max_results'] = results_to_request
-                elif self.__twitter_all_tweets:
+                if self.__twitter_all_tweets:
                     self.log.info("ASKING FOR NEXT PAGE")
                     self.__query['max_results'] = str(500)
-
+                elif self.__twitter_n_results:
+                    result_obtained_yet += int(self.response['meta']['result_count'])
+                    results_to_request = self.__twitter_n_results - result_obtained_yet
+                    if results_to_request <= 0:
+                        return
+                    if results_to_request < 10:
+                        results_to_request = 10
+                    if results_to_request > 500:
+                        results_to_request = 500
+                    self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
+                    self.__query['max_results'] = results_to_request
                 self.__next_page(next_token=self.response["meta"]["next_token"])
                 self.response = self.__connect_to_endpoint()
             else:
+                self.log.debug("NO NEXT TOKEN IN RESPONSE:INTERRUPTING")
                 break
         self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self):
         if self.__multi_user:
             self.log.info("MULTI-USERS SEARCH")
-            for us in self.__users:
-                self.log.info("SEARCH FOR: {}".format(us))
-                self.__build_query(user=us)
-                self.__make()
-        else:
+        for us in self.__twitter_users:
+            self.log.info("SEARCH FOR: {}".format(us))
+            self.__build_query(user=us)
+            self.__make()
+        if len(self.__twitter_users) == 0 :
             self.__build_query()
             self.__make()
         return self.total_result
@@ -293,7 +290,6 @@ class TwitterSearch:
             futures = []
             for tweet in (self.response['data']):
                 if not self.mongodb.is_in(tweet['id']):
-                    self.log.setLevel(logging.DEBUG)
                     self.log.debug(tweet)
                     fut = executor.submit(util.pre_process_response, tweet, self.response['includes'])
                     fut.add_done_callback(self.save_)
