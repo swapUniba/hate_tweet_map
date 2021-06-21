@@ -7,7 +7,7 @@ import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
 
-from src.DataBase import DataBase
+from hate_tweet_map.database import DataBase
 from EntityLinker import EntityLinker
 import time
 from tqdm import tqdm

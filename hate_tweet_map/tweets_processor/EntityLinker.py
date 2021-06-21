@@ -1,6 +1,6 @@
 import yaml
 
-from src.TweetsProcessor import MyTagMe
+from hate_tweet_map.tweets_processor import MyTagMe
 
 
 class EntityLinker:

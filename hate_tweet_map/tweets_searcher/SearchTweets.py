@@ -11,8 +11,8 @@ import requests
 import yaml
 from tqdm import tqdm
 
-from src import util
-from src.DataBase import DataBase
+from hate_tweet_map import util
+from hate_tweet_map.database import DataBase
 
 
 class SearchTweets:

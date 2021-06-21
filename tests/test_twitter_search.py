@@ -6,15 +6,15 @@ from unittest.mock import MagicMock, patch, PropertyMock
 
 from tqdm import tqdm
 
-from src.DataBase import DataBase
-from src.TweetsSearcher.SearchTweets import SearchTweets
+from hate_tweet_map import database
+from hate_tweet_map.tweets_searcher import SearchTweets
 
 
 class TwitterSearchTestCase(unittest.TestCase):
     """ Test cases for TwitterSearch Class """
 
     def setUp(self):
-        self.db = MagicMock(DataBase)
+        self.db = MagicMock(database)
 
     def test429Error1Second(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from

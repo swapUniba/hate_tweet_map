@@ -11,8 +11,8 @@ import requests
 import yaml
 from tqdm import tqdm
 
-from src import util
-from src.DataBase import DataBase
+from hate_tweet_map import util
+from hate_tweet_map.database import DataBase
 
 
 class UserSearch:
@@ -28,7 +28,7 @@ class UserSearch:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        with open("../TweetsSearcher/search_tweets.config", "r") as ymlfile:
+        with open("../tweets_searcher/search_tweets.config", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']

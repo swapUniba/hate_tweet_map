@@ -1,5 +1,5 @@
 import unittest
-from src import util
+from hate_tweet_map import util
 
 
 class UtilTestCase(unittest.TestCase):

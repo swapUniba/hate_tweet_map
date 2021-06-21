@@ -7,7 +7,7 @@ from json import dumps
 import pandas
 import yaml
 
-from src.DataBase import DataBase
+from hate_tweet_map.database import DataBase
 
 
 def main():

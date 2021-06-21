@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from src.DataBase import DataBase
+from hate_tweet_map.database import DataBase
 from SearchTweets import SearchTweets
 import time
 
