@@ -1,14 +1,13 @@
 import logging
 import os
-from datetime import time, datetime
+from datetime import time
 import time
 from json import dumps
 
 import pandas
 import yaml
 
-from DataBase import DataBase
-from TwitterSearch import TwitterSearch
+from src.DataBase import DataBase
 
 
 def main():
@@ -16,7 +15,7 @@ def main():
     start = time.time()
     logging.basicConfig()
 
-    with open("manage_config.yml", "r") as ymlfile:
+    with open("manage_tweets.config", "r") as ymlfile:
         cfg = yaml.safe_load(ymlfile)
         mode = cfg['mode']
         _format = cfg['format']
@@ -52,7 +51,7 @@ def main():
     log = logging.getLogger("MANAGE")
     log.setLevel(logging.INFO)
 
-    db = DataBase('manage_config.yml')
+    db = DataBase('manage_tweets.config')
     values = []
     if logical_operator == "and":
         query = {"$and": values}
@@ -81,13 +80,13 @@ def main():
         result = db.extract(query)
         log.info("TWEETS RETRIEVED: {}".format(len(result)))
         if _format == "json":
-            with open('data.json', 'w') as file:
+            with open('../../data.json', 'w') as file:
                 file.write(dumps(result, indent=2))
-                log.info("TWEETS SAVED ON: {}".format(os.path.abspath('data.json')))
+                log.info("TWEETS SAVED ON: {}".format(os.path.abspath('../../data.json')))
         elif _format == "csv":
             df = pandas.DataFrame(db.extract(query))
             df.to_csv('data.csv', index=False)
-            log.info("TWEETS SAVED ON: {}".format(os.path.abspath('data.csv')))
+            log.info("TWEETS SAVED ON: {}".format(os.path.abspath('../../data.csv')))
 
     end = time.time()
     log.info("DONE IN: {}".format(end - start))

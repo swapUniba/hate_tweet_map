@@ -1,8 +1,8 @@
 import logging
 from datetime import datetime
 
-from DataBase import DataBase
-from TwitterSearch import TwitterSearch
+from src.DataBase import DataBase
+from SearchTweets import SearchTweets
 import time
 
 
@@ -13,9 +13,9 @@ def main():
     start = time.time()
     log.info(datetime.fromtimestamp(start))
 
-    mongo_db = DataBase("search_config.yml")
+    mongo_db = DataBase("search_tweets.config")
     log.info("LOADING CONFIGURATION")
-    twitter_search = TwitterSearch(mongo_db)
+    twitter_search = SearchTweets(mongo_db)
 
     log.info("SEARCH FOR TWEETS")
     n_tweets = twitter_search.search()

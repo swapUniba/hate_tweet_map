@@ -1,13 +1,12 @@
 import yaml
-from yaml import BaseLoader
 
-import MyTagMe
+from src.TweetsProcessor import MyTagMe
 
 
 class EntityLinker:
 
     def __init__(self):
-        with open("process_config.yml", "r") as yamlfile:
+        with open("process_tweets.config", "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
             self.__tagme_token = cfg['analyzes']['tagme']['token']
