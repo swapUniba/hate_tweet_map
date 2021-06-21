@@ -30,7 +30,7 @@ class SearchTweets:
         logging.basicConfig()
         self.response = {}
         sep = os.sep
-        with open("..{}script{}search_tweets{}search_tweets.config".format(sep, sep, sep, sep), "r") as ymlfile:
+        with open('../script/search_tweets/search_tweets.config', "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
