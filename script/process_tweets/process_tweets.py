@@ -7,7 +7,7 @@ import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
 
-from DataBase import DataBase
+from hate_tweet_map.database import DataBase
 from EntityLinker import EntityLinker
 import time
 from tqdm import tqdm
@@ -34,7 +34,7 @@ class Process:
         self.load_configuration()
 
     def load_configuration(self):
-        with open("process_config.yml", "r") as ymlfile:
+        with open("process_tweets.config", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             self.nlp = cfg['analyzes']['nlp']
             self.tag_me = cfg['analyzes']['tagme']['enabled']
@@ -61,7 +61,7 @@ class Process:
 
         # 1. extracting tweet in according to configuration
 
-        mongo_db = DataBase("process_config.yml")
+        mongo_db = DataBase("process_tweets.config")
 
         if self.sent_it:
             if self.all_tweets:
@@ -157,14 +157,14 @@ class Process:
             # for s in self.stopwords:
             #     for word in result['processed_text']:
             #         if s in word:
-            #             mongo_db = DataBase("process_config.yml")
+            #             mongo_db = DataBase("process_tweets.config")
             #             mongo_db.delete_one(tweet['_id'])
             #             return
             tweet['spacy'] = result
             tweet['processed'] = True
         elif process_id == 1:
             tweet['tags'] = result
-        mongo_db = DataBase("process_config.yml")
+        mongo_db = DataBase("process_tweets.config")
         mongo_db.update_one(tweet)
 
     def link_entity(self, tweet_text: "", tweet: {}):

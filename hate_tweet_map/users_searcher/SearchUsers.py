@@ -1,6 +1,5 @@
 import concurrent
 from concurrent import futures
-import json
 import logging
 import math
 import time
@@ -11,13 +10,12 @@ from datetime import datetime, timezone
 import requests
 import yaml
 from tqdm import tqdm
-from yaml import BaseLoader
 
-import util
-from DataBase import DataBase
+from hate_tweet_map import util
+from hate_tweet_map.database import DataBase
 
 
-class TwitterSearch:
+class UserSearch:
 
     def __init__(self, mongodb: DataBase):
         self.mongodb = mongodb
@@ -30,7 +28,7 @@ class TwitterSearch:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        with open("search_config.yml", "r") as ymlfile:
+        with open("../../script/search_tweets/search_tweets.config", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
