@@ -28,7 +28,7 @@ class UserSearch:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        with open("../tweets_searcher/search_tweets.config", "r") as ymlfile:
+        with open("../../script/search_tweets/search_tweets.config", "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']

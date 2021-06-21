@@ -1,4 +1,5 @@
 import concurrent
+import os
 from concurrent import futures
 import logging
 import math
@@ -28,7 +29,8 @@ class SearchTweets:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        with open("search_tweets.config", "r") as ymlfile:
+        sep = os.sep
+        with open("..{}script{}search_tweets{}search_tweets.config".format(sep, sep, sep, sep), "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']

@@ -6,7 +6,7 @@ from hate_tweet_map.tweets_processor import MyTagMe
 class EntityLinker:
 
     def __init__(self):
-        with open("process_tweets.config", "r") as yamlfile:
+        with open("../../script/process_tweets/process_tweets.config", "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
             self.__tagme_token = cfg['analyzes']['tagme']['token']

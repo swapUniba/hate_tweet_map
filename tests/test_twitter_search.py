@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch, PropertyMock
 from tqdm import tqdm
 
 from hate_tweet_map import database
-from hate_tweet_map.tweets_searcher import SearchTweets
+from hate_tweet_map.tweets_searcher.SearchTweets import SearchTweets
 
 
 class TwitterSearchTestCase(unittest.TestCase):
