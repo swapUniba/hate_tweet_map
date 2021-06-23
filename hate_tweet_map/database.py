@@ -6,13 +6,13 @@ from pymongo import MongoClient
 
 class DataBase:
 
-    def __init__(self, file_path=""):
+    def __init__(self, file_path="", key="mongodb"):
         with open(file_path, "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
-            self.__mongo_db_url = cfg['mongodb']['url']
-            self.__mongo_db_database_name = cfg['mongodb']['database']
-            self.__mongo_db_collection_name = cfg['mongodb']['collection']
+            self.__mongo_db_url = cfg[key]['url']
+            self.__mongo_db_database_name = cfg[key]['database']
+            self.__mongo_db_collection_name = cfg[key]['collection']
             self.__client = MongoClient(self.__mongo_db_url)
             self.__db = self.__client.get_database(self.__mongo_db_database_name)
             self.__collection = self.__db.get_collection(self.__mongo_db_collection_name)
@@ -112,3 +112,13 @@ class DataBase:
 
     def delete_more(self, query):
         return self.__collection.delete_many(query).deleted_count
+
+    def get_users_id(self):
+        result = []
+        query = {"author_id": 1, "_id": 0}
+        for tweet in self.__collection.find({},query):
+            result.append(list(tweet.values())[0])
+        return list(set(result))
+
+
+

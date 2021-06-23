@@ -1,4 +1,4 @@
-def pre_process_response(tweet: {}, includes: {}):
+def pre_process_tweets_response(tweet: {}, includes: {}):
     ent = {}
     post = {'_id': tweet['id'], 'raw_text': tweet['text'], 'author_id': tweet['author_id']}
     retweeted = False
@@ -95,3 +95,9 @@ def extract_mentions(ent, tweet):
                 ent['mentions'] += mentions
             else:
                 ent['mentions'] = mentions
+
+
+def pre_process_user_response(usr: {}):
+    user = {'_id': usr["id"], "name": usr["name"], "username": usr["username"], "public_metrics": usr["public_metrics"],
+            "location": usr.get("lcoation", None)}
+    return user
