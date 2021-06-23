@@ -44,32 +44,30 @@ class UserSearch:
         self.log.info("LOADED {} USERS ID TO SEARCH".format(len(to_search)))
         self.__users_to_search = [str(id) for id in to_search]
 
-    def __next_page(self, next_token=""):
-        if next_token != "":
-            self.__query["next_token"] = next_token
+    def __build_query(self, users=None):
 
-    def __build_query(self, user=None):
-
-        self.retrieve_users_id()
-        ids = ",".join(self.__users_to_search)
-        self.__query = {'ids': ids,
+        self.__query = {'ids': users,
                         "user.fields": "id,name,username,location,entities,"
                                        "public_metrics"}
 
     def __connect_to_endpoint(self, retried=False):
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
         if response.status_code == 200:
-            t = response.headers.get('date')
             self.log.info("RECEIVED VALID RESPONSE")
-            return response.json()
+            json_response = response.json()
+            if "errors" in json_response:
+                self.log.warning("RECEIVED VALID RESPONSE WITH ERRORS")
+                ids = []
+                for i in json_response["errors"]:
+                    ids.append(i["value"])
+                self.log.warning("IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:{}".format(ids))
+
+            return json_response
         if response.status_code == 429 and not retried:
             self.log.debug("RETRY")
             time.sleep(1)
             return self.__connect_to_endpoint(retried=True)
         elif response.status_code == 429 and retried:
-            #            frequency = 2500  # Set Frequency To 2500 Hertz
-            #            duration = 3000  # Set Duration To 1000 ms == 1 second
-            #            Beep(frequency, duration)
             self.log.info("RATE LIMITS REACHED: WAITING")
             now = time.time()
             now_date = datetime.fromtimestamp(now, timezone.utc)
@@ -79,33 +77,41 @@ class UserSearch:
             for i in tqdm(range(0, math.floor(sec_to_reset) + 1), desc="WAITING FOR (in sec)", leave=True, position=0):
                 time.sleep(1)
             return self.__connect_to_endpoint(retried=True)
-        if response.status_code == 503:
-            self.log.warning(
-                "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
-                                                                                           response.text))
-            self.log.warning("WAITING FOR 1 MINUTE BEFORE RESEND THE REQUEST")
-            for i in tqdm(range(0, 60), desc="WAITING FOR (in sec)", leave=True):
-                time.sleep(1)
-            self.log.warning("RESENDING THE REQUEST")
-            return self.__connect_to_endpoint()
         else:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
 
-    def __make(self, result_obtained_yet=0):
+    def __make(self):
         self.response = self.__connect_to_endpoint()
-        self.log.info("USERS RECEIVED: {}".format(len(self.response["data"])))
-        self.save()
-        self.log.info("USERS NOT SAVED BECAUSE ALREADY EXISTENT IN THE DB: {}".format(len(self.response["data"]) - self.__tot_user_saved))
-        self.log.info("NEW USERS SAVED: {}".format(self.__tot_user_saved))
-
+        if "data" in self.response:
+            self.log.info("USERS RECEIVED: {}".format(len(self.response["data"])))
+            self.__save()
+            self.log.info("USERS NOT SAVED BECAUSE ALREADY IN THE DB: {}".format(
+                len(self.response["data"]) - self.__tot_user_saved))
+            self.log.info("NEW USERS SAVED: {}".format(self.__tot_user_saved))
+        else:
+            self.log.info("USERS RECEIVED: 0")
 
     def search(self):
-        self.__build_query()
-        self.__make()
+        self.retrieve_users_id()
+        if len(self.__users_to_search) > 100:
+            if len(self.__users_to_search) % 100 != 0:
+                n_requests = int(len(self.__users_to_search) / 100) + 1
+            else:
+                n_requests = int(len(self.__users_to_search) / 100)
+            with tqdm(self.__users_to_search, desc="Searching", leave=True, position=0) as bar:
+                for i in range(0, n_requests):
+                    ids = ",".join(self.__users_to_search[:100])
+                    self.__build_query(users=ids)
+                    self.__make()
+                    self.__users_to_search = self.__users_to_search[100:]
+                    bar.update(100)
+        else:
+            ids = ",".join(self.__users_to_search)
+            self.__build_query(users=ids)
+            self.__make()
 
-
-    def save(self):
+    def __save(self):
         self.log.info("SAVING USER INFO")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
@@ -114,12 +120,14 @@ class UserSearch:
                     self.__tot_user_saved += 1
                     self.log.debug(user)
                     fut = executor.submit(util.pre_process_user_response, user)
-                    fut.add_done_callback(self.save_)
+                    fut.add_done_callback(self.__save_)
                     futures.append(fut)
         self.mongodb_users.save_many(self._all)
+        self._all.clear()
 
-    def save_(self, fut: Future):
+    def __save_(self, fut: Future):
         self._all.append(fut.result())
+
 
 def main():
     usr = UserSearch()
