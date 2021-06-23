@@ -4,7 +4,6 @@ from concurrent import futures
 import logging
 import math
 import time
-# from winsound import Beep
 from concurrent.futures import Future
 from datetime import datetime, timezone
 
@@ -29,9 +28,9 @@ class SearchTweets:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "../../script/search_tweets/search_tweets.config")
-        with open(path, "r") as ymlfile:
+        working_directory = os.path.abspath(os.path.dirname(__file__))
+        cnfg_file_path = os.path.join(working_directory, "../../script/search_tweets/search_tweets.config")
+        with open(cnfg_file_path, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
@@ -203,7 +202,7 @@ class SearchTweets:
 
     @property
     def twitter_user(self):
-        return self.__twitter_user
+        return self.__twitter_users
 
     @property
     def twitter_filter_retweet(self):
@@ -292,7 +291,7 @@ class SearchTweets:
             for tweet in (self.response['data']):
                 if not self.mongodb.is_in(tweet['id']):
                     self.log.debug(tweet)
-                    fut = executor.submit(util.pre_process_response, tweet, self.response['includes'])
+                    fut = executor.submit(util.pre_process_tweets_response, tweet, self.response['includes'])
                     fut.add_done_callback(self.save_)
                     futures.append(fut)
                 else:

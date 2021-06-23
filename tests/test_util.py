@@ -760,7 +760,7 @@ class UtilTestCase(unittest.TestCase):
                     'like_count': 102,
                     'quote_count': 5}}])
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_no_retweeted(self):
         ent = {'hashtags': ['Eurovision'], 'annotation': [{'normalized_text': 'Toñi Prieto',
@@ -886,7 +886,7 @@ class UtilTestCase(unittest.TestCase):
                                                     'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
                                          'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}]}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_geo(self):
         ent = {'hashtags': ['Eurovision'], 'annotation': [{'normalized_text': 'TVE',
@@ -1427,7 +1427,7 @@ class UtilTestCase(unittest.TestCase):
                                         'properties': {}}, 'id': '6c1be133511970bc', 'country': 'Spagna',
                                 'full_name': 'Palma di Maiorca, Spagna'}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_mention(self):
         ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['marlenasslave'],
@@ -1483,7 +1483,7 @@ class UtilTestCase(unittest.TestCase):
                                                                                                  'name': 'Eurovision 2021'}}],
                                 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_mention2(self):
         ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
@@ -1540,7 +1540,7 @@ class UtilTestCase(unittest.TestCase):
                                                                                                  'name': 'Eurovision 2021'}}],
                                 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_possibly_sensitive(self):
         ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
@@ -1602,7 +1602,7 @@ class UtilTestCase(unittest.TestCase):
                                                                                                  'name': 'Eurovision 2021'}}],
                                 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
     def test_user_location(self):
         ent = {'hashtags': ['damikate', 'damianodavid', 'Eurovision'], 'mentions': ['try', 'marlenasslave'],
@@ -1665,7 +1665,7 @@ class UtilTestCase(unittest.TestCase):
                                                                                                  'name': 'Eurovision 2021'}}],
                                 'text': '[AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmCgVjf'}]}
         self.maxDiff = None
-        self.assertDictEqual(result, util.pre_process_response(tweet, includes))
+        self.assertDictEqual(result, util.pre_process_tweets_response(tweet, includes))
 
 
 if __name__ == "__main__":
