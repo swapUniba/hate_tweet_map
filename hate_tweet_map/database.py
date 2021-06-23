@@ -52,7 +52,7 @@ class DataBase:
 
     def extract_all_tweets_to_geo(self):
         result = []
-        query = {"$or": [{"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}, {"user_location": {"$exists": True}}]}
+        query = {"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]}, {"geo.user_location": {"$exists": True}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result

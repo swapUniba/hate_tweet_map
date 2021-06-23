@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from hate_tweet_map.database import DataBase
-from SearchTweets import SearchTweets
+from hate_tweet_map.tweets_searcher.SearchTweets import SearchTweets
 import time
 
 
