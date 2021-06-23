@@ -236,7 +236,7 @@ class TwitterSearchTestCase(unittest.TestCase):
         self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
         self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
 
-
+    @unittest.skip
     def test_n_results_greater_than_500(self):
         """ Test the correct behavior when we are asking for more than 500tweets """
 
