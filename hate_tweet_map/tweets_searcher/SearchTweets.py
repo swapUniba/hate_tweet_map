@@ -29,7 +29,9 @@ class SearchTweets:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        with open('../../script/search_tweets/search_tweets.config', "r") as ymlfile:
+        my_path = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(my_path, "../../script/search_tweets/search_tweets.config")
+        with open(path, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
