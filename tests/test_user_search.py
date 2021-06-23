@@ -21,8 +21,8 @@ class UsersSearchTestCase(unittest.TestCase):
         with self.assertLogs('SEARCH USERS', level='WARNING') as cm:
             mock.return_value = ['2']
             usr = UserSearch()
-            usr.__save = mock
-            usr.search()
+            with patch.object(usr, '_UserSearch__save') as mock_method:
+                usr.search()
         self.assertTrue("WARNING:SEARCH USERS:IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:['2']" in cm.output)
 
     @patch.object(DataBase, 'get_users_id')
@@ -30,8 +30,8 @@ class UsersSearchTestCase(unittest.TestCase):
         with self.assertLogs('SEARCH USERS', level='WARNING') as cm:
             mock.return_value = ['2', "857925504514523137"]
             usr = UserSearch()
-            usr.__save = mock
-            usr.search()
+            with patch.object(usr, '_UserSearch__save') as mock_method:
+                usr.search()
         self.assertTrue("WARNING:SEARCH USERS:IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:['2']" in cm.output)
         self.assertTrue("INFO:SEARCH USERS:USERS RECEIVED: 1" in cm.output)
 
@@ -72,7 +72,6 @@ class UsersSearchTestCase(unittest.TestCase):
                 usr.search()
         self.assertTrue(mock_method.call_count, 10)
         self.assertTrue("INFO:SEARCH USERS:USERS RECEIVED: 100" in cm.output)
-
 
 
 if __name__ == "__main__":
