@@ -41,6 +41,8 @@ class UserSearch:
 
     def retrieve_users_id(self):
         to_search = self.mongodb_tweets.get_users_id()
+        saved = self.mongodb_users.get_users()
+        to_search = [usr for usr in to_search if usr not in saved]
         self.log.info("LOADED {} USERS ID TO SEARCH".format(len(to_search)))
         self.__users_to_search = [str(id) for id in to_search]
 
@@ -94,7 +96,11 @@ class UserSearch:
 
     def search(self):
         self.retrieve_users_id()
+        if len(self.__users_to_search) <= 0:
+            self.log.info("NOTHING TO SEARCH")
+            return
         if len(self.__users_to_search) > 100:
+            self.log.setLevel(logging.WARNING)
             if len(self.__users_to_search) % 100 != 0:
                 n_requests = int(len(self.__users_to_search) / 100) + 1
             else:
@@ -106,6 +112,8 @@ class UserSearch:
                     self.__make()
                     self.__users_to_search = self.__users_to_search[100:]
                     bar.update(100)
+            self.log.setLevel(logging.INFO)
+            self.log.info("NEW USERS SAVED: {}".format(self.__tot_user_saved))
         else:
             ids = ",".join(self.__users_to_search)
             self.__build_query(users=ids)

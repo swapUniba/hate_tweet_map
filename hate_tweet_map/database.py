@@ -120,5 +120,13 @@ class DataBase:
             result.append(list(tweet.values())[0])
         return list(set(result))
 
+    def get_users(self):
+        result = []
+        query = {"_id": 1}
+        for tweet in self.__collection.find({},query):
+            result.append(list(tweet.values())[0])
+        return list(set(result))
+
+
 
 
