@@ -26,9 +26,6 @@ class Process:
         self.tag_me = False
         self.emotion_classifier = None
         self.sentiment_classifier = None
-        # self.stopwords = None
-        # with open('stopwords.txt', 'r') as f:
-        #     self.stopwords = f.readlines()
         self.log = logging.getLogger('TWEETS PROCESSOR')
         self.log.setLevel(logging.INFO)
         self.load_configuration()
@@ -110,7 +107,7 @@ class Process:
         # 2.4 feel-it
         if self.feel_it:
             if self.all_tweets:
-                tweets_to_feel_it = mongo_db.extract_all_tweets()
+                tweets_to_feel_it = mongo_db.extract_all_tweets_to_feel_it()
             else:
                 tweets_to_feel_it = mongo_db.extract_new_tweets_to_feel_it()
             if len(tweets_to_feel_it) > 0:
@@ -138,8 +135,16 @@ class Process:
             else:
                 tweets_to_nlp = mongo_db.extract_new_tweets_to_nlp()
             if len(tweets_to_nlp) > 0:
-                self.nlp_module = spacy.load('it_core_news_lg')
-                self.process(tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE")
+                ita_tweets_to_nlp = [t for t in tweets_to_nlp if t['lang'] == 'it']
+                eng_tweets_to_nlp = [t for t in tweets_to_nlp if t['lang'] == 'en']
+                if len(ita_tweets_to_nlp) > 0:
+                    self.log.info("SPACY PHASE: LOADING ITA MODEL")
+                    self.nlp_module = spacy.load('it_core_news_lg')
+                    self.process(ita_tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE:IT")
+                if len(eng_tweets_to_nlp) > 0:
+                    self.log.info("SPACY PHASE: LOADING ENG MODEL")
+                    self.nlp_module = spacy.load('en_core_web_lg')
+                    self.process(eng_tweets_to_nlp, self.process_text_with_spacy, "SPACY PHASE:ENG")
             else:
                 self.log.info("SPACY PHASE: NO TWEETS FOUND TO PROCESS")
 
@@ -155,12 +160,6 @@ class Process:
                 tweet['sentiment'] = {}
                 tweet['sentiment']['sent-it'] = result
         elif process_id == 4:
-            # for s in self.stopwords:
-            #     for word in result['processed_text']:
-            #         if s in word:
-            #             mongo_db = DataBase("process_tweets.config")
-            #             mongo_db.delete_one(tweet['_id'])
-            #             return
             tweet['spacy'] = result
             tweet['processed'] = True
         elif process_id == 1:
@@ -170,7 +169,7 @@ class Process:
 
     def link_entity(self, tweet_text: "", tweet: {}):
         tag_me = EntityLinker()
-        t = {'tag_me': tag_me.tag(tweet_text)}
+        t = {'tag_me': tag_me.tag(tweet_text, tweet['lang'])}
         return 1, t, tweet
 
     def sentit_analyze_sentiment(self, tweet_text: "", tweet: {}):

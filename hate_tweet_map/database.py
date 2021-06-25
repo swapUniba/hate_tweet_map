@@ -36,7 +36,7 @@ class DataBase:
 
     def extract_all_tweets(self):
         result = []
-        for tweet in self.__collection.find():
+        for tweet in self.__collection.find().sort("lang",-1):
             result.append(tweet)
         return result
 
@@ -58,7 +58,7 @@ class DataBase:
     def extract_new_tweets_to_nlp(self):
         result = []
         query = {"processed": False}
-        for tweet in self.__collection.find(query):
+        for tweet in self.__collection.find(query).sort("lang", -1):
             result.append(tweet)
         return result
 
@@ -78,7 +78,14 @@ class DataBase:
 
     def extract_new_tweets_to_feel_it(self):
         result = []
-        query = {"$and": [{"sentiment.feel-it": {"$exists": False}}, {"processed": False}]}
+        query = {"$and": [{"sentiment.feel-it": {"$exists": False}}, {"processed": False}, {"lang": "it"}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_all_tweets_to_feel_it(self):
+        result = []
+        query = {"lang": "it"}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
