@@ -14,6 +14,7 @@ class UtilTestCase(unittest.TestCase):
                               'Altınordu https://t.co/4KvvbmfvUV', 'author_id': '1402304961615179784',
                   'author_name': 'Aysıla Ünal', 'author_username': 'Ayslanal1',
                   'created_at': '2021-06-08T16:44:10.000Z',
+                  'lang': 'k',
                   'referenced_tweets': [{'id': '1396194560171290626', 'type': 'retweeted'}],
                   'complete_text': True, 'twitter_entities': ent, 'twitter_context_annotations': [
                 {
@@ -40,6 +41,7 @@ class UtilTestCase(unittest.TestCase):
                     'bitmediği gibi, beklentiler bitiyor ama sonuç değişmiyor.…',
             'author_id': '1402304961615179784', 'created_at': '2021-06-08T16:44:10.000Z',
             'id': '1402305464625422342',
+            'lang' : 'k',
             'public_metrics': {'retweet_count': 318, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
             'referenced_tweets': [{'type': 'retweeted', 'id': '1396194560171290626'}],
             'entities': {'mentions': [{'start': 3, 'end': 16, 'username': 'veyselkarane'}]}}
@@ -780,11 +782,12 @@ class UtilTestCase(unittest.TestCase):
                                    'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
                         'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
                   'metrics': {'retweet_count': 0, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
-                  'processed': False
+                  'processed': False,
+                  'lang': 'k'
                   }
         tweet = {'entities': {'hashtags': [{'start': 122, 'end': 133, 'tag': 'Eurovision'}], 'annotations': [
             {'start': 35, 'end': 45, 'probability': 0.9891, 'type': 'Person', 'normalized_text': 'Toñi Prieto'},
-            {'start': 54, 'end': 62, 'probability': 0.9963, 'type': 'Person', 'normalized_text': 'Ana Maria'}]},
+            {'start': 54, 'end': 62, 'probability': 0.9963, 'type': 'Person', 'normalized_text': 'Ana Maria'}]},'lang' : 'k',
                  'id': '1402586088523317249', 'author_id': '849837630', 'created_at': '2021-06-09T11:19:16.000Z',
                  'text': 'Mucha alegría veo con la salida de Toñi Prieto cuando Ana Maria también esta desde hace años en la delegación española de #Eurovision y siguieron los mismos resultados',
                  'public_metrics': {'retweet_count': 0, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
@@ -914,7 +917,8 @@ class UtilTestCase(unittest.TestCase):
                         'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
                   'geo': {'geo_id': 'a6a7a5f5b5f9a4c9', 'country': 'Spagna', 'city': 'Tegueste, España'},
                   'metrics': {'retweet_count': 0, 'reply_count': 0, 'like_count': 1, 'quote_count': 0},
-                  'processed': False
+                  'processed': False,
+                  'lang': 'k'
                   }
 
         tweet = {'author_id': '1079696713609342981', 'created_at': '2021-06-09T10:30:33.000Z',
@@ -932,7 +936,8 @@ class UtilTestCase(unittest.TestCase):
                  'public_metrics': {'retweet_count': 0, 'reply_count': 0, 'like_count': 1, 'quote_count': 0},
                  'context_annotations': [{'domain': {'id': '118', 'name': 'Award Show',
                                                      'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
-                                          'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}]}
+                                          'entity': {'id': '1376864097594011648', 'name': 'Eurovision 2021'}}],
+                 'lang' : 'k'}
 
         includes = {'users': [{'id': '374420085', 'name': 'Doc Holiday #TeamZeroCovid 🧬🏝', 'username': 'doc53577'},
                               {'id': '547957320', 'name': 'Σελ · Mauz', 'username': 'mauzemontole'},
@@ -1440,6 +1445,7 @@ class UtilTestCase(unittest.TestCase):
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
+                  'lang': 'k',
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
                                                                                        'name': 'Award Show',
                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
@@ -1459,7 +1465,8 @@ class UtilTestCase(unittest.TestCase):
                                                                                                               'id': '1376864097594011648',
                                                                                                               'name': 'Eurovision 2021'}}],
                  'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
-                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
+                 'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…',
+                 'lang' : 'k'}
         includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'},
                               {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
                               {'id': '1078462753461989378', 'name': 'juliå', 'username': 'athousandlivesz'}, ],
@@ -1496,6 +1503,7 @@ class UtilTestCase(unittest.TestCase):
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
+                  'lang': 'k',
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
                                                                                        'name': 'Award Show',
                                                                                        'description': 'Award shows, like the Oscars, Grammys, or VMAs'},
@@ -1515,6 +1523,7 @@ class UtilTestCase(unittest.TestCase):
                                                                                                               'id': '1376864097594011648',
                                                                                                               'name': 'Eurovision 2021'}}],
                  'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
+                 'lang': 'k',
                  'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
         includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc'},
                               {'id': '1566112255', 'name': 'Miguel', 'username': 'teriz00'},
@@ -1552,6 +1561,7 @@ class UtilTestCase(unittest.TestCase):
                   'author_name': 'Milan ESC', 'author_username': 'milan_esc',
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'possibly_sensitive': True,
+                  'lang': 'k',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
@@ -1562,7 +1572,7 @@ class UtilTestCase(unittest.TestCase):
                   'metrics': {'retweet_count': 1, 'reply_count': 0, 'like_count': 0, 'quote_count': 0},
                   'processed': False
                   }
-        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'entities': {
+        tweet = {'created_at': '2021-06-09T12:16:40.000Z', 'lang' : 'k', 'entities': {
             'hashtags': [{'start': 84, 'end': 93, 'tag': 'damikate'},
                          {'start': 94, 'end': 107, 'tag': 'damianodavid'},
                          {'start': 108, 'end': 119, 'tag': 'Eurovision'}],
@@ -1614,6 +1624,7 @@ class UtilTestCase(unittest.TestCase):
                   'author_name': 'Milan ESC', 'author_username': 'milan_esc',
                   'created_at': '2021-06-09T12:16:40.000Z',
                   'possibly_sensitive': True,
+                  'lang': 'k',
                   'referenced_tweets': [{'id': '1402600151789850626', 'type': 'retweeted'}],
                   'complete_text': True,
                   'twitter_entities': ent, 'twitter_context_annotations': [{'domain': {'id': '118',
@@ -1639,6 +1650,7 @@ class UtilTestCase(unittest.TestCase):
                      'entity': {
                          'id': '1376864097594011648',
                          'name': 'Eurovision 2021'}}],
+                 'lang': 'k',
                  'referenced_tweets': [{'type': 'retweeted', 'id': '1402600151789850626'}],
                  'text': 'RT @marlenasslave: [AU] В котором Катя и Дэвид поют «I wanna be your slave» дуэтом.\n#damikate #damianodavid #Eurovision https://t.co/wBDwmC…'}
         includes = {'users': [{'id': '957784397566050304', 'name': 'Milan ESC', 'username': 'milan_esc', "location": "Bari,Italia"},

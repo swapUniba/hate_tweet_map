@@ -1,5 +1,3 @@
-from json import dumps
-
 import yaml
 from pymongo import MongoClient
 
@@ -16,14 +14,6 @@ class DataBase:
             self.__client = MongoClient(self.__mongo_db_url)
             self.__db = self.__client.get_database(self.__mongo_db_database_name)
             self.__collection = self.__db.get_collection(self.__mongo_db_collection_name)
-
-    def delete_tweets_already_saved(self, tweets):
-        new_tweet = []
-        for tweet in tweets:
-            if self.__collection.count_documents({"_id": str(tweet['_id'])}) != 0:
-                continue
-            new_tweet.append(tweet)
-        return new_tweet
 
     def find_by_id(self, id):
         query = {'_id': id}
@@ -46,7 +36,7 @@ class DataBase:
 
     def extract_all_tweets(self):
         result = []
-        for tweet in self.__collection.find():
+        for tweet in self.__collection.find().sort("lang",-1):
             result.append(tweet)
         return result
 
@@ -68,7 +58,7 @@ class DataBase:
     def extract_new_tweets_to_nlp(self):
         result = []
         query = {"processed": False}
-        for tweet in self.__collection.find(query):
+        for tweet in self.__collection.find(query).sort("lang", -1):
             result.append(tweet)
         return result
 
@@ -88,7 +78,14 @@ class DataBase:
 
     def extract_new_tweets_to_feel_it(self):
         result = []
-        query = {"$and": [{"sentiment.feel-it": {"$exists": False}}, {"processed": False}]}
+        query = {"$and": [{"sentiment.feel-it": {"$exists": False}}, {"processed": False}, {"lang": "it"}]}
+        for tweet in self.__collection.find(query):
+            result.append(tweet)
+        return result
+
+    def extract_all_tweets_to_feel_it(self):
+        result = []
+        query = {"lang": "it"}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result

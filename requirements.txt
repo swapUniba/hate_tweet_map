@@ -6,4 +6,6 @@ requests~=2.25.1
 six~=1.15.0
 PyYAML~=5.4.1
 pymongo~=3.11.4
-spacy~=3.0.6
+spacy>=3.0.0,<4.0.0
+https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.0.0/en_core_web_lg-3.0.0.tar.gz#egg=en_core_web_lg
+https://github.com/explosion/spacy-models/releases/download/it_core_news_lg-3.0.0/it_core_news_lg-3.0.0.tar.gz#egg=it_core_news_lg

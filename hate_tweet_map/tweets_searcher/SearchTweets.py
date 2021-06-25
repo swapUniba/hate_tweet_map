@@ -134,7 +134,7 @@ class SearchTweets:
             self.__query['query'] += " -is:retweet"
         self.__query['place.fields'] = "contained_within,country,country_code,full_name,geo,id,name,place_type"
         self.__query['expansions'] = 'author_id,geo.place_id,referenced_tweets.id'
-        self.__query['tweet.fields'] = 'referenced_tweets,public_metrics,entities,created_at,possibly_sensitive'
+        self.__query['tweet.fields'] = 'lang,referenced_tweets,public_metrics,entities,created_at,possibly_sensitive'
         self.__query['user.fields'] = 'username,location'
 
         if self.__twitter_context_annotations:
