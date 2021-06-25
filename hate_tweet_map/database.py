@@ -1,5 +1,3 @@
-from json import dumps
-
 import yaml
 from pymongo import MongoClient
 
@@ -16,14 +14,6 @@ class DataBase:
             self.__client = MongoClient(self.__mongo_db_url)
             self.__db = self.__client.get_database(self.__mongo_db_database_name)
             self.__collection = self.__db.get_collection(self.__mongo_db_collection_name)
-
-    def delete_tweets_already_saved(self, tweets):
-        new_tweet = []
-        for tweet in tweets:
-            if self.__collection.count_documents({"_id": str(tweet['_id'])}) != 0:
-                continue
-            new_tweet.append(tweet)
-        return new_tweet
 
     def find_by_id(self, id):
         query = {'_id': id}

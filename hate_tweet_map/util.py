@@ -10,6 +10,7 @@ def pre_process_tweets_response(tweet: {}, includes: {}):
             user_location = u.get("location")
             break
     post['created_at'] = tweet['created_at']
+    post['lang'] = tweet['lang']
     if "possibly_sensitive" in tweet:
         post["possibly_sensitive"] = tweet["possibly_sensitive"]
     if 'referenced_tweets' in tweet:
@@ -42,10 +43,6 @@ def pre_process_tweets_response(tweet: {}, includes: {}):
             if p['id'] == geo['geo_id']:
                 geo['country'] = p['country']
                 geo['city'] = p['full_name']
-                # latitude, longitude = get_osm_coordinates(post['city'] + "," + post['country'])
-                # latitude, longitude = get_openstack_coordinates(post['city'] ,post['country'])
-
-                # post["coordinates"] = str(latitude) + "," + str(longitude)
                 break
         post["geo"] = geo
     else:
