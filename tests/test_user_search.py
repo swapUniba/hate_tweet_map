@@ -1,16 +1,9 @@
-import logging
-import time
 import unittest
-from unittest import mock
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import patch
 
-from tqdm import tqdm
 
-from hate_tweet_map import database
 from hate_tweet_map.database import DataBase
-from hate_tweet_map.tweets_searcher.SearchTweets import SearchTweets
 from script.search_users.search_user import UserSearch
-
 
 
 class UsersSearchTestCase(unittest.TestCase):
@@ -38,12 +31,13 @@ class UsersSearchTestCase(unittest.TestCase):
                 usr.search()
         self.assertTrue("WARNING:SEARCH USERS:IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:['2']" in cm.output)
         self.assertTrue("INFO:SEARCH USERS:USERS RECEIVED: 1" in cm.output)
+
     @patch.object(DataBase, 'get_users')
     @patch.object(DataBase, 'get_users_id')
     def test_more_than_100_users(self, mock_get_users_id, mock_get_users):
         with self.assertLogs('SEARCH USERS', level='WARNING') as cm:
             r = []
-            for i in range(0,101):
+            for i in range(0, 101):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
@@ -57,7 +51,7 @@ class UsersSearchTestCase(unittest.TestCase):
     def test_more_than_100_users2(self, mock_get_users_id, mock_get_users):
         with self.assertLogs('SEARCH USERS', level='INFO') as cm:
             r = []
-            for i in range(0,1000):
+            for i in range(0, 1000):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
@@ -85,7 +79,7 @@ class UsersSearchTestCase(unittest.TestCase):
     def test_429_error(self, mock_get_users_id, mock_get_users):
         with self.assertLogs('SEARCH USERS', level='INFO') as cm:
             r = []
-            for i in range(0,1000*100):
+            for i in range(0, 1000 * 100):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
