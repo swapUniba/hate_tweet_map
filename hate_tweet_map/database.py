@@ -5,6 +5,7 @@ from pymongo import MongoClient
 class DataBase:
 
     def __init__(self, file_path="", key="mongodb"):
+
         with open(file_path, "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
