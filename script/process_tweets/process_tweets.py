@@ -1,4 +1,5 @@
 import concurrent
+import os
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed
 
 import geocoder
@@ -31,7 +32,9 @@ class Process:
         self.load_configuration()
 
     def load_configuration(self):
-        with open("process_tweets.config", "r") as ymlfile:
+        working_directory = os.path.abspath(os.path.dirname(__file__))
+        self.cnfg_file_path = os.path.join(working_directory, "./process_tweets.config")
+        with open(self.cnfg_file_path, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             self.nlp = cfg['analyzes']['nlp']
             self.tag_me = cfg['analyzes']['tagme']['enabled']
@@ -57,8 +60,9 @@ class Process:
         self.log.info("RETRIEVING TWEETS TO PROCESS FROM DATABASE")
 
         # 1. extracting tweet in according to configuration
-
-        mongo_db = DataBase("process_tweets.config")
+        working_directory = os.path.abspath(os.path.dirname(__file__))
+        cnfg_file_path = os.path.join(working_directory, "./process_tweets.config")
+        mongo_db = DataBase(cnfg_file_path)
 
         if self.sent_it:
             if self.all_tweets:
@@ -164,7 +168,8 @@ class Process:
             tweet['processed'] = True
         elif process_id == 1:
             tweet['tags'] = result
-        mongo_db = DataBase("process_tweets.config")
+
+        mongo_db = DataBase(self.cnfg_file_path)
         mongo_db.update_one(tweet)
 
     def link_entity(self, tweet_text: "", tweet: {}):

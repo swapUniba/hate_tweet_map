@@ -5,6 +5,7 @@ from pymongo import MongoClient
 class DataBase:
 
     def __init__(self, file_path="", key="mongodb"):
+
         with open(file_path, "r") as yamlfile:
             cfg = yaml.safe_load(yamlfile)
 
@@ -28,7 +29,7 @@ class DataBase:
 
     def extract_tweets_not_processed(self):
 
-        query = {'processed': str(False)}
+        query = {'processed': False}
         result = []
         for tweet in self.__collection.find(query):
             result.append(tweet)
