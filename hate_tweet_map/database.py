@@ -29,7 +29,7 @@ class DataBase:
 
     def extract_tweets_not_processed(self):
 
-        query = {'processed': str(False)}
+        query = {'processed': False}
         result = []
         for tweet in self.__collection.find(query):
             result.append(tweet)
