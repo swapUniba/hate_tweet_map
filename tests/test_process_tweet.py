@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import patch, PropertyMock
 
@@ -48,7 +49,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_tag", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -149,7 +152,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_nlp", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -275,7 +280,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_sentit", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -374,7 +381,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_feel_it", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=True)):
                     with patch.object(twitter_process, 'nlp',
@@ -476,7 +485,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_geo", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -575,7 +586,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_new_tweets_to_geo", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -671,7 +684,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -772,7 +787,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -898,7 +915,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -997,7 +1016,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets_to_feel_it", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=True)):
                     with patch.object(twitter_process, 'nlp',
@@ -1099,7 +1120,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets_to_geo", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -1198,7 +1221,9 @@ class TwitterProcessTestCase(unittest.TestCase):
         }]
         with patch.object(DataBase, "extract_all_tweets_to_geo", return_value=t_to_process):
             with patch.object(DataBase, "update_one") as update_one_mock:
-                twitter_process = ProcessTweet("process_tweets.config")
+                wk = os.path.dirname(os.path.abspath(__file__))
+                f = os.path.join(wk, "process_tweets.config")
+                twitter_process = ProcessTweet(f)
                 with patch.object(twitter_process, 'feel_it',
                                   new_callable=PropertyMock(return_value=False)):
                     with patch.object(twitter_process, 'nlp',
@@ -1297,7 +1322,9 @@ class TwitterProcessTestCase(unittest.TestCase):
                     with patch.object(DataBase, "extract_new_tweets_to_nlp", return_value=t_to_process):
                         with patch.object(DataBase, "extract_new_tweets_to_tag", return_value=t_to_process):
                             with patch.object(DataBase, "update_one") as update_one_mock:
-                                twitter_process = ProcessTweet("process_tweets.config")
+                                wk = os.path.dirname(os.path.abspath(__file__))
+                                f = os.path.join(wk, "process_tweets.config")
+                                twitter_process = ProcessTweet(f)
                                 with patch.object(twitter_process, 'feel_it',
                                                   new_callable=PropertyMock(return_value=True)):
                                     with patch.object(twitter_process, 'nlp',
@@ -1456,7 +1483,9 @@ class TwitterProcessTestCase(unittest.TestCase):
                     with patch.object(DataBase, "extract_new_tweets_to_nlp", return_value=t_to_process):
                         with patch.object(DataBase, "extract_new_tweets_to_tag", return_value=t_to_process):
                             with patch.object(DataBase, "update_one") as update_one_mock:
-                                twitter_process = ProcessTweet("process_tweets.config")
+                                wk = os.path.dirname(os.path.abspath(__file__))
+                                f = os.path.join(wk, "process_tweets.config")
+                                twitter_process = ProcessTweet(f)
                                 with patch.object(twitter_process, 'feel_it',
                                                   new_callable=PropertyMock(return_value=True)):
                                     with patch.object(twitter_process, 'nlp',
