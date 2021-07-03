@@ -1,2 +1,5 @@
 /.bandit/
 /.scannerwork/
+/Hate_Tweet_Map.egg-info/
+/UNKNOWN.egg-info/
+/_lib

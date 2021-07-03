@@ -6,6 +6,7 @@ import math
 import time
 from concurrent.futures import Future
 from datetime import datetime, timezone
+from typing import Optional
 
 import requests
 import yaml
@@ -16,8 +17,18 @@ from hate_tweet_map.database import DataBase
 
 
 class SearchTweets:
+    """
 
-    def __init__(self, mongodb: DataBase):
+    """
+    def __init__(self, mongodb: DataBase, path_to_cnfg_file: str) -> None:
+        """
+        This method load the paramaters of the serch from the configuration file, validate these and initialize the value of the class attribute.
+
+        :param path_to_cnfg_file:
+        :type path_to_cnfg_file:
+        :param mongodb: the database instance where save the result of the search
+        :type mongodb: DataBase
+        """
         self.mongodb = mongodb
         self._all = []
         self.total_result = 0
@@ -28,9 +39,8 @@ class SearchTweets:
         self.log.setLevel(logging.INFO)
         logging.basicConfig()
         self.response = {}
-        working_directory = os.path.abspath(os.path.dirname(__file__))
-        cnfg_file_path = os.path.join(working_directory, "../../script/search_tweets/search_tweets.config")
-        with open(cnfg_file_path, "r") as ymlfile:
+        # load the comfiguration file, save the parameters and validate it
+        with open(path_to_cnfg_file, "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             check = []
             self.__twitter_keyword = cfg['twitter']['search']['keyword']
@@ -65,7 +75,7 @@ class SearchTweets:
 
             if 1 < check.count(True) < 3:
                 raise ValueError(
-                    'Per cercare utilizzando [point_radius] tutti i seguenti parametri devono essere inserito [latitude], [radius] e [longitude]')
+                    'To search using [point_radius] all the following parameters must be set: [latitude], [radius] e [longitude]')
 
             check = []
 
@@ -80,7 +90,7 @@ class SearchTweets:
 
             if check.count(True) > 1:
                 raise ValueError(
-                    'Solo uno tra i paremetri [bounding_box], [point_radius] e [place_country] può essere impostato')
+                    'Only one of the following paramaters must be set [bounding_box], [point_radius]')
 
             self.__twitter_context_annotations = cfg['twitter']['search']['context_annotations']
             self.__twitter_all_tweets = cfg['twitter']['search']['all_tweets']
@@ -89,14 +99,27 @@ class SearchTweets:
             self.__twitter_barer_token = cfg['twitter']['configuration']['barer_token']
             self.__twitter_end_point = cfg['twitter']['configuration']['end_point']
 
-
         self.__headers = {"Authorization": "Bearer {}".format(self.__twitter_barer_token)}
 
-    def __next_page(self, next_token=""):
+    def __next_page(self, next_token="") -> None:
+        """
+        Insert in the query the token to obtain the next page of the tesult of the search.
+
+        :param next_token: the token obtained from twitter to reach the next page of the search
+        :type next_token: str, optional
+        :return: None
+        """
         if next_token != "":
             self.__query["next_token"] = next_token
 
-    def __build_query(self, user=None):
+    def __build_query(self, user: str = None) -> None:
+        """
+        This method build the query to send to twitter
+
+        :param user: the id or name of the user whose tweets you want, defaults to None
+        :type user: str, optional
+        :return: None
+        """
         # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
         # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
         self.__query = {'query': ""}
@@ -115,15 +138,21 @@ class SearchTweets:
             self.__query['query'] += " place:" + self.__twitter_place
         if self.__twitter_place_country:
             self.__query['query'] += " place_country:" + self.__twitter_place_country
-        if self.__twitter_n_results:
-            if self.__twitter_n_results > 500 or self.__twitter_all_tweets:
+        if self.__twitter_all_tweets:
+            self.__query['max_results'] = str(500)
+
+        # if is specified a number of result to request
+        elif self.__twitter_n_results:
+            # if the specified number is greater than 500 set the max_result query field to the max value possible so
+            # 500.
+            if self.__twitter_n_results > 500:
                 self.__query['max_results'] = str(500)
+            # if the specified number is less than 10 set the max_result field to the min value possible so 10
             elif self.__twitter_n_results < 10:
                 self.__query['max_results'] = str(10)
+            # else if the value is between 10 and 500 set the max_result field query to the value given
             else:
                 self.__query['max_results'] = str(self.__twitter_n_results)
-        elif self.__twitter_all_tweets:
-            self.__query['max_results'] = str(500)
 
         if self.__twitter_bounding_box:
             self.__query['query'] += " bounding_box:" + "[" + self.__twitter_bounding_box + "]"
@@ -208,30 +237,51 @@ class SearchTweets:
     def twitter_filter_retweet(self):
         return self.__twitter_filter_retweet
 
-    def __connect_to_endpoint(self, retried=False):
+    def __connect_to_endpoint(self, retried: bool = False) -> dict:
+        """
+        This method sends the request to twitter and return the response.
+        The possibles status codes in the twitter response are:
+            - 200: ok,in this case the response is a valid response;
+            - 429: rate limit exceeded, this means that either more requests were sent per second than allowed or more requests were sent in 15min than allowed. so in this case this method waits 1 second and tries to send the request again,  if twitter still replies with a 429 code, it retrieves from the reply the time when the limit will reset and wait for that time to resubmit the request;
+            - 503: service overloaded, this means that twitter can't response to our requesst because there too many request to process. In this case this method wait for a minute and then retry to send the request.
+            - others: in this case the method raises an exception
+
+        :param retried: a parameter that indicate if it is the first retry after an error or not, defaults to False
+        :type retried: bool, optional
+        :raise Exception: when twitter response with not 200 or 429 status code.
+        :return: dict that contains the response from twitter
+        :rtype: dict
+        """
+        # send the request to twitter, save the response, check if it's ok and if is return the response in json format
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
         if response.status_code == 200:
             t = response.headers.get('date')
             self.log.info("RECEIVED VALID RESPONSE")
             return response.json()
+        # if the response status code is 429 and the value of retried is False wait for 1 second and retry to send the request
         if response.status_code == 429 and not retried:
             self.log.debug("RETRY")
             time.sleep(1)
             return self.__connect_to_endpoint(retried=True)
+        # if the response status code is 429 and the retried value is True it means it is at least the second attempt in a row after receiving a 429 error
         elif response.status_code == 429 and retried:
-            #            frequency = 2500  # Set Frequency To 2500 Hertz
-            #            duration = 3000  # Set Duration To 1000 ms == 1 second
-            #            Beep(frequency, duration)
             self.log.info("RATE LIMITS REACHED: WAITING")
+            # save the current time
             now = time.time()
+            # transform it in utc format
             now_date = datetime.fromtimestamp(now, timezone.utc)
+            # retrieve the time when the rate limit will be reset
             reset = float(response.headers.get("x-rate-limit-reset"))
+            # transform it in utc format
             reset_date = datetime.fromtimestamp(reset, timezone.utc)
+            # obatain the second to wait for reset the rate limit
             sec_to_reset = (reset_date - now_date).total_seconds()
+            # print a bar to show the time passing
             for i in tqdm(range(0, math.floor(sec_to_reset) + 1), desc="WAITING FOR (in sec)", leave=True, position=0):
                 time.sleep(1)
             return self.__connect_to_endpoint(retried=True)
-        if response.status_code == 503:
+        # if the response is 503 twitter is overloaded, in this case wait for a minute and retry to send the request.
+        elif response.status_code == 503:
             self.log.warning(
                 "GET BAD RESPONSE FROM TWITTER: {}: {}. THE SERVICE IS OVERLOADED.".format(response.status_code,
                                                                                            response.text))
@@ -240,23 +290,50 @@ class SearchTweets:
                 time.sleep(1)
             self.log.warning("RESENDING THE REQUEST")
             return self.__connect_to_endpoint()
+        # else, fot all the other status code, raises an exception
         else:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
 
-    def __make(self, result_obtained_yet=0):
+    def __make(self) -> None:
+        """
+        This method sends the request to twitter, elaborates it and saves the response.
+        After the first search the number of tweets contained in the response are checked,
+        if this number is equal to the number of result wanted set in the config file the method stop to send request.
+        If this number is less than the number of result wanted set in the config file, the difference between the two number are
+        done and a new request with this number as max_result query field are send, so this method a called with
+        result_obtained_yet parameter updated. Note that if the difference between the number of tweets obtained and the
+        number of tweets wanted is greater than 500 the max_result query field for the next request is set to 500 instead
+        if is less than 10 the max_result query field for the next request is set to 10.
+        Moreover if the all_tweets parameters is set to True on the file config this method resend the request to twitter
+        asking for 500 tweets per time (max_result = 500) until the end of the result is not reached.
+
+        :return: None
+        """
+        # call the method to send the request to twitter
+        result_obtained_yet = 0
         self.response = self.__connect_to_endpoint()
+        # while there are tweets in the response
         while "meta" in self.response:
             self.log.info("RECEIVED: {} TWEETS".format(self.response['meta']['result_count']))
-            self.save()
+            # save the tweets received
+            self.__save()
+            # update the value of the total result obtained
             self.total_result += self.response['meta']['result_count']
+            # check if there is another page fot the research performed
             if "next_token" in self.response['meta']:
+                # if there is a next page and all_tweets are set to True to reach all tweets
                 if self.__twitter_all_tweets:
                     self.log.info("ASKING FOR NEXT PAGE")
+                    # set the max_results query field to 500.
                     self.__query['max_results'] = str(500)
+                # else if the all_tweets is False but is set a specific number of results to reach
                 elif self.__twitter_n_results:
+                    # update the value of the number of tweets obtained yet
                     result_obtained_yet += int(self.response['meta']['result_count'])
+                    # calculate how many tweets is necessary to ask
                     results_to_request = self.__twitter_n_results - result_obtained_yet
+                    # set the right value
                     if results_to_request <= 0:
                         return
                     if results_to_request < 10:
@@ -265,39 +342,62 @@ class SearchTweets:
                         results_to_request = 500
                     self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
                     self.__query['max_results'] = results_to_request
+                # retrieve from the response the next token and pass it to the next query
                 self.__next_page(next_token=self.response["meta"]["next_token"])
+                # resend the request
                 self.response = self.__connect_to_endpoint()
+            # if there is not a next token stop the loop
             else:
                 self.log.debug("NO NEXT TOKEN IN RESPONSE:INTERRUPTING")
                 break
         self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
-    def search(self):
+    def search(self) -> int:
+        """
+        This method start the search on twitter. So first build the query and then send it to twitter.
+        If are set in the config file more users for each user tries to
+        retrieve the number of tweets set in n_result config file field, only after reach this number perform the
+        search on the next user.
+
+        :return: the number of the total tweets saved
+        :rtype: int
+        """
         if self.__multi_user:
             self.log.info("MULTI-USERS SEARCH")
         for us in self.__twitter_users:
             self.log.info("SEARCH FOR: {}".format(us))
             self.__build_query(user=us)
             self.__make()
-        if len(self.__twitter_users) == 0 :
+        if len(self.__twitter_users) == 0:
             self.__build_query()
             self.__make()
         return self.total_result
 
-    def save(self):
+    def __save(self):
+        """
+        THis method are called after that a request have been sent to twitter. When called this method process all
+        the tweets received in parallel using the multithreading and then save all tweets processed on the database.
+        Note that process only the tweet not already in the database.
+
+        :return: None
+        """
         self.log.info("SAVING TWEETS")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
             for tweet in (self.response['data']):
                 if not self.mongodb.is_in(tweet['id']):
                     self.log.debug(tweet)
+                    # process each tweet ib parallel
                     fut = executor.submit(util.pre_process_tweets_response, tweet, self.response['includes'])
-                    fut.add_done_callback(self.save_)
+                    fut.add_done_callback(self.__save_callback)
                     futures.append(fut)
                 else:
+                    # if the tweet is already in the db not save it and uodate the value of the number of tweets saved.
                     self.total_result -= 1
         self.mongodb.save_many(self._all)
+        # clean the list populate with these tweets processed.
         self._all = []
 
-    def save_(self, fut: Future):
+    def __save_callback(self, fut: Future):
+        # append the tweet process on a list
         self._all.append(fut.result())

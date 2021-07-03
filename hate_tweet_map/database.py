@@ -50,8 +50,8 @@ class DataBase:
 
     def extract_new_tweets_to_geo(self):
         result = []
-        query = {"$and": [{"$or": [{"$and": [{"city": {"$exists": True}}, {"country": {"$exists": True}}]}, {"user_location": {"$exists": True}}]}, {"processed": False},
-                          {"coordinates": {"$exists": False}}]}
+        query = {"$and": [{"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]}, {"geo.user_location": {"$exists": True}}]}, {"processed": False},
+                          {"geo.coordinates": {"$exists": False}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
@@ -72,7 +72,7 @@ class DataBase:
 
     def extract_new_tweets_to_tag(self):
         result = []
-        query = {"$and": [{"sentiment.tags.tag_me": {"$exists": False}}, {"processed": False}]}
+        query = {"$and": [{"tags.tag_me": {"$exists": False}}, {"processed": False}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result

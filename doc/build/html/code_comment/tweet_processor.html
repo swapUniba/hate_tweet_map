@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Tweets Process &#8212; Hate Tweet Map 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tweets Searcher" href="tweet_search.html" />
+    <link rel="prev" title="Code Documentation" href="code_comment.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tweets-process">
+<h1>Tweets Process<a class="headerlink" href="#tweets-process" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="module-hate_tweet_map.tweets_processor.MyTagMe">
+<span id="tagme-service"></span><h2>TagMe Service<a class="headerlink" href="#module-hate_tweet_map.tweets_processor.MyTagMe" title="Permalink to this headline">¶</a></h2>
+<p>This module provides a wrapper for the TagMe API.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.AnnotateResponse">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">AnnotateResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.AnnotateResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>A response to a call to the annotation (/tag) service. It contains the list of annotations
+found.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.AnnotateResponse.get_annotations">
+<span class="sig-name descname"><span class="pre">get_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.AnnotateResponse.get_annotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of annotations found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_rho</strong> – if set, only get entities with a rho-score (confidence) higher than this.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.Annotation">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">Annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ann_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.Annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>An annotation, i.e. a link of a part of text to an entity.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.Annotation.uri">
+<span class="sig-name descname"><span class="pre">uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.Annotation.uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the URI of this annotation entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lang</strong> – the Wikipedia language.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.Mention">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">Mention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mention_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.Mention" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mention, i.e. a part of text that may mention an entity.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.MentionsResponse">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">MentionsResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_content</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.MentionsResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>A response to a call to the mention finding (/spot) service. It contains the list of mentions
+found.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.MentionsResponse.get_mentions">
+<span class="sig-name descname"><span class="pre">get_mentions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_lp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.MentionsResponse.get_mentions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the list of mentions found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>min_lp</strong> – if set, only get mentions with a link probability higher than this.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.Relatedness">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">Relatedness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rel_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.Relatedness" title="Permalink to this definition">¶</a></dt>
+<dd><p>A relatedness, i.e. a real value between 0 and 1 indicating how semantically close two entities
+are.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.Relatedness.as_pair">
+<span class="sig-name descname"><span class="pre">as_pair</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.Relatedness.as_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get this relatedness value as a pair (titles, rel), where rel is the relatedness value and
+titles is the pair of the two titles/Wikipedia IDs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.RelatednessResponse">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">RelatednessResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_contents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.RelatednessResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>A response to a call to the relatedness (/rel) service. It contains the list of relatedness for
+each pair.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.RelatednessResponse.get_relatedness">
+<span class="sig-name descname"><span class="pre">get_relatedness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.RelatednessResponse.get_relatedness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the relatedness of a pairs of entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>i</strong> – the index of an entity pair. The order is the same as the request.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.annotate">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_twitter_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcube_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://tagme.d4science.org/tagme/tag'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.annotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Annotate a text, linking it to Wikipedia entities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>is_twitter_text</strong> – true if the text is a tweet, in this case it’s possible pass the json as text parameter</p></li>
+<li><p><strong>text</strong> – the text to annotate.</p></li>
+<li><p><strong>gcube_token</strong> – the authentication token provided by the D4Science infrastructure.</p></li>
+<li><p><strong>lang</strong> – the Wikipedia language.</p></li>
+<li><p><strong>api</strong> – the API endpoint.</p></li>
+<li><p><strong>long_text</strong> – long_text parameter (see TagMe documentation).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.mentions">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">mentions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcube_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://tagme.d4science.org/tagme/spot'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.mentions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find possible mentions in a text, do not link them to any entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – the text where to find mentions.</p></li>
+<li><p><strong>gcube_token</strong> – the authentication token provided by the D4Science infrastructure.</p></li>
+<li><p><strong>lang</strong> – the Wikipedia language.</p></li>
+<li><p><strong>api</strong> – the API endpoint.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.normalize_title">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">normalize_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.normalize_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize a title to Wikipedia format. E.g. “barack Obama” becomes “Barack_Obama”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>title</strong> – a title to normalize.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.relatedness_title">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">relatedness_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tt_pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcube_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://tagme.d4science.org/tagme/rel'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.relatedness_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the semantic relatedness among pairs of entities. Entities are indicated by their
+Wikipedia ID (an integer).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tt_pairs</strong> – either one pair or a list of pairs of entity titles.</p></li>
+<li><p><strong>gcube_token</strong> – the authentication token provided by the D4Science infrastructure.</p></li>
+<li><p><strong>lang</strong> – the Wikipedia language.</p></li>
+<li><p><strong>api</strong> – the API endpoint.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.relatedness_wid">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">relatedness_wid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wid_pairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcube_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://tagme.d4science.org/tagme/rel'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.relatedness_wid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the semantic relatedness among pairs of entities. Entities are indicated by their
+Wikipedia ID (an integer).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wid_pairs</strong> – either one pair or a list of pairs of Wikipedia IDs.</p></li>
+<li><p><strong>gcube_token</strong> – the authentication token provided by the D4Science infrastructure.</p></li>
+<li><p><strong>lang</strong> – the Wikipedia language.</p></li>
+<li><p><strong>api</strong> – the API endpoint.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.MyTagMe.title_to_uri">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.MyTagMe.</span></span><span class="sig-name descname"><span class="pre">title_to_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'en'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.MyTagMe.title_to_uri" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the URI of the page describing a Wikipedia entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>entity_title</strong> – an entity title.</p></li>
+<li><p><strong>lang</strong> – the Wikipedia language.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-hate_tweet_map.tweets_processor.EntityLinker">
+<span id="entity-linker-service"></span><h2>Entity Linker Service<a class="headerlink" href="#module-hate_tweet_map.tweets_processor.EntityLinker" title="Permalink to this headline">¶</a></h2>
+<p>Entity Linker</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.EntityLinker.EntityLinker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.EntityLinker.</span></span><span class="sig-name descname"><span class="pre">EntityLinker</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.EntityLinker.EntityLinker" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.EntityLinker.EntityLinker.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.EntityLinker.EntityLinker.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method send the text to tag on TagMe service and return the response
+:param raw_tweet: the text of the tweet to tag
+:type raw_tweet: str
+:param lang: tha language to use to tag the entities
+:type lang: str
+:return: a list with the id of the entities, the title and the url of the wikipedia page.
+:rtype: list</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-hate_tweet_map.tweets_processor.TweetProcessor">
+<span id="tweet-processor"></span><h2>Tweet Processor<a class="headerlink" href="#module-hate_tweet_map.tweets_processor.TweetProcessor" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.TweetProcessor.</span></span><span class="sig-name descname"><span class="pre">ProcessTweet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_cnfg_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__feel_it_analyze_sentiment">
+<span class="sig-name descname"><span class="pre">__feel_it_analyze_sentiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet_text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__feel_it_analyze_sentiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method use the feel-it algorithms to perform the sentiment and emotion analysis.</p>
+<div class="line-block">
+<div class="line">NB. these models works only with italian language.</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tweet_text</strong> (<em>str</em>) – the text of the tweet</p></li>
+<li><p><strong>tweet</strong> (<em>dict</em>) – a dict representing the tweet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process: 3; a dictionary that contains the result of the analysis; the tweet analyzed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates">
+<span class="sig-name descname"><span class="pre">__get_osm_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_location</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">city</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method use the Open Street Map service to find the coordinates of a specific location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tweet</strong> (<em>dict</em>) – the tweet analyzed</p></li>
+<li><p><strong>user_location</strong> (<em>str</em><em>, </em><em>optional</em>) – the user_location if the tweet contains it</p></li>
+<li><p><strong>city</strong> (<em>str</em><em>, </em><em>optional</em>) – the city from where the tweet has been posted if the tweet contains it</p></li>
+<li><p><strong>country</strong> (<em>str</em><em>, </em><em>optional</em>) – the country from where the tweet has been posted if the tweet contains it</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process: 5; a dictionary that contains the result of the analysis; the tweet analyzed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, bool, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__link_entity">
+<span class="sig-name descname"><span class="pre">__link_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__link_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method use the sent-it uniba service to perform the sentiment analyses of the tweet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tweet_text</strong> (<em>str</em>) – the text of the tweet</p></li>
+<li><p><strong>tweet</strong> (<em>dict</em>) – a dictionary representing the tweet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process:1; a dictionary representing the result of the analyses; a dictionary representing the original tweet.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__process_text_with_spacy">
+<span class="sig-name descname"><span class="pre">__process_text_with_spacy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__process_text_with_spacy" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method perform the natural language processing on the tweet text using spacy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text_tweet</strong> (<em>str</em>) – the text of the tweet</p></li>
+<li><p><strong>tweet</strong> (<em>dict</em>) – a dict representing the tweet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process: 4; a dictionary that contains the result of the analysis; the tweet analyzed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__save">
+<span class="sig-name descname"><span class="pre">__save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">concurrent.futures._base.Future</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__save" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the callback function. when a tweets finish to be processed in it’s thread
+this function retrieve the result returned by the function called by the thread, unpack it,
+adds the information on the tweet and save it in the db.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fut</strong> (<em>Future</em>) – the future object that contains the transformation done on the tweet</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__sent_it_analyze_sentiment">
+<span class="sig-name descname"><span class="pre">__sent_it_analyze_sentiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet_text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__sent_it_analyze_sentiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method use the sent-it uniba service to perform the sentiment analyses of the tweet:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tweet_text</strong> (<em>str</em>) – the text of the tweet</p></li>
+<li><p><strong>tweet</strong> (<em>dict</em>) – a dictionary representing the tweet</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process:2; a dictionary represent the result of the analysis (empty if something goes wrong); a dictionary representing the original tweet.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method start the process on the tweets in according with the configuyration.
+For easch phase enabled in the config file the method retrieve the tweets to analyze,
+do the analyses and save all tweets process on the database.
+So after each phase the tweets processed are updated in the db.
+When the field all_tweets is set to False in the config file for each phase are retrieved from the database
+the tweets were the processed field is False and that have not already been processed by that phase
+(eg. for sentiment analyses that have not the field sentiment  or for geo that have not the field geo.coordinates).
+Instead if the value of all_tweets is True all the tweets in the db are processed.
+:return: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Hate Tweet Map</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="code_comment.html">Code Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tweets Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-hate_tweet_map.tweets_processor.MyTagMe">TagMe Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hate_tweet_map.tweets_processor.EntityLinker">Entity Linker Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-hate_tweet_map.tweets_processor.TweetProcessor">Tweet Processor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tweet_search.html">Tweets Searcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_search.html">Users Searcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manage_tweets.html">Manage Tweets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/guide.html">User Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="code_comment.html">Code Documentation</a><ul>
+      <li>Previous: <a href="code_comment.html" title="previous chapter">Code Documentation</a></li>
+      <li>Next: <a href="tweet_search.html" title="next chapter">Tweets Searcher</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Dario Amoroso d'Aragona.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/code_comment/tweet_processor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

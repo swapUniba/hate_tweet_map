@@ -1,6 +1,6 @@
-'''
+"""
 This module provides a wrapper for the TagMe API.
-'''
+"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -31,9 +31,9 @@ GCUBE_TOKEN = None
 HTML_PARSER = HTMLParser()
 
 class Annotation(object):
-    '''
+    """
     An annotation, i.e. a link of a part of text to an entity.
-    '''
+    """
     def __init__(self, ann_json):
         self.begin = int(ann_json.get("start"))
         self.end = int(ann_json.get("end"))
@@ -46,18 +46,19 @@ class Annotation(object):
         return u"{} -> {} (score: {})".format(self.mention, self.entity_title, self.score)
 
     def uri(self, lang=DEFAULT_LANG):
-        '''
+        """
         Get the URI of this annotation entity.
+
         :param lang: the Wikipedia language.
-        '''
+        """
         return title_to_uri(self.entity_title, lang)
 
 
 class AnnotateResponse(object):
-    '''
+    """
     A response to a call to the annotation (/tag) service. It contains the list of annotations
     found.
-    '''
+    """
     def __init__(self, json_content):
         self.annotations = [Annotation(ann_json) for ann_json in json_content["annotations"] if "title" in ann_json]
         self.time = int(json_content["time"])
@@ -65,10 +66,11 @@ class AnnotateResponse(object):
         self.timestamp = dateutil.parser.parse(json_content["timestamp"])
 
     def get_annotations(self, min_rho=None):
-        '''
+        """
         Get the list of annotations found.
+        
         :param min_rho: if set, only get entities with a rho-score (confidence) higher than this.
-        '''
+        """
         return (a for a in self.annotations if min_rho is None or a.score > min_rho)
 
     def __str__(self):
@@ -76,9 +78,9 @@ class AnnotateResponse(object):
 
 
 class Mention(object):
-    '''
+    """
     A mention, i.e. a part of text that may mention an entity.
-    '''
+    """
     def __init__(self, mention_json):
         self.begin = int(mention_json.get("start"))
         self.end = int(mention_json.get("end"))
@@ -90,10 +92,10 @@ class Mention(object):
 
 
 class MentionsResponse(object):
-    '''
+    """
     A response to a call to the mention finding (/spot) service. It contains the list of mentions
     found.
-    '''
+    """
     def __init__(self, json_content):
         self.mentions = [Mention(mention_json) for mention_json in json_content["spots"]]
         self.time = int(json_content["time"])
@@ -101,10 +103,11 @@ class MentionsResponse(object):
         self.timestamp = dateutil.parser.parse(json_content["timestamp"])
 
     def get_mentions(self, min_lp=None):
-        '''
+        """
         Get the list of mentions found.
+
         :param min_lp: if set, only get mentions with a link probability higher than this.
-        '''
+        """
         return (m for m in self.mentions if min_lp is None or m.linkprob > min_lp)
 
     def __str__(self):
@@ -112,19 +115,19 @@ class MentionsResponse(object):
 
 
 class Relatedness(object):
-    '''
+    """
     A relatedness, i.e. a real value between 0 and 1 indicating how semantically close two entities
     are.
-    '''
+    """
     def __init__(self, rel_json):
         self.title1, self.title2 = (wiki_title(t) for t in rel_json["couple"].split(" "))
         self.rel = float(rel_json["rel"]) if "rel" in rel_json else None
 
     def as_pair(self):
-        '''
+        """
         Get this relatedness value as a pair (titles, rel), where rel is the relatedness value and
         titles is the pair of the two titles/Wikipedia IDs.
-        '''
+        """
         return ((self.title1, self.title2), self.rel)
 
     def __str__(self):
@@ -132,10 +135,10 @@ class Relatedness(object):
 
 
 class RelatednessResponse(object):
-    '''
+    """
     A response to a call to the relatedness (/rel) service. It contains the list of relatedness for
     each pair.
-    '''
+    """
     def __init__(self, json_contents):
         self.relatedness = [Relatedness(rel_json)
                             for json_content in json_contents
@@ -149,10 +152,11 @@ class RelatednessResponse(object):
             yield rel.as_pair()
 
     def get_relatedness(self, i=0):
-        '''
+        """
         Get the relatedness of a pairs of entities.
+
         :param i: the index of an entity pair. The order is the same as the request.
-        '''
+        """
         return self.relatedness[i].rel
 
     def __str__(self):
@@ -160,42 +164,46 @@ class RelatednessResponse(object):
 
 
 def normalize_title(title):
-    '''
+    """
     Normalize a title to Wikipedia format. E.g. "barack Obama" becomes "Barack_Obama"
+
     :param title: a title to normalize.
-    '''
+    """
     title = title.strip().replace(" ", "_")
     return title[0].upper() + title[1:]
 
 
 def wiki_title(title):
-    '''
+    """
     Given a normalized title, get the page title. E.g. "Barack_Obama" becomes "Barack Obama"
+
     :param title: a wikipedia title.
-    '''
+    """
     return HTML_PARSER.unescape(title.strip(" _").replace("_", " "))
 
 
 def title_to_uri(entity_title, lang=DEFAULT_LANG):
-    '''
+    """
     Get the URI of the page describing a Wikipedia entity.
+
     :param entity_title: an entity title.
     :param lang: the Wikipedia language.
-    '''
+    """
     return WIKIPEDIA_URI_BASE.format(lang, normalize_title(entity_title))
 
 
 def annotate(text, is_twitter_text=False, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_TAG_API,
              long_text=DEFAULT_LONG_TEXT):
-    '''
+    """
     Annotate a text, linking it to Wikipedia entities.
+
     :param is_twitter_text: true if the text is a tweet, in this case it's possible pass the json as text parameter
     :param text: the text to annotate.
     :param gcube_token: the authentication token provided by the D4Science infrastructure.
     :param lang: the Wikipedia language.
     :param api: the API endpoint.
     :param long_text: long_text parameter (see TagMe documentation).
-    '''
+    """
     payload = [("text", text.encode("utf-8")),
                ("long_text", long_text),
                ("lang", lang),
@@ -205,13 +213,14 @@ def annotate(text, is_twitter_text=False, gcube_token=None, lang=DEFAULT_LANG, a
 
 
 def mentions(text, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_SPOT_API):
-    '''
+    """
     Find possible mentions in a text, do not link them to any entity.
+
     :param text: the text where to find mentions.
     :param gcube_token: the authentication token provided by the D4Science infrastructure.
     :param lang: the Wikipedia language.
     :param api: the API endpoint.
-    '''
+    """
     payload = [("text", text.encode("utf-8")),
                ("lang", lang.encode("utf-8"))]
     json_response = _issue_request(api, payload, gcube_token)
@@ -219,26 +228,28 @@ def mentions(text, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_SPOT_API):
 
 
 def relatedness_wid(wid_pairs, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_REL_API):
-    '''
+    """
     Get the semantic relatedness among pairs of entities. Entities are indicated by their
     Wikipedia ID (an integer).
+
     :param wid_pairs: either one pair or a list of pairs of Wikipedia IDs.
     :param gcube_token: the authentication token provided by the D4Science infrastructure.
     :param lang: the Wikipedia language.
     :param api: the API endpoint.
-    '''
+    """
     return _relatedness("id", wid_pairs, gcube_token, lang, api)
 
 
 def relatedness_title(tt_pairs, gcube_token=None, lang=DEFAULT_LANG, api=DEFAULT_REL_API):
-    '''
+    """
     Get the semantic relatedness among pairs of entities. Entities are indicated by their
     Wikipedia ID (an integer).
+
     :param tt_pairs: either one pair or a list of pairs of entity titles.
     :param gcube_token: the authentication token provided by the D4Science infrastructure.
     :param lang: the Wikipedia language.
     :param api: the API endpoint.
-    '''
+    """
     return _relatedness("tt", tt_pairs, gcube_token, lang, api)
 
 
