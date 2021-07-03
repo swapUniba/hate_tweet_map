@@ -1,9 +1,10 @@
+import os
 import unittest
 from unittest.mock import patch
 
 
 from hate_tweet_map.database import DataBase
-from script.search_users.search_user import UserSearch
+from hate_tweet_map.users_searcher.SearchUsers import UserSearch
 
 
 class UsersSearchTestCase(unittest.TestCase):
@@ -15,7 +16,9 @@ class UsersSearchTestCase(unittest.TestCase):
         with self.assertLogs('SEARCH USERS', level='WARNING') as cm:
             mock_get_users_id.return_value = ['2']
             mock_get_users.return_value = []
-            usr = UserSearch()
+            wk = os.path.dirname(os.path.abspath(__file__))
+            f = os.path.join(wk, "search_users.config")
+            usr = UserSearch(f)
             with patch.object(usr, '_UserSearch__save') as mock_method:
                 usr.search()
         self.assertTrue("WARNING:SEARCH USERS:IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:['2']" in cm.output)
@@ -26,7 +29,9 @@ class UsersSearchTestCase(unittest.TestCase):
         with self.assertLogs('SEARCH USERS', level='WARNING') as cm:
             mock_get_users_id.return_value = ['2', "857925504514523137"]
             mock_get_users.return_value = []
-            usr = UserSearch()
+            wk = os.path.dirname(os.path.abspath(__file__))
+            f = os.path.join(wk, "search_users.config")
+            usr = UserSearch(f)
             with patch.object(usr, '_UserSearch__save') as mock_method:
                 usr.search()
         self.assertTrue("WARNING:SEARCH USERS:IMPOSSIBLE TO RETRIEVE THE FOLLOWING USERS:['2']" in cm.output)
@@ -41,9 +46,11 @@ class UsersSearchTestCase(unittest.TestCase):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
-            usr = UserSearch()
-        with patch.object(usr, '_UserSearch__save') as mock_method:
-            usr.search()
+            wk = os.path.dirname(os.path.abspath(__file__))
+            f = os.path.join(wk, "search_users.config")
+            usr = UserSearch(f)
+            with patch.object(usr, '_UserSearch__save') as mock_method:
+                usr.search()
         self.assertTrue(mock_method.call_count, 2)
 
     @patch.object(DataBase, 'get_users')
@@ -55,7 +62,9 @@ class UsersSearchTestCase(unittest.TestCase):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
-            usr = UserSearch()
+            wk = os.path.dirname(os.path.abspath(__file__))
+            f = os.path.join(wk, "search_users.config")
+            usr = UserSearch(f)
             with patch.object(usr, '_UserSearch__save') as mock_method:
                 usr.search()
         self.assertTrue(mock_method.call_count, 10)
@@ -68,7 +77,9 @@ class UsersSearchTestCase(unittest.TestCase):
             r.append("857925504514523137")
         mock_get_users_id.return_value = r
         mock_get_users.return_value = []
-        usr = UserSearch()
+        wk = os.path.dirname(os.path.abspath(__file__))
+        f = os.path.join(wk, "search_users.config")
+        usr = UserSearch(f)
         with patch.object(usr, '_UserSearch__save') as mock_method:
             usr.search()
         self.assertTrue(mock_method.call_count, 10)
@@ -83,7 +94,9 @@ class UsersSearchTestCase(unittest.TestCase):
                 r.append("857925504514523137")
             mock_get_users_id.return_value = r
             mock_get_users.return_value = []
-            usr = UserSearch()
+            wk = os.path.dirname(os.path.abspath(__file__))
+            f = os.path.join(wk, "search_users.config")
+            usr = UserSearch(f)
             with patch.object(usr, '_UserSearch__save') as mock_method:
                 usr.search()
         self.assertTrue(mock_method.call_count, 10)

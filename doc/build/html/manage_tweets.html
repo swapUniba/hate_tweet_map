@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Manage Tweets &#8212; Hate Tweet Map 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Guide" href="guide.html" />
+    <link rel="prev" title="Users Searcher" href="user_search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="manage-tweets">
+<h1>Manage Tweets<a class="headerlink" href="#manage-tweets" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="id1">
+<h2>Manage Tweets<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-script.manage_tweets.manage_tweets"></span><dl class="py function">
+<dt class="sig sig-object py" id="script.manage_tweets.manage_tweets.main">
+<span class="sig-prename descclassname"><span class="pre">script.manage_tweets.manage_tweets.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#script.manage_tweets.manage_tweets.main" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Using this script is possible:</dt><dd><ul class="simple">
+<li><p>extract some tweets from the database and save it on .json or .csv file</p></li>
+<li><p>delete some tweets</p></li>
+</ul>
+</dd>
+</dl>
+<p>The criteria to select the tweets to extract/delete are defined in the manage_tweets.config file.
+Is possible modify that file to set the criteria.
+The possible criteria are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>contains some specific word/words. In this case it is possible or write a list of words separated by comma in the words field, or use a txt file and write it path in the path field.</p></li>
+<li><p>contains a specific sentiment</p></li>
+<li><p>contains a word with a specific Part Of Speech (POS)</p></li>
+<li><p>raw criteria: a query written in mongodb style</p></li>
+</ul>
+</div></blockquote>
+<p>These criteria and the words specified in the relative field/file are connected with the “OR” logical operator
+or with the “AND” logical operator. It is possible specify which operator must be used setting the logical_operator field in the config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Hate Tweet Map</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="code_comment.html">Code Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tweet_processor.html">Tweets Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tweet_search.html">Tweets Searcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_search.html">Users Searcher</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Manage Tweets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Manage Tweets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">User Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="code_comment.html">Code Documentation</a><ul>
+      <li>Previous: <a href="user_search.html" title="previous chapter">Users Searcher</a></li>
+      <li>Next: <a href="guide.html" title="next chapter">User Guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Dario Amoroso d'Aragona.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/manage_tweets.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
