@@ -278,8 +278,45 @@ class ProcessTweet:
             else:
                 return False
         except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
-                or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
             self.log.warning("SENT-IT PHASE:IMPOSSIBLE TO ESTABLISH CONNECTION WITH SENT-IT SERVICE. PHASE SKIPPED.")
+            return False
+
+    def sent_it_analyze_sentiment2(self, tweets: [dict]) -> bool:
+        """
+        This method use the sent-it uniba service to perform the sentiment analyses of the tweet:
+
+        :param tweet_text: the text of the tweet
+        :type tweet_text: str
+        :param dict tweet: a dictionary representing the tweet
+        :type tweet: dict
+        :return: the id of the process:2; a dictionary represent the result of the analysis (empty if something goes wrong); a dictionary representing the original tweet.
+        :rtype: Tuple[int, dict, dict]
+        """
+        # build the request to send to ths server
+        print('building')
+        d = []
+        for t in tweets:
+            d.append("{\"id\": \"" + str(t["_id"]) + "\", \"text\": \"" + t["raw_text"].replace("\n", "").replace("\"",
+                                                                                                                  "").replace(
+                "\r", "") + "\"}")
+
+        data = "{\"texts\": [" + ",".join(d) + "]}"
+        # remove special charachters from the teof the tweet before send it
+        # data += tweet_text.replace("\n", "").replace("\"", "").replace("\r", "") + "\"}]}"
+        # set the url
+        url = "http://193.204.187.210:9009/sentipolc/v1/classify"
+        # send the request and save the response in json
+        try:
+            print('sending')
+            json_response = requests.post(url, data=data.encode('utf-8')).json()
+            # if there is a result in the response
+            if 'results' in json_response:
+                return True
+            else:
+                return False
+        except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
             return False
 
     def __sent_it_analyze_sentiment(self, tweet_text: str, tweet: dict) -> Tuple[int, dict, dict]:
@@ -300,23 +337,29 @@ class ProcessTweet:
         # set the url
         url = "http://193.204.187.210:9009/sentipolc/v1/classify"
         # send the request and save the response in json
-
-        json_response = requests.post(url, data=data.encode('utf-8')).json()
-        # if there is a result in the response
-        if 'results' in json_response:
-            # save the result (for consistence the result is normalized)
-            if json_response['results'][0]['polarity'] == "neg":
-                polarity = "negative"
-            elif json_response['results'][0]['polarity'] == "pos":
-                polarity = "positive"
+        try:
+            json_response = requests.post(url, data=data.encode('utf-8')).json()
+            # if there is a result in the response
+            if 'results' in json_response:
+                # save the result (for consistence the result is normalized)
+                if json_response['results'][0]['polarity'] == "neg":
+                    polarity = "negative"
+                elif json_response['results'][0]['polarity'] == "pos":
+                    polarity = "positive"
+                else:
+                    polarity = "neutral"
+                sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
+                                      'sentiment': polarity}
+                # return the id of the process (2), the result of the analyses, and the original tweet
+                return 2, sentiment_analyses, tweet
             else:
-                polarity = "neutral"
-            sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
-                                  'sentiment': polarity}
-            # return the id of the process (2), the result of the analyses, and the original tweet
-            return 2, sentiment_analyses, tweet
-        else:
-            return 2, {}, tweet
+                return 2, {}, tweet
+        except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
+            self.log.warning(
+                "\nSENT-IT PHASE:IMPOSSIBLE TO ESTABLISH CONNECTION WITH SENT-IT SERVICE. WAITING AND RETRYING.")
+            time.sleep(2)
+            return self.__sent_it_analyze_sentiment(tweet_text=tweet_text, tweet=tweet, retried=retried + 1)
 
     def __feel_it_analyze_sentiment(self, tweet_text: str, tweet: dict) -> Tuple[int, dict, dict]:
         """
@@ -406,10 +449,13 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
-        if user_location is not None:
-            g = geocoder.osm(user_location)
-        elif city is not None and country is not None:
-            g = geocoder.osm(city + "," + country)
+        try:
+            if user_location is not None:
+                g = geocoder.osm(user_location)
+            elif city is not None and country is not None:
+                g = geocoder.osm(city + "," + country)
+        except Exception:
+            return 5, False, {}, tweet
 
         # return the coordinates if the result of the request is ok
         if g.ok:
