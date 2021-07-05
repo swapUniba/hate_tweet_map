@@ -1,4 +1,5 @@
 import os
+import time
 import unittest
 from unittest.mock import patch, PropertyMock
 
@@ -1581,7 +1582,6 @@ class TwitterProcessTestCase(unittest.TestCase):
                                                         }
                                                         twitter_process.start()
                                                         update_one_mock.assert_called_with(t_processed)
-
 
 if __name__ == "__main__":
     unittest.main()  # run all tests

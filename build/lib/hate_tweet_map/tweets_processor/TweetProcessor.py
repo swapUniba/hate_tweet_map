@@ -9,6 +9,7 @@ import urllib3.exceptions
 import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
+from urllib3 import HTTPSConnectionPool
 
 from hate_tweet_map.database import DataBase
 from hate_tweet_map.tweets_processor.EntityLinker import EntityLinker
@@ -35,6 +36,7 @@ class ProcessTweet:
         self.log = logging.getLogger('TWEETS PROCESSOR')
         self.log.setLevel(logging.INFO)
         self.cnfg_file_path = path_to_cnfg_file
+        self.mongo_db = None
         self.__load_configuration()
 
     def __load_configuration(self):
@@ -47,22 +49,37 @@ class ProcessTweet:
             self.geo = cfg['analyzes']['geocoding']
             self.all_tweets = cfg['analyzes']['analyze_all_tweets']
 
-    def __process(self, tweets: list, fun: callable, phase_name: str):
+        self.mongo_db = DataBase(self.cnfg_file_path)
+
+
+    def __process(self, tweets: list, fun: callable, phase_name: str, id=0):
         # use the multithread to start the same analyss in parallel on more tweets
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
-            # for each tweet given
-            for tweet in tweets:
-                # retrieve the text of the tweet
-                text = tweet['raw_text']
-                # submit the function, so the analysis to perfonrm on the tweet, and pass to it the tweet and the text of the tweet
-                fut = executor.submit(fun, text, tweet)
-                # when finish the analysis on the tweet save the result
-                fut.add_done_callback(self.__save)
-                futures.append(fut)
-            # wait that all tweets have been processed
-            for job in tqdm(as_completed(futures), total=len(futures), desc=phase_name, leave=True):
-                pass
+            if id == 2:
+                total = 0
+                for l in tweets:
+                    total = total + len(l)
+                    fut = executor.submit(fun, l)
+                    # when finish the analysis on the tweet save the result
+                    fut.add_done_callback(self.__save)
+                    futures.append(fut)
+                bar = tqdm(futures, total=total, desc=phase_name, leave=True)
+                for job in as_completed(futures):
+                    bar.update(100)
+            else:
+                # for each tweet given
+                for tweet in tweets:
+                    # retrieve the text of the tweet
+                    text = tweet['raw_text']
+                    # submit the function, so the analysis to perfonrm on the tweet, and pass to it the tweet and the text of the tweet
+                    fut = executor.submit(fun, text, tweet)
+                    # when finish the analysis on the tweet save the result
+                    fut.add_done_callback(self.__save)
+                    futures.append(fut)
+                # wait that all tweets have been processed
+                for job in tqdm(as_completed(futures), total=len(futures), desc=phase_name, leave=True):
+                    pass
 
     def start(self):
         """
@@ -81,24 +98,26 @@ class ProcessTweet:
         self.log.info("RETRIEVING TWEETS TO PROCESS FROM DATABASE")
 
         # connect to the db indicate on the config file
-        mongo_db = DataBase(self.cnfg_file_path)
 
         # if the sent_it analysis have to be done
         if self.sent_it:
-            if self.__check_sent_it_availability():
+            if self.check_sent_it_availability():
                 # if must be analyzed all tweets in the db
                 if self.all_tweets:
                     # extract all tweets from the db
-                    tweets_to_sentit = mongo_db.extract_all_tweets()
+                    tweets_to_sentit = self.mongo_db.extract_all_tweets()
                 else:
                     # if not all tweets have to be analyzed, ectract from the db only the tweets that
                     # have not yet the field sentiment.sent-it and that are not already processed by spacy.
-                    tweets_to_sentit = mongo_db.extract_new_tweets_to_sentit()
+                    tweets_to_sentit = self.mongo_db.extract_new_tweets_to_sentit()
                 if len(tweets_to_sentit) > 0:
                     # 2.1 Sent-it analyses: send all tweets extracted to process function, so pass the list of the
                     # tweets, the function to apply on the tweets, sent_it, and the name of the phase.
                     # N.B process save the result of the analyses on the db
-                    self.__process(tweets_to_sentit, self.__sent_it_analyze_sentiment, "SENT-IT PHASE")
+                    # self.__process(tweets_to_sentit, self.__sent_it_analyze_sentiment, "SENT-IT PHASE")
+                    to_send_per_time = list(self.divide_chunks(tweets_to_sentit, 100))
+                    self.__process(to_send_per_time, self.sent_it_analyze_sentiment2, "SENT-IT PHASE",2)
+
                 else:
                     self.log.info("SENT-IT PHASE: NO TWEETS FOUND TO PROCESS")
 
@@ -107,11 +126,11 @@ class ProcessTweet:
             # if must be analyzed all tweets in the db
             if self.all_tweets:
                 # extract all tweets from the db
-                tweets_to_tag = mongo_db.extract_all_tweets()
+                tweets_to_tag = self.mongo_db.extract_all_tweets()
             else:
                 # if not all tweets have to be analyzed, ectract from the db only the tweets that
                 # have not yet the field tags.tag_me and that are not already processed by spacy.
-                tweets_to_tag = mongo_db.extract_new_tweets_to_tag()
+                tweets_to_tag = self.mongo_db.extract_new_tweets_to_tag()
             if len(tweets_to_tag) > 0:
                 # 2.2 tag analyses: send all tweets extracted to process function, so pass the list of the
                 # tweets, the function to apply on the tweets, link_entity, and the name of the phase.
@@ -126,12 +145,12 @@ class ProcessTweet:
             # if must be analyzed all tweets in the db extract from it all tweets
             # that have the field geo.user_location or the field geo.city, geo.country
             if self.all_tweets:
-                tweets_to_geo = mongo_db.extract_all_tweets_to_geo()
+                tweets_to_geo = self.mongo_db.extract_all_tweets_to_geo()
             else:
                 # if not all tweets have to be analyzed, extract from the db only the tweets that have are not been
                 # processed by spacy and have not yet the field geo.coordinates and have or the fields geo.city,
                 # geo.country or have the field geo.user_location
-                tweets_to_geo = mongo_db.extract_new_tweets_to_geo()
+                tweets_to_geo = self.mongo_db.extract_new_tweets_to_geo()
             if len(tweets_to_geo) > 0:
                 for tweet in tqdm(tweets_to_geo, desc="GEOCODING PHASE", leave=True):
                     # extracts the information from the tweet
@@ -148,7 +167,7 @@ class ProcessTweet:
                     if id == 5:
                         if check:
                             tweet["geo"]["coordinates"] = result
-                    mongo_db.update_one(tweet)
+                    self.mongo_db.update_one(tweet)
             else:
                 self.log.info("GEOCODING PHASE: NO TWEETS FOUND TO GEOCODE")
 
@@ -157,11 +176,11 @@ class ProcessTweet:
             # if must be analyzed all tweets in the db extract from it all tweets
             # in italian language
             if self.all_tweets:
-                tweets_to_feel_it = mongo_db.extract_all_tweets_to_feel_it()
+                tweets_to_feel_it = self.mongo_db.extract_all_tweets_to_feel_it()
             # if not all tweets have to be analyzed, extract from the db only the tweets that have are not been
             # processed by spacy and that are in italian language
             else:
-                tweets_to_feel_it = mongo_db.extract_new_tweets_to_feel_it()
+                tweets_to_feel_it = self.mongo_db.extract_new_tweets_to_feel_it()
             if len(tweets_to_feel_it) > 0:
                 self.log.info("FEEL-IT PHASE: LOADING NECESSARY MODULES")
                 self.emotion_classifier = EmotionClassifier()
@@ -182,7 +201,7 @@ class ProcessTweet:
                         else:
                             tweet['sentiment'] = {}
                             tweet['sentiment']['feel-it'] = result
-                    mongo_db.update_one(tweet)
+                    self.mongo_db.update_one(tweet)
             else:
                 self.log.info("FEEL-IT PHASE: NO TWEETS FOUND TO PROCESS")
 
@@ -191,10 +210,10 @@ class ProcessTweet:
         if self.nlp:
             # if must be analyzed all tweets in the db extract from it all tweets
             if self.all_tweets:
-                tweets_to_nlp = mongo_db.extract_all_tweets()
+                tweets_to_nlp = self.mongo_db.extract_all_tweets()
             # else extract only the tweets not yet processed by spacy
             else:
-                tweets_to_nlp = mongo_db.extract_new_tweets_to_nlp()
+                tweets_to_nlp = self.mongo_db.extract_new_tweets_to_nlp()
             if len(tweets_to_nlp) > 0:
                 # separate the italian tweets from the english tweet
                 ita_tweets_to_nlp = [t for t in tweets_to_nlp if t['lang'] == 'it']
@@ -221,6 +240,13 @@ class ProcessTweet:
         end = time.time()
         self.log.info("DONE IN: {}".format(end - start))
 
+    def divide_chunks(self,l, n):
+
+        # looping till length l
+        for i in range(0, len(l), n):
+            yield l[i:i + n]
+
+
     def __save(self, fut: Future):
         """
         This is the callback function. when a tweets finish to be processed in it's thread
@@ -235,11 +261,17 @@ class ProcessTweet:
         process_id, result, tweet = fut.result()
         # save the result in the right field in according to the process id returned
         if process_id == 2:
-            if 'sentiment' in tweet:
-                tweet['sentiment']['sent-it'] = result
-            else:
-                tweet['sentiment'] = {}
-                tweet['sentiment']['sent-it'] = result
+            for r in result:
+                for t in tweet:
+                    if r["id"] == t["_id"]:
+                        if 'sentiment' in t:
+                            t['sentiment']['sent-it'] = result
+                        else:
+                            t['sentiment'] = {}
+                            t['sentiment']['sent-it'] = result
+                        self.mongo_db.update_one(t)
+                        break
+            return
         elif process_id == 4:
             tweet['spacy'] = result
             tweet['processed'] = True
@@ -247,8 +279,7 @@ class ProcessTweet:
             tweet['tags'] = result
 
         # save the tweet on the db
-        mongo_db = DataBase(self.cnfg_file_path)
-        mongo_db.update_one(tweet)
+        self.mongo_db.update_one(tweet)
 
     def __link_entity(self, tweet_text: str, tweet: dict) -> Tuple[int, dict, dict]:
         """
@@ -268,8 +299,8 @@ class ProcessTweet:
         # return the process id (1), the result (the dict t), and the tweet analyzed
         return 1, t, tweet
 
-    def __check_sent_it_availability(self) -> bool:
-        data = "{\"texts\": [{\"id\": \"1\", \"text\":\"prova di bellissimo sentit \"}]}"
+    def check_sent_it_availability(self) -> bool:
+        data = "{\"texts\": [{\"id\": \"1\", \"text\":\"Please vote for our nation's group and South Korea's pride, BTS. https://t.co/MsvLwepLRj \"}]}"
         url = "http://193.204.187.210:9009/sentipolc/v1/classify"
         try:
             json_response = requests.post(url, data=data.encode('utf-8')).json()
@@ -278,9 +309,44 @@ class ProcessTweet:
             else:
                 return False
         except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
-                or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
             self.log.warning("SENT-IT PHASE:IMPOSSIBLE TO ESTABLISH CONNECTION WITH SENT-IT SERVICE. PHASE SKIPPED.")
             return False
+
+    def sent_it_analyze_sentiment2(self, tweets: [dict]) -> Tuple[int, list, dict]:
+        """
+        This method use the sent-it uniba service to perform the sentiment analyses of the tweet:
+
+        :param tweets:
+        :type tweets:
+        :return: the id of the process:2; a dictionary represent the result of the analysis (empty if something goes wrong); a dictionary representing the original tweet.
+        :rtype: Tuple[int, dict, dict]
+        """
+        # build the request to send to ths server
+        self.log.debug('building')
+        d = []
+        for t in tweets:
+            d.append("{\"id\": \"" + str(t["_id"]) + "\", \"text\": \"" + t["raw_text"].replace("\n", "").replace("\"",
+                                                                                                                  "").replace(
+                "\r", "") + "\"}")
+
+        data = "{\"texts\": [" + ",".join(d) + "]}"
+        # remove special charachters from the teof the tweet before send it
+        # data += tweet_text.replace("\n", "").replace("\"", "").replace("\r", "") + "\"}]}"
+        # set the url
+        url = "http://193.204.187.210:9009/sentipolc/v1/classify"
+        # send the request and save the response in json
+        try:
+            self.log.debug('sending')
+            json_response = requests.post(url, data=data.encode('utf-8')).json()
+            # if there is a result in the response
+            if 'results' in json_response:
+                return 2, json_response["results"], tweets
+            else:
+                return 2, [], tweets
+        except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
+            return 2, [], tweets
 
     def __sent_it_analyze_sentiment(self, tweet_text: str, tweet: dict) -> Tuple[int, dict, dict]:
         """
@@ -300,23 +366,29 @@ class ProcessTweet:
         # set the url
         url = "http://193.204.187.210:9009/sentipolc/v1/classify"
         # send the request and save the response in json
-
-        json_response = requests.post(url, data=data.encode('utf-8')).json()
-        # if there is a result in the response
-        if 'results' in json_response:
-            # save the result (for consistence the result is normalized)
-            if json_response['results'][0]['polarity'] == "neg":
-                polarity = "negative"
-            elif json_response['results'][0]['polarity'] == "pos":
-                polarity = "positive"
+        try:
+            json_response = requests.post(url, data=data.encode('utf-8')).json()
+            # if there is a result in the response
+            if 'results' in json_response:
+                # save the result (for consistence the result is normalized)
+                if json_response['results'][0]['polarity'] == "neg":
+                    polarity = "negative"
+                elif json_response['results'][0]['polarity'] == "pos":
+                    polarity = "positive"
+                else:
+                    polarity = "neutral"
+                sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
+                                      'sentiment': polarity}
+                # return the id of the process (2), the result of the analyses, and the original tweet
+                return 2, sentiment_analyses, tweet
             else:
-                polarity = "neutral"
-            sentiment_analyses = {'subjectivity': json_response['results'][0]['subjectivity'],
-                                  'sentiment': polarity}
-            # return the id of the process (2), the result of the analyses, and the original tweet
-            return 2, sentiment_analyses, tweet
-        else:
-            return 2, {}, tweet
+                return 2, {}, tweet
+        except requests.exceptions.ConnectionError or urllib3.exceptions.MaxRetryError \
+               or urllib3.exceptions.NewConnectionError or ConnectionRefusedError as e:
+            self.log.warning(
+                "\nSENT-IT PHASE:IMPOSSIBLE TO ESTABLISH CONNECTION WITH SENT-IT SERVICE. WAITING AND RETRYING.")
+            time.sleep(2)
+            return self.__sent_it_analyze_sentiment(tweet_text=tweet_text, tweet=tweet)
 
     def __feel_it_analyze_sentiment(self, tweet_text: str, tweet: dict) -> Tuple[int, dict, dict]:
         """
@@ -386,8 +458,7 @@ class ProcessTweet:
 
         return 4, {'processed_text': lemmas_with_postag, 'entities': entities}, tweet
 
-    @staticmethod
-    def __get_osm_coordinates(tweet: dict, user_location: Optional[str], city: Optional[str], country: Optional[str]) \
+    def __get_osm_coordinates(self, tweet: dict, user_location: Optional[str], city: Optional[str], country: Optional[str]) \
             -> Tuple[int, bool, dict, dict]:
         """
         This method use the Open Street Map service to find the coordinates of a specific location.
@@ -406,11 +477,15 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
-        if user_location is not None:
-            g = geocoder.osm(user_location)
-        elif city is not None and country is not None:
-            g = geocoder.osm(city + "," + country)
-
+        try:
+            if user_location is not None:
+                g = geocoder.osm(user_location)
+            elif city is not None and country is not None:
+                g = geocoder.osm(city + "," + country)
+        except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
+            time.sleep(0.5)
+            self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
+            return ProcessTweet.__get_osm_coordinates(tweet, user_location, city, country)
         # return the coordinates if the result of the request is ok
         if g.ok:
             return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet

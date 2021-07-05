@@ -197,6 +197,7 @@ want retrieve.
 
 
 | This field indicate to Twitter to include or not the context annotation for tweet that have it.
+| If this field is set to :code:`True` the :code:`n_results` field will be se automatically yo 100 in according to the TwitterAPI doc.
 | For more information see the official doc `here. <https://developer.twitter.com/en/docs/twitter-api/annotations>`_
 
 **Possible values**: *True/False*
@@ -218,6 +219,9 @@ want retrieve.
 
 | N.B
 | If the :code:`all_tweets` field is set to True this field automatically will be set to 500 whatever value is insert here.
+| If the :code:`context_annotation` field is set to True this field automatically will be set to 100 whatever value is insert here.
+| If the :code:`all_tweets` field is set to True and :code:`context_annotation` field is set to True this field automatically will be set to 100 whatever value is insert here.
+
 
 
 4. Reach all tweets

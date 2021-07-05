@@ -168,6 +168,8 @@ class SearchTweets:
 
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
+            if self.__twitter_n_results > 100:
+                self.__query['max_results'] = str(100)
         if self.__twitter_start_time:
             self.__query['start_time'] = str(self.__twitter_start_time)
         if self.__twitter_end_time:
@@ -326,7 +328,10 @@ class SearchTweets:
                 if self.__twitter_all_tweets:
                     self.log.info("ASKING FOR NEXT PAGE")
                     # set the max_results query field to 500.
-                    self.__query['max_results'] = str(500)
+                    if self.__twitter_context_annotations:
+                        self.__query['max_results'] = str(100)
+                    else:
+                        self.__query['max_results'] = str(500)
                 # else if the all_tweets is False but is set a specific number of results to reach
                 elif self.__twitter_n_results:
                     # update the value of the number of tweets obtained yet
@@ -336,9 +341,11 @@ class SearchTweets:
                     # set the right value
                     if results_to_request <= 0:
                         return
-                    if results_to_request < 10:
+                    elif results_to_request < 10:
                         results_to_request = 10
-                    if results_to_request > 500:
+                    elif results_to_request > 100 and self.__twitter_context_annotations:
+                        results_to_request = 100
+                    elif results_to_request > 500:
                         results_to_request = 500
                     self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
                     self.__query['max_results'] = results_to_request
