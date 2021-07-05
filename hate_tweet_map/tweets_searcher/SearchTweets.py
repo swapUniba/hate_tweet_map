@@ -168,7 +168,8 @@ class SearchTweets:
 
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
-            self.__query['max_results'] = str(100)
+            if self.__twitter_n_results > 100:
+                self.__query['max_results'] = str(100)
         if self.__twitter_start_time:
             self.__query['start_time'] = str(self.__twitter_start_time)
         if self.__twitter_end_time:
