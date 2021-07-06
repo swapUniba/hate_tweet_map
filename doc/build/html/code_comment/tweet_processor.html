@@ -230,7 +230,7 @@ Wikipedia ID (an integer).</p>
 <p>Entity Linker</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.EntityLinker.EntityLinker">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.EntityLinker.</span></span><span class="sig-name descname"><span class="pre">EntityLinker</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.EntityLinker.EntityLinker" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">hate_tweet_map.tweets_processor.EntityLinker.</span></span><span class="sig-name descname"><span class="pre">EntityLinker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_cnfg_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.EntityLinker.EntityLinker" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.EntityLinker.EntityLinker.tag">
 <span class="sig-name descname"><span class="pre">tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.tweets_processor.EntityLinker.EntityLinker.tag" title="Permalink to this definition">¶</a></dt>
@@ -276,7 +276,7 @@ Wikipedia ID (an integer).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates">
-<span class="sig-name descname"><span class="pre">__get_osm_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_location</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">city</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__get_osm_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_location</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">city</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">country</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method use the Open Street Map service to find the coordinates of a specific location.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -298,7 +298,7 @@ Wikipedia ID (an integer).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__link_entity">
-<span class="sig-name descname"><span class="pre">__link_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__link_entity" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__link_entity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet_text</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__link_entity" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method use the sent-it uniba service to perform the sentiment analyses of the tweet.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -368,6 +368,23 @@ adds the information on the tweet and save it in the db.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tuple[int, dict, dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__sent_it_analyze_sentiment2">
+<span class="sig-name descname"><span class="pre">__sent_it_analyze_sentiment2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__sent_it_analyze_sentiment2" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method use the sent-it uniba service to perform the sentiment analyses of the tweet:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tweets</strong> (<em>list</em>) – list of tweets to send to sent_it</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the process:2; a list represent the result of the analysis (empty if something goes wrong); a list representing the original tweets.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, list, list]</p>
 </dd>
 </dl>
 </dd></dl>

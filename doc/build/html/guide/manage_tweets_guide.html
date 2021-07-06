@@ -104,8 +104,8 @@ The configuration file looks like this:</p>
 <div class="line"><strong>Possible values:</strong> extract delete</div>
 <div class="line"><strong>Mandatory</strong></div>
 </div>
-<section id="extract-format">
-<h4>extract:format<a class="headerlink" href="#extract-format" title="Permalink to this headline">¶</a></h4>
+<section id="mode-extract">
+<h4>Mode: extract<a class="headerlink" href="#mode-extract" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#possible values: extract delete</span>
   <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">extract</span>
   <span class="c1">#json or csv (only with extract mode)</span>
@@ -113,11 +113,12 @@ The configuration file looks like this:</p>
 </pre></div>
 </div>
 <div class="line-block">
-<div class="line">To extract tweets it’s necessary set the <code class="code docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">extract</span></code> and to choose a format so: or <code class="code docutils literal notranslate"><span class="pre">format:</span> <span class="pre">csv</span></code> or <code class="code docutils literal notranslate"><span class="pre">format:</span> <span class="pre">json</span></code>.</div>
+<div class="line">To extract tweets it’s necessary set the <code class="code docutils literal notranslate"><span class="pre">mode:</span> <span class="pre">extract</span></code> and choose a format so: or <code class="code docutils literal notranslate"><span class="pre">format:</span> <span class="pre">csv</span></code> or <code class="code docutils literal notranslate"><span class="pre">format:</span> <span class="pre">json</span></code>.</div>
+<div class="line">This will generate a file (in the format chosen) in the working directory.</div>
 </div>
 </section>
-<section id="delete">
-<h4>delete<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h4>
+<section id="mode-delete">
+<h4>Mode: delete<a class="headerlink" href="#mode-delete" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#possible values: extract delete</span>
   <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">delete</span>
   <span class="c1">#json or csv (only with extract mode)</span>
@@ -278,8 +279,8 @@ The configuration file looks like this:</p>
 <li class="toctree-l4"><a class="reference internal" href="#configuration-file">Configuration file</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#mongodb">Mongodb</a></li>
 <li class="toctree-l5"><a class="reference internal" href="#mode">Mode</a><ul>
-<li class="toctree-l6"><a class="reference internal" href="#extract-format">extract:format</a></li>
-<li class="toctree-l6"><a class="reference internal" href="#delete">delete</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#mode-extract">Mode: extract</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#mode-delete">Mode: delete</a></li>
 </ul>
 </li>
 <li class="toctree-l5"><a class="reference internal" href="#criteria">Criteria</a></li>

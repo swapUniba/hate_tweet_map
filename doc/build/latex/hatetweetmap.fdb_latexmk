@@ -1,10 +1,10 @@
 # Fdb version 3
-["makeindex hatetweetmap.idx"] 0 "hatetweetmap.idx" "hatetweetmap.ind" "hatetweetmap" 0
-  "hatetweetmap.idx" 0 -1 0 "pdflatex"
+["makeindex hatetweetmap.idx"] 1625572278 "hatetweetmap.idx" "hatetweetmap.ind" "hatetweetmap" 1625572322
+  "hatetweetmap.idx" 1625572290 10649 094d73e860b8fd64560dd0ade6554e1c "pdflatex"
   (generated)
   "hatetweetmap.ind"
   "hatetweetmap.ilg"
-["pdflatex"] 1625314633 "hatetweetmap.tex" "hatetweetmap.pdf" "hatetweetmap" 1625314633
+["pdflatex"] 1625572278 "hatetweetmap.tex" "hatetweetmap.pdf" "hatetweetmap" 1625572322
   "C:/Users/Dario/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1624623126 9752243 b22f7049eb3e882224b3ea04110cbc62 ""
   "C:/Users/Dario/AppData/Local/MiKTeX/pdftex/config/pdftex.map" 1625160031 123072 4dfec00f36c42e8f2db702e61ef5862a ""
   "C:/Users/Dario/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458477487 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -151,12 +151,13 @@
   "C:/Users/Dario/AppData/Local/Programs/MiKTeX/tex/latex/varwidth/varwidth.sty" 1238469540 10894 d359a13923460b2a73d4312d613554c8 ""
   "C:/Users/Dario/AppData/Local/Programs/MiKTeX/tex/latex/wrapfig/wrapfig.sty" 1044406800 26220 3701aebf80ccdef248c0c20dd062fea9 ""
   "C:/Users/Dario/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1623005660 55589 34128738f682d033422ca125f82e5d62 ""
-  "hatetweetmap.aux" 1625314633 34 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "hatetweetmap.ind" 0 -1 0 "makeindex hatetweetmap.idx"
-  "hatetweetmap.out" 0 -1 0 "pdflatex"
-  "hatetweetmap.tex" 1625314632 112153 ef96cf5e93b40013c6a90af896a028a8 ""
+  "hatetweetmap.aux" 1625572290 21212 ad6c62fc50acee95e08b57482db3366f "pdflatex"
+  "hatetweetmap.ind" 1625572278 7134 72fb2d3e36fd6d88c8d338ab25c5e568 "makeindex hatetweetmap.idx"
+  "hatetweetmap.out" 1625572290 7532 75b39196dc8ef8fb84da164254af984a "pdflatex"
+  "hatetweetmap.tex" 1625572128 114229 3dfe6b086f98d9ac07d6c51bbce43acb ""
+  "hatetweetmap.toc" 1625572290 4681 8e6245c8533d1702a66626ebaf32990c "pdflatex"
   "sphinx.sty" 1624964314 13210 1fc7fddaf4a9dba457504448864afe1f ""
-  "sphinxhighlight.sty" 1625314632 6785 76d10c62e0f0661410b46f5db6118e26 ""
+  "sphinxhighlight.sty" 1625572321 6785 76d10c62e0f0661410b46f5db6118e26 ""
   "sphinxlatexadmonitions.sty" 1624964314 6238 2d867d769abf3f72abc17ef52adff78b ""
   "sphinxlatexgraphics.sty" 1624964314 4840 a9578332b6f3b35e198751fb632c9b79 ""
   "sphinxlatexindbibtoc.sty" 1624964314 2066 b93f8504d02f6337fde3074b179de55e ""
@@ -170,14 +171,14 @@
   "sphinxlatexstyletext.sty" 1624964314 5771 a578900e23c0331bf3e01507feb96320 ""
   "sphinxlatextables.sty" 1624964314 21848 2827eb0b11b99b185a8b77317d3e131c ""
   "sphinxmanual.cls" 1624964314 4236 124cd90deb92742b5d3922bfc2cd70c0 ""
-  "sphinxmessages.sty" 1625314632 765 3f5fcd6cdd7964ed608767954a8ced6f ""
+  "sphinxmessages.sty" 1625572321 765 3f5fcd6cdd7964ed608767954a8ced6f ""
   "sphinxoptionsgeometry.sty" 1624964314 2061 47bb34b8ed8a78823eb0c886abfb9f4d ""
   "sphinxoptionshyperref.sty" 1624964314 1093 22dd608777751296c61a93174b0f4bb8 ""
   "sphinxpackagefootnote.sty" 1624964314 13248 e2c77871396275ccf592403f8130f6f2 ""
   (generated)
+  "hatetweetmap.aux"
+  "hatetweetmap.idx"
+  "hatetweetmap.pdf"
+  "hatetweetmap.out"
   "hatetweetmap.toc"
   "hatetweetmap.log"
-  "hatetweetmap.aux"
-  "hatetweetmap.out"
-  "hatetweetmap.pdf"
-  "hatetweetmap.idx"
