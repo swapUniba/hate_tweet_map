@@ -17,6 +17,7 @@ cache:
     - .cache/pip
     - venv/
 
+
 before_script:
   - python -V  # Print out python version for debugging
   - pip install virtualenv
@@ -49,8 +50,8 @@ run:
 
 pages:
   stage: deploy
-  script:
-    - mv release public
+  script: 
+    cd public
   artifacts:
     paths:
       - public
