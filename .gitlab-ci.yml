@@ -47,6 +47,15 @@ run:
     paths:
       - dist/*.whl
 
+pages:
+  stage: deploy
+  script:
+    - mv release public
+  artifacts:
+    paths:
+      - public
+
+
 #pages:
 #  script:
 #    - pip install sphinx sphinx-rtd-theme
