@@ -40,6 +40,7 @@ test:
 
 
 pages:
+  stage: deploy
   script:
    - pip install -U sphinx
    - cd doc ; sphinx-build -b html ../public
