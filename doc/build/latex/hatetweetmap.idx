@@ -30,6 +30,7 @@
 \indexentry{\_\_process\_text\_with\_spacy() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_process\_text\_with\_spacy()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}|hyperpage}{4}
 \indexentry{\_\_save() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_save()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}|hyperpage}{4}
 \indexentry{\_\_sent\_it\_analyze\_sentiment() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_sent\_it\_analyze\_sentiment()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}|hyperpage}{4}
+\indexentry{\_\_sent\_it\_analyze\_sentiment2() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_sent\_it\_analyze\_sentiment2()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}|hyperpage}{4}
 \indexentry{start() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{start()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}|hyperpage}{4}
 \indexentry{module@\spxentry{module}!hate\_tweet\_map.tweets\_searcher.SearchTweets@\spxentry{hate\_tweet\_map.tweets\_searcher.SearchTweets}|hyperpage}{5}
 \indexentry{hate\_tweet\_map.tweets\_searcher.SearchTweets@\spxentry{hate\_tweet\_map.tweets\_searcher.SearchTweets}!module@\spxentry{module}|hyperpage}{5}
@@ -37,7 +38,7 @@
 \indexentry{\_\_build\_query() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_build\_query()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{5}
 \indexentry{\_\_connect\_to\_endpoint() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_connect\_to\_endpoint()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{5}
 \indexentry{\_\_make() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_make()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{5}
-\indexentry{\_\_next\_page() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_next\_page()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{5}
+\indexentry{\_\_next\_page() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_next\_page()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{6}
 \indexentry{\_\_save() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{\_\_save()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{6}
 \indexentry{search() (hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method)@\spxentry{search()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}|hyperpage}{6}
 \indexentry{module@\spxentry{module}!hate\_tweet\_map.users\_searcher.SearchUsers@\spxentry{hate\_tweet\_map.users\_searcher.SearchUsers}|hyperpage}{6}
@@ -45,7 +46,7 @@
 \indexentry{UserSearch (class in hate\_tweet\_map.users\_searcher.SearchUsers)@\spxentry{UserSearch}\spxextra{class in hate\_tweet\_map.users\_searcher.SearchUsers}|hyperpage}{6}
 \indexentry{\_\_build\_query() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_build\_query()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{6}
 \indexentry{\_\_connect\_to\_endpoint() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_connect\_to\_endpoint()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{6}
-\indexentry{\_\_make() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_make()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{6}
+\indexentry{\_\_make() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_make()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{7}
 \indexentry{\_\_retrieve\_users\_id() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_retrieve\_users\_id()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{7}
 \indexentry{\_\_save() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{\_\_save()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{7}
 \indexentry{search() (hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method)@\spxentry{search()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}|hyperpage}{7}

@@ -214,6 +214,7 @@ want retrieve.</p>
 </div>
 <div class="line-block">
 <div class="line">This field indicate to Twitter to include or not the context annotation for tweet that have it.</div>
+<div class="line">If this field is set to <code class="code docutils literal notranslate"><span class="pre">True</span></code> the <code class="code docutils literal notranslate"><span class="pre">n_results</span></code> field will be se automatically yo 100 in according to the TwitterAPI doc.</div>
 <div class="line">For more information see the official doc <a class="reference external" href="https://developer.twitter.com/en/docs/twitter-api/annotations">here.</a></div>
 </div>
 <p><strong>Possible values</strong>: <em>True/False</em></p>
@@ -236,6 +237,8 @@ want retrieve.</p>
 <div class="line-block">
 <div class="line">N.B</div>
 <div class="line">If the <code class="code docutils literal notranslate"><span class="pre">all_tweets</span></code> field is set to True this field automatically will be set to 500 whatever value is insert here.</div>
+<div class="line">If the <code class="code docutils literal notranslate"><span class="pre">context_annotation</span></code> field is set to True this field automatically will be set to 100 whatever value is insert here.</div>
+<div class="line">If the <code class="code docutils literal notranslate"><span class="pre">all_tweets</span></code> field is set to True and <code class="code docutils literal notranslate"><span class="pre">context_annotation</span></code> field is set to True this field automatically will be set to 100 whatever value is insert here.</div>
 </div>
 </section>
 <section id="reach-all-tweets">
@@ -465,6 +468,7 @@ want retrieve.</p>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="user_search_guide.html">Search Users Script</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tweet_processor_guide.html">Process Tweets Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="manage_tweets_guide.html">Manage Tweets Script</a></li>
 </ul>
 </li>
 </ul>

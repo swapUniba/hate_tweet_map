@@ -61,7 +61,7 @@
 
 
 \title{Hate Tweet Map}
-\date{Jul 03, 2021}
+\date{Jul 06, 2021}
 \release{1.0}
 \author{Dario Amoroso d\textquotesingle{}Aragona}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -453,7 +453,7 @@ Tuple{[}int, dict, dict{]}
 \index{\_\_get\_osm\_coordinates() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_get\_osm\_coordinates()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{code_comment/tweet_processor:hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_\_get\_osm\_coordinates}}}{\emph{\DUrole{n}{user\_location}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}, \emph{\DUrole{n}{city}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}, \emph{\DUrole{n}{country}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}}{{ $\rightarrow$ Tuple\DUrole{p}{{[}}int\DUrole{p}{, }bool\DUrole{p}{, }dict\DUrole{p}{, }dict\DUrole{p}{{]}}}}
+\phantomsection\label{\detokenize{code_comment/tweet_processor:hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__get_osm_coordinates}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_\_get\_osm\_coordinates}}}{\emph{\DUrole{n}{tweet}\DUrole{p}{:} \DUrole{n}{dict}}, \emph{\DUrole{n}{user\_location}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}, \emph{\DUrole{n}{city}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}, \emph{\DUrole{n}{country}\DUrole{p}{:} \DUrole{n}{Optional\DUrole{p}{{[}}str\DUrole{p}{{]}}}}}{{ $\rightarrow$ Tuple\DUrole{p}{{[}}int\DUrole{p}{, }bool\DUrole{p}{, }dict\DUrole{p}{, }dict\DUrole{p}{{]}}}}
 \sphinxAtStartPar
 This method use the Open Street Map service to find the coordinates of a specific location.
 \begin{quote}\begin{description}
@@ -594,6 +594,29 @@ the id of the process:2; a dictionary represent the result of the analysis (empt
 \item[{Return type}] \leavevmode
 \sphinxAtStartPar
 Tuple{[}int, dict, dict{]}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_\_sent\_it\_analyze\_sentiment2() (hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method)@\spxentry{\_\_sent\_it\_analyze\_sentiment2()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{code_comment/tweet_processor:hate_tweet_map.tweets_processor.TweetProcessor.ProcessTweet.__sent_it_analyze_sentiment2}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_\_sent\_it\_analyze\_sentiment2}}}{\emph{\DUrole{n}{tweets}\DUrole{p}{:} \DUrole{n}{list}}}{{ $\rightarrow$ Tuple\DUrole{p}{{[}}int\DUrole{p}{, }list\DUrole{p}{, }list\DUrole{p}{{]}}}}
+\sphinxAtStartPar
+This method use the sent\sphinxhyphen{}it uniba service to perform the sentiment analyses of the tweet:
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxAtStartPar
+\sphinxstyleliteralstrong{\sphinxupquote{tweets}} (\sphinxstyleliteralemphasis{\sphinxupquote{list}}) \textendash{} list of tweets to send to sent\_it
+
+\item[{Returns}] \leavevmode
+\sphinxAtStartPar
+the id of the process:2; a list represent the result of the analysis (empty if something goes wrong); a list representing the original tweets.
+
+\item[{Return type}] \leavevmode
+\sphinxAtStartPar
+Tuple{[}int, list, list{]}
 
 \end{description}\end{quote}
 
@@ -1199,6 +1222,7 @@ want retrieve.
 
 \begin{DUlineblock}{0em}
 \item[] This field indicate to Twitter to include or not the context annotation for tweet that have it.
+\item[] If this field is set to \sphinxcode{\sphinxupquote{True}} the \sphinxcode{\sphinxupquote{n\_results}} field will be se automatically yo 100 in according to the TwitterAPI doc.
 \item[] For more information see the official doc \sphinxhref{https://developer.twitter.com/en/docs/twitter-api/annotations}{here.}
 \end{DUlineblock}
 
@@ -1227,6 +1251,8 @@ want retrieve.
 \begin{DUlineblock}{0em}
 \item[] N.B
 \item[] If the \sphinxcode{\sphinxupquote{all\_tweets}} field is set to True this field automatically will be set to 500 whatever value is insert here.
+\item[] If the \sphinxcode{\sphinxupquote{context\_annotation}} field is set to True this field automatically will be set to 100 whatever value is insert here.
+\item[] If the \sphinxcode{\sphinxupquote{all\_tweets}} field is set to True and \sphinxcode{\sphinxupquote{context\_annotation}} field is set to True this field automatically will be set to 100 whatever value is insert here.
 \end{DUlineblock}
 
 
@@ -1897,8 +1923,8 @@ This section provide the information to connect to the mongodb collection where 
 \end{DUlineblock}
 
 
-\subparagraph{extract:format}
-\label{\detokenize{guide/manage_tweets_guide:extract-format}}
+\subparagraph{Mode: extract}
+\label{\detokenize{guide/manage_tweets_guide:mode-extract}}
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{}possible values: extract delete}
   \PYG{n+nt}{mode}\PYG{p}{:} \PYG{l+lScalar+lScalarPlain}{extract}
@@ -1907,12 +1933,13 @@ This section provide the information to connect to the mongodb collection where 
 \end{sphinxVerbatim}
 
 \begin{DUlineblock}{0em}
-\item[] To extract tweets it’s necessary set the \sphinxcode{\sphinxupquote{mode: extract}} and to choose a format so: or \sphinxcode{\sphinxupquote{format: csv}} or \sphinxcode{\sphinxupquote{format: json}}.
+\item[] To extract tweets it’s necessary set the \sphinxcode{\sphinxupquote{mode: extract}} and choose a format so: or \sphinxcode{\sphinxupquote{format: csv}} or \sphinxcode{\sphinxupquote{format: json}}.
+\item[] This will generate a file (in the format chosen) in the working directory.
 \end{DUlineblock}
 
 
-\subparagraph{delete}
-\label{\detokenize{guide/manage_tweets_guide:delete}}
+\subparagraph{Mode: delete}
+\label{\detokenize{guide/manage_tweets_guide:mode-delete}}
 \begin{sphinxVerbatim}[commandchars=\\\{\}]
 \PYG{c+c1}{\PYGZsh{}possible values: extract delete}
   \PYG{n+nt}{mode}\PYG{p}{:} \PYG{l+lScalar+lScalarPlain}{delete}

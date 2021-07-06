@@ -81,7 +81,7 @@ Mode
 | **Possible values:** extract delete
 | **Mandatory**
 
-extract:format
+Mode: extract
 """"""""""""""
 
 .. code:: yaml
@@ -91,11 +91,12 @@ extract:format
     #json or csv (only with extract mode)
     format:
 
-| To extract tweets it's necessary set the :code:`mode: extract` and to choose a format so: or :code:`format: csv` or :code:`format: json`.
+| To extract tweets it's necessary set the :code:`mode: extract` and choose a format so: or :code:`format: csv` or :code:`format: json`.
+| This will generate a file (in the format chosen) in the working directory.
 
 
-delete
-""""""
+Mode: delete
+""""""""""""
 
 .. code:: yaml
 

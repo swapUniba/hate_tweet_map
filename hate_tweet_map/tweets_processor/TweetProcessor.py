@@ -9,7 +9,6 @@ import urllib3.exceptions
 import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
-from urllib3 import HTTPSConnectionPool
 
 from hate_tweet_map.database import DataBase
 from hate_tweet_map.tweets_processor.EntityLinker import EntityLinker
