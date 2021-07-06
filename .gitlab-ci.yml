@@ -50,6 +50,7 @@ run:
 
 
 pages:
+  stage: deploy
   script:
     - pip install sphinx sphinx-rtd-theme
     - cd doc ; make html
