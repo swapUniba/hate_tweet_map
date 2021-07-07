@@ -4,8 +4,10 @@ from pymongo import MongoClient
 
 class DataBase:
     """
+
     Class to perform operation on the mongodb collection. This class handle the operation on the collection
     containing tweets and the operation on the collection containing the users.
+
     """
 
     def __init__(self, file_path="", key="mongodb"):
