@@ -489,6 +489,8 @@ class ProcessTweet:
             time.sleep(0.5)
             self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
             return self.__get_osm_coordinates(tweet, user_location, city, country)
+        except ValueError:
+            return 5, False, {}, tweet
         # return the coordinates if the result of the request is ok
         if g.ok:
             return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet
