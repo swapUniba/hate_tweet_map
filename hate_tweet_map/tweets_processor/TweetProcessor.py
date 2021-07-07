@@ -480,20 +480,19 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
+        user_location = "ciapo mi cchiamo dario"
         if user_location is not None:
             try:
+                user_location = "ciapo mi cchiamo dario"
                 g = geocoder.osm(user_location)
             except ValueError:
-                self.log.error(user_location, city, country)
+                self.log.error(str(user_location))
                 return 5, False, {}, tweet
-            except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
-                time.sleep(0.5)
-                self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
         elif city is not None and country is not None:
             try:
                 g = geocoder.osm(city + "," + country)
             except ValueError as ve:
-                self.log.error(user_location, city, country)
+                self.log.error(city, country)
                 return 5, False, {}, tweet
             except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
                 time.sleep(0.5)
