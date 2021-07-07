@@ -485,7 +485,8 @@ class ProcessTweet:
                 g = geocoder.osm(user_location)
             elif city is not None and country is not None:
                 g = geocoder.osm(city + "," + country)
-        except ValueError:
+        except ValueError as ve:
+            self.log.error(user_location, city, country)
             return 5, False, {}, tweet
         except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
             time.sleep(0.5)
