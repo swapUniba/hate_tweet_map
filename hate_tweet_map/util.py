@@ -1,4 +1,49 @@
-def pre_process_tweets_response(tweet: {}, includes: {}):
+def pre_process_tweets_response(tweet: dict, includes: dict) -> dict:
+    """
+    This method take an input a dict representing a tweet (in the Twitter original format) and create a dict containing the usefull information of the tweet reorganized usign different criteria and if necessary renaming the fields.
+
+    Here there is an example of the result of this processing:
+
+
+    .. code:: json
+
+        {
+        "_id": "1411354087682097159",
+        "raw_text": "@suncapaldi che cazzo di ragionamento è; io seguo il calcio ma anche se non lo seguissi guarderei i mondiali e gli europei",
+        "author_id": "1176108556057227271",
+        "author_name": "elisa⁹⁴🦕|| -427; -1",
+        "author_username": "CH3RRV91",
+        "created_at": "2021-07-03T16:00:10.000Z",
+        "lang": "it",
+        "possibly_sensitive": false,
+        "referenced_tweets": [{
+            "id": "1411242299993083909",
+            "type": "replied_to"
+        }],
+        "twitter_entities": {
+            "mentions": ["suncapaldi"]
+        },
+        "geo": {
+            "user_location": "h, l, n, z, l ➳in 1d’s arms home (n.) louis yellow (n.) harry sun (n.) niall happy place (n.) zayn safe place (n.) liam fati, ale e fab"
+        },
+        "metrics": {
+            "retweet_count": 0,
+            "reply_count": 0,
+            "like_count": 0,
+            "quote_count": 0
+        },
+        "processed": false,
+        }
+
+    :param tweet: the tweet in Twitter original format
+    :type tweet: dict
+    :param includes: the includes dict returned by Twitter
+    :type includes: dict
+    :return: a dict representing a tweet with the useful information
+    :rtype: dict
+
+    """
+
     ent = {}
     post = {'_id': tweet['id'], 'raw_text': tweet['text'], 'author_id': tweet['author_id']}
     retweeted = False
@@ -25,16 +70,16 @@ def pre_process_tweets_response(tweet: {}, includes: {}):
                     if p['id'] == ref_id:
                         post['raw_text'] = p['text']
                         post['complete_text'] = True
-                        extract_context_annotation(post, p)
-                        extract_entities(ent, p)
-                        extract_mentions(ent, p)
+                        __extract_context_annotation(post, p)
+                        __extract_entities(ent, p)
+                        __extract_mentions(ent, p)
                         break
         post["referenced_tweets"] = ref_tweets
     if not retweeted:
-        extract_entities(ent, tweet)
-        extract_context_annotation(post, tweet)
+        __extract_entities(ent, tweet)
+        __extract_context_annotation(post, tweet)
 
-    extract_mentions(ent, tweet)
+    __extract_mentions(ent, tweet)
     post['twitter_entities'] = ent
     geo = {}
     if 'geo' in tweet:
@@ -56,12 +101,12 @@ def pre_process_tweets_response(tweet: {}, includes: {}):
     return post
 
 
-def extract_context_annotation(post, tweet):
+def __extract_context_annotation(post, tweet):
     if 'context_annotations' in tweet:
         post['twitter_context_annotations'] = tweet['context_annotations']
 
 
-def extract_entities(ent, tweet):
+def __extract_entities(ent, tweet):
     if 'entities' in tweet:
         if 'hashtags' in tweet['entities']:
             hashtags = []
@@ -82,7 +127,7 @@ def extract_entities(ent, tweet):
             ent['annotation'] = annotations
 
 
-def extract_mentions(ent, tweet):
+def __extract_mentions(ent, tweet):
     if 'entities' in tweet:
         if 'mentions' in tweet['entities']:
             mentions = []
@@ -94,7 +139,35 @@ def extract_mentions(ent, tweet):
                 ent['mentions'] = mentions
 
 
-def pre_process_user_response(usr: {}):
+def pre_process_user_response(usr: dict) -> dict:
+    """
+    This method take an input a dict representing an user (in the Twitter original format) and create a dict containing the usefull information of the user reorganized usign different criteria and if necessary renaming the fields.
+
+    Here there is an example of the result of this processing:
+
+
+    .. code:: json
+
+        {
+        "_id": "714034850",
+        "name": "TeeJ",
+        "username": "VolsTeeJ",
+        "public_metrics": {
+            "followers_count": 457,
+            "following_count": 326,
+            "tweet_count": 32541,
+            "listed_count": 5
+        },
+        "location": "Rocky Top, TN"
+        }
+
+    :param usr: the user in Twitter original format
+    :type usr: dict
+    :return: a dict representing a user with the useful information
+    :rtype: dict
+
+    """
+
     user = {'_id': usr["id"], "name": usr["name"], "username": usr["username"], "public_metrics": usr["public_metrics"],
-            "location": usr.get("lcoation", None)}
+            "location": usr.get("location", None)}
     return user

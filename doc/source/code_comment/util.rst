@@ -3,16 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Code Documentation
-==================
+Util
+==========================================
 
 .. toctree::
    :maxdepth: 5
    :caption: Contents:
 
-   tweet_processor
-   tweet_search
-   user_search
-   manage_tweets
-   database
-   util
+Util
+---------------------
+.. automodule:: hate_tweet_map.util
+   :members:
+   :private-members:
+

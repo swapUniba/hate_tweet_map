@@ -15,3 +15,4 @@ Code Documentation
    user_search
    manage_tweets
    database
+   util
