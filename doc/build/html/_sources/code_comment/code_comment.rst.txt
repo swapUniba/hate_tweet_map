@@ -14,3 +14,4 @@ Code Documentation
    tweet_search
    user_search
    manage_tweets
+   database
