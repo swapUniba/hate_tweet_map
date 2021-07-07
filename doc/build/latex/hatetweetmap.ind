@@ -1,0 +1,146 @@
+\begin{sphinxtheindex}
+\let\bigletter\sphinxstyleindexlettergroup
+\let\spxpagem \sphinxstyleindexpagemain
+\let\spxentry \sphinxstyleindexentry
+\let\spxextra \sphinxstyleindexextra
+
+  \bigletter {\sphinxsymbolsname}
+  \item \spxentry{\_\_build\_query()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{5}
+  \item \spxentry{\_\_build\_query()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{6}
+  \item \spxentry{\_\_connect\_to\_endpoint()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{5}
+  \item \spxentry{\_\_connect\_to\_endpoint()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{6}
+  \item \spxentry{\_\_feel\_it\_analyze\_sentiment()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{3}
+  \item \spxentry{\_\_get\_osm\_coordinates()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{3}
+  \item \spxentry{\_\_link\_entity()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+  \item \spxentry{\_\_make()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{5}
+  \item \spxentry{\_\_make()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{7}
+  \item \spxentry{\_\_next\_page()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{6}
+  \item \spxentry{\_\_process\_text\_with\_spacy()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+  \item \spxentry{\_\_retrieve\_users\_id()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{7}
+  \item \spxentry{\_\_save()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+  \item \spxentry{\_\_save()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{6}
+  \item \spxentry{\_\_save()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{7}
+  \item \spxentry{\_\_sent\_it\_analyze\_sentiment()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+  \item \spxentry{\_\_sent\_it\_analyze\_sentiment2()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+
+  \indexspace
+  \bigletter A
+  \item \spxentry{annotate()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{AnnotateResponse}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{Annotation}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{as\_pair()}\spxextra{hate\_tweet\_map.tweets\_processor.MyTagMe.Relatedness method}, 
+		\hyperpage{1}
+
+  \indexspace
+  \bigletter E
+  \item \spxentry{EntityLinker}\spxextra{class in hate\_tweet\_map.tweets\_processor.EntityLinker}, 
+		\hyperpage{3}
+
+  \indexspace
+  \bigletter G
+  \item \spxentry{get\_annotations()}\spxextra{hate\_tweet\_map.tweets\_processor.MyTagMe.AnnotateResponse method}, 
+		\hyperpage{1}
+  \item \spxentry{get\_mentions()}\spxextra{hate\_tweet\_map.tweets\_processor.MyTagMe.MentionsResponse method}, 
+		\hyperpage{1}
+  \item \spxentry{get\_relatedness()}\spxextra{hate\_tweet\_map.tweets\_processor.MyTagMe.RelatednessResponse method}, 
+		\hyperpage{1}
+
+  \indexspace
+  \bigletter H
+  \item \spxentry{hate\_tweet\_map.tweets\_processor.EntityLinker}
+    \subitem \spxentry{module}, \hyperpage{3}
+  \item \spxentry{hate\_tweet\_map.tweets\_processor.MyTagMe}
+    \subitem \spxentry{module}, \hyperpage{1}
+  \item \spxentry{hate\_tweet\_map.tweets\_processor.TweetProcessor}
+    \subitem \spxentry{module}, \hyperpage{3}
+  \item \spxentry{hate\_tweet\_map.tweets\_searcher.SearchTweets}
+    \subitem \spxentry{module}, \hyperpage{5}
+  \item \spxentry{hate\_tweet\_map.users\_searcher.SearchUsers}
+    \subitem \spxentry{module}, \hyperpage{6}
+
+  \indexspace
+  \bigletter M
+  \item \spxentry{main()}\spxextra{in module script.manage\_tweets.manage\_tweets}, \hyperpage{7}
+  \item \spxentry{Mention}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{mentions()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{2}
+  \item \spxentry{MentionsResponse}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{module}
+    \subitem \spxentry{hate\_tweet\_map.tweets\_processor.EntityLinker}, \hyperpage{3}
+    \subitem \spxentry{hate\_tweet\_map.tweets\_processor.MyTagMe}, \hyperpage{1}
+    \subitem \spxentry{hate\_tweet\_map.tweets\_processor.TweetProcessor}, \hyperpage{3}
+    \subitem \spxentry{hate\_tweet\_map.tweets\_searcher.SearchTweets}, \hyperpage{5}
+    \subitem \spxentry{hate\_tweet\_map.users\_searcher.SearchUsers}, \hyperpage{6}
+    \subitem \spxentry{script.manage\_tweets.manage\_tweets}, \hyperpage{7}
+
+  \indexspace
+  \bigletter N
+  \item \spxentry{normalize\_title()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{2}
+
+  \indexspace
+  \bigletter P
+  \item \spxentry{ProcessTweet}\spxextra{class in hate\_tweet\_map.tweets\_processor.TweetProcessor}, 
+		\hyperpage{3}
+
+  \indexspace
+  \bigletter R
+  \item \spxentry{Relatedness}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+  \item \spxentry{relatedness\_title()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{2}
+  \item \spxentry{relatedness\_wid()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{2}
+  \item \spxentry{RelatednessResponse}\spxextra{class in hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{1}
+
+  \indexspace
+  \bigletter S
+  \item \spxentry{script.manage\_tweets.manage\_tweets}
+    \subitem \spxentry{module}, \hyperpage{7}
+  \item \spxentry{search()}\spxextra{hate\_tweet\_map.tweets\_searcher.SearchTweets.SearchTweets method}, 
+		\hyperpage{6}
+  \item \spxentry{search()}\spxextra{hate\_tweet\_map.users\_searcher.SearchUsers.UserSearch method}, 
+		\hyperpage{7}
+  \item \spxentry{SearchTweets}\spxextra{class in hate\_tweet\_map.tweets\_searcher.SearchTweets}, 
+		\hyperpage{5}
+  \item \spxentry{start()}\spxextra{hate\_tweet\_map.tweets\_processor.TweetProcessor.ProcessTweet method}, 
+		\hyperpage{4}
+
+  \indexspace
+  \bigletter T
+  \item \spxentry{tag()}\spxextra{hate\_tweet\_map.tweets\_processor.EntityLinker.EntityLinker method}, 
+		\hyperpage{3}
+  \item \spxentry{title\_to\_uri()}\spxextra{in module hate\_tweet\_map.tweets\_processor.MyTagMe}, 
+		\hyperpage{2}
+
+  \indexspace
+  \bigletter U
+  \item \spxentry{uri()}\spxextra{hate\_tweet\_map.tweets\_processor.MyTagMe.Annotation method}, 
+		\hyperpage{1}
+  \item \spxentry{UserSearch}\spxextra{class in hate\_tweet\_map.users\_searcher.SearchUsers}, 
+		\hyperpage{6}
+
+\end{sphinxtheindex}
