@@ -1,2 +1,1 @@
-Open the wiki: https://gitlab.com/DarioAmorosodAragona/hatemap/-/wikis/home/
-See the doc here: 
+Open the wiki: https://darioamorosodaragona.gitlab.io/hatemap/ 
