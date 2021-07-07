@@ -480,18 +480,25 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
-        try:
-            if user_location is not None:
+        if user_location is not None:
+            try:
                 g = geocoder.osm(user_location)
-            elif city is not None and country is not None:
+            except ValueError:
+                self.log.error(user_location, city, country)
+                return 5, False, {}, tweet
+            except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
+                time.sleep(0.5)
+                self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
+        elif city is not None and country is not None:
+            try:
                 g = geocoder.osm(city + "," + country)
-        except ValueError as ve:
-            self.log.error(user_location, city, country)
-            return 5, False, {}, tweet
-        except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
-            time.sleep(0.5)
-            self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
-            return self.__get_osm_coordinates(tweet, user_location, city, country)
+            except ValueError as ve:
+                self.log.error(user_location, city, country)
+                return 5, False, {}, tweet
+            except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
+                time.sleep(0.5)
+                self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
+                return self.__get_osm_coordinates(tweet, user_location, city, country)
         # return the coordinates if the result of the request is ok
         if g.ok:
             return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet
