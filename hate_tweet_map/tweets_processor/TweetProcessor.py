@@ -480,11 +480,9 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
-        user_location = "ciapo mi cchiamo dario"
         if user_location is not None:
             print(user_location)
             try:
-                user_location = "ciapo mi cchiamo dario"
                 g = geocoder.osm(user_location)
             except ValueError:
                 self.log.error(str(user_location))
