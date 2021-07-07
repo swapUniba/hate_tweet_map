@@ -30,22 +30,18 @@ before_script:
 
 test:
   script:
-    - pytest --junitxml=report.xml --cov=. tests/
-    - coverage xml
+    - pytest --junitxml=report.xml
   artifacts:
     when: always
     reports:
       junit: report.xml
-      cobertura: coverage.xml
-
 
 pages:
   stage: deploy
   script:
-   - pip install -U sphinx
-   - cd doc ; sphinx-build -b html ../public
+    - pip install sphinx sphinx-rtd-theme
+    - cd doc ; make html
+    - mv build/html/ ../public/
   artifacts:
     paths:
       - public
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
