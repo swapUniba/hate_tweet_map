@@ -165,6 +165,8 @@ class ProcessTweet:
                     if id == 5:
                         if check:
                             tweet["geo"]["coordinates"] = result
+                        elif usr_location is not None:
+                            tweet.pop("user_location")
                     self.mongo_db.update_one(tweet)
             else:
                 self.log.info("GEOCODING PHASE: NO TWEETS FOUND TO GEOCODE")
@@ -270,7 +272,7 @@ class ProcessTweet:
                         else:
                             t['sentiment'] = {}
                             t['sentiment']['sent-it'] = {"subjectivity": r["subjectivity"],
-                                                                                     "sentiment": r["polarity"]}
+                                                         "sentiment": r["polarity"]}
                         self.mongo_db.update_one(t)
                         break
             return
@@ -480,23 +482,17 @@ class ProcessTweet:
 
         g = None
         # build the dict to send as request to the osm service withe the information given
-        if user_location is not None:
-            print(user_location)
-            try:
+        try:
+            if user_location is not None:
                 g = geocoder.osm(user_location)
-            except ValueError:
-                self.log.error(str(user_location))
-                return 5, False, {}, tweet
-        elif city is not None and country is not None:
-            try:
+            elif city is not None and country is not None:
                 g = geocoder.osm(city + "," + country)
-            except ValueError as ve:
-                self.log.error(city, country)
-                return 5, False, {}, tweet
-            except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
-                time.sleep(0.5)
-                self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
-                return self.__get_osm_coordinates(tweet, user_location, city, country)
+        except ValueError:
+            return 5, False, {}, tweet
+        except requests.exceptions.ConnectionError or requests.exceptions.ReadTimeout or requests.exceptions.Timeout:
+            time.sleep(0.5)
+            self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
+            return self.__get_osm_coordinates(tweet, user_location, city, country)
         # return the coordinates if the result of the request is ok
         if g.ok:
             return 5, True, {'latitude': g.osm['y'], 'longitude': g.osm['x']}, tweet
