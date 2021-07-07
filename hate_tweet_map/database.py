@@ -87,7 +87,8 @@ class DataBase:
     def extract_new_tweets_to_geo(self) -> list[dict]:
         """
         Extract all tweets, not already processed, that contain Twitter geographic information,
-        then tweets not processed (by SpaCy) that have a user_location field or a city and country field.
+        then tweets not processed (by SpaCy), that have a user_location field or a city and country field, and
+        that not have the coordinates.
 
         :return: the tweets extract
         :rtype: list[dict]
