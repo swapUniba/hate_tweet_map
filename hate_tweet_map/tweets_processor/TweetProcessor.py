@@ -485,7 +485,7 @@ class ProcessTweet:
                 g = geocoder.osm(user_location)
             elif city is not None and country is not None:
                 g = geocoder.osm(city + "," + country)
-        except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError or Exception:
+        except urllib3.exceptions.ReadTimeoutError or urllib3.exceptions.TimeoutError or urllib3.exceptions.ConnectionError or ConnectionError or TimeoutError:
             time.sleep(0.5)
             self.log.warning("GEO PHASE: ERROR DURING THE CONNECTION. RETRYING.")
             return self.__get_osm_coordinates(tweet, user_location, city, country)
