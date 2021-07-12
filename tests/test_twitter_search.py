@@ -15,7 +15,7 @@ class TwitterSearchTestCase(unittest.TestCase):
     """ Test cases for TwitterSearch Class """
 
     def setUp(self):
-        self.db = MagicMock(database)
+        self.db = MagicMock(database.DataBase)
 
     def test429Error1Second(self):
         """ Test the behaviour of the method search() when a 429 status code is returned (rate limit exceeded) from
