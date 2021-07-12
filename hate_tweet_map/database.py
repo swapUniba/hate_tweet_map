@@ -295,7 +295,7 @@ class DataBase:
         return self.__collection.create_index([('tags.tag_me', 1), ('processed', 1)])
 
     def __create_feel_it_index(self):
-        return self.__collection.create_index([('sentiment.feel-it', 1), ('processed', 1)])
+        return self.__collection.create_index([('sentiment.feel-it', 1), ('processed', 1), ("lang", 1)])
 
     def create_indexes(self):
         return self.__create_geo_index() + " " + " " + self.__create_lang_index() + self.__create_processed_index() + self.__create_tag_index() + self.__create_feel_it_index() + self.__create_sent_it_index()
