@@ -25,7 +25,6 @@ before_script:
   - source venv/bin/activate
   - pip install pytest pytest-cov
   - pip install -U pip setuptools wheel
-  - pip install -U spacy
   - pip install -U spacy 
   - python -m spacy download it_core_news_lg
   - python -m spacy download en_core_web_lg
