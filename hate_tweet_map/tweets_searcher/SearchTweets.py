@@ -382,6 +382,7 @@ class SearchTweets:
         no_user = True
         multi_user = False
         one_user = False
+        bar = None
 
         if  len(self.__twitter_users) > 0:
             no_user = False
@@ -405,6 +406,7 @@ class SearchTweets:
             else:
                 bar = tqdm(desc="INFO:SEARCH:SEARCHING", leave=False, position=1)
             self.__make(bar)
+            bar.close()
             bar1.update(1)
         if no_user:
             self.__build_query()
@@ -413,10 +415,17 @@ class SearchTweets:
             else:
                 bar = tqdm(desc="INFO:SEARCH:SEARCHING", leave=False, position=0)
             self.__make(bar)
-        time.sleep(0.1)
+        #time.sleep(0.1)
+        #if bar is not None:
+        #    bar.close()
+        print('\n')
+        self.log.info('CREATING NECESSARY INDEXES ON DB')
+        self.log.debug(self.mongodb.create_lang_index())
+
+
         return self.total_result
 
-    def __save(self, bar=""):
+    def __save(self):
         """
         THis method are called after that a request have been sent to twitter. When called this method process all
         the tweets received in parallel using the multithreading and then save all tweets processed on the database.
@@ -424,15 +433,11 @@ class SearchTweets:
 
         :return: None
         """
-        bar = ""
         self.log.debug("SAVING TWEETS")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
-            for tweet in self.response['data']:
-                #bar.total(len(self.response["data"]))
+            for tweet in self.response.get('data', []):
                 if not self.mongodb.is_in(tweet['id']):
-                    #bar.update(1)
-                    #bar.total()
                     self.log.debug(tweet)
                     # process each tweet ib parallel
                     fut = executor.submit(util.pre_process_tweets_response, tweet, self.response['includes'])
@@ -444,7 +449,6 @@ class SearchTweets:
         for job in tqdm(as_completed(futures), total=len(futures), desc="INFO:SEARCH:SAVING", leave=False, position=1):
             pass
 
-        #bar.close()
         self.mongodb.save_many(self._all)
         # clean the list populate with these tweets processed.
         self._all = []

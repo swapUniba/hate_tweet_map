@@ -1,3 +1,4 @@
+import pymongo
 import yaml
 from pymongo import MongoClient
 
@@ -273,6 +274,9 @@ class DataBase:
         for tweet in self.__collection.find({},query):
             result.append(list(tweet.values())[0])
         return list(set(result))
+
+    def create_lang_index(self):
+        return self.__collection.create_index([('lang', pymongo.DESCENDING)])
 
 
 
