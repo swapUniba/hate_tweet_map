@@ -66,7 +66,7 @@ class DataBase:
         """
 
         result = []
-        for tweet in self.__collection.find().sort("lang",-1):
+        for tweet in self.__collection.find().sort("lang", -1):
             result.append(tweet)
         return result
 
@@ -80,7 +80,8 @@ class DataBase:
         """
 
         result = []
-        query = {"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]}, {"geo.user_location": {"$exists": True}}]}
+        query = {"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]},
+                         {"geo.user_location": {"$exists": True}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
@@ -96,7 +97,8 @@ class DataBase:
         """
 
         result = []
-        query = {"$and": [{"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]}, {"geo.user_location": {"$exists": True}}]}, {"processed": False},
+        query = {"$and": [{"$or": [{"$and": [{"geo.city": {"$exists": True}}, {"geo.country": {"$exists": True}}]},
+                                   {"geo.user_location": {"$exists": True}}]}, {"processed": False},
                           {"geo.coordinates": {"$exists": False}}]}
         for tweet in self.__collection.find(query):
             result.append(tweet)
@@ -235,7 +237,7 @@ class DataBase:
 
         self.__collection.delete_one({"_id": id})
 
-    def delete_more(self, query:dict) -> int:
+    def delete_more(self, query: dict) -> int:
         """
         Delete all the tweets that match the query given from the collection.
 
@@ -257,7 +259,7 @@ class DataBase:
 
         result = []
         query = {"author_id": 1, "_id": 0}
-        for tweet in self.__collection.find({},query):
+        for tweet in self.__collection.find({}, query):
             result.append(list(tweet.values())[0])
         return list(set(result))
 
@@ -271,13 +273,29 @@ class DataBase:
 
         result = []
         query = {"_id": 1}
-        for tweet in self.__collection.find({},query):
+        for tweet in self.__collection.find({}, query):
             result.append(list(tweet.values())[0])
         return list(set(result))
 
-    def create_lang_index(self):
+    def __create_lang_index(self):
         return self.__collection.create_index([('lang', pymongo.DESCENDING)])
 
+    def __create_processed_index(self):
+        return self.__collection.create_index("processed")
 
+    def __create_geo_index(self):
 
+        return self.__collection.create_index([("processed", 1), ("geo.coordinates", 1)]) + "  " + self.__collection.create_index(
+            [('geo.city', 1), ('geo.country', 1)]) + " " + self.__collection.create_index([('geo.user_location', 1)])
 
+    def __create_sent_it_index(self):
+        return self.__collection.create_index([('sentiment.sent-it', 1), ('processed', 1)])
+
+    def __create_tag_index(self):
+        return self.__collection.create_index([('tags.tag_me', 1), ('processed', 1)])
+
+    def __create_feel_it_index(self):
+        return self.__collection.create_index([('sentiment.feel-it', 1), ('processed', 1)])
+
+    def create_indexes(self):
+        return self.__create_geo_index() + " " + " " + self.__create_lang_index() + self.__create_processed_index() + self.__create_tag_index() + self.__create_feel_it_index() + self.__create_sent_it_index()

@@ -420,7 +420,8 @@ class SearchTweets:
         #    bar.close()
         print('\n')
         self.log.info('CREATING NECESSARY INDEXES ON DB')
-        self.log.debug(self.mongodb.create_lang_index())
+        self.log.setLevel(logging.DEBUG)
+        self.log.debug(self.mongodb.create_indexes())
 
 
         return self.total_result
