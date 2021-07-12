@@ -299,3 +299,5 @@ class DataBase:
 
     def create_indexes(self):
         return self.__create_geo_index() + " " + " " + self.__create_lang_index() + self.__create_processed_index() + self.__create_tag_index() + self.__create_feel_it_index() + self.__create_sent_it_index()
+
+
