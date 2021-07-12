@@ -24,6 +24,7 @@ def main():
     log.info("SEARCH FOR TWEETS")
     n_tweets = twitter_search.search()
 
+    print("\n")
     log.info("TWEETS FOUND AND SAVED SUCCESSFULLY: {}".format(n_tweets))
 
     end = time.time()

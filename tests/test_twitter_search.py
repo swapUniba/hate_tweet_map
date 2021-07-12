@@ -125,9 +125,9 @@ class TwitterSearchTestCase(unittest.TestCase):
                     with patch.object(twitter_research, '_SearchTweets__twitter_keyword',
                                       new_callable=PropertyMock(return_value=None)):
                         with patch.object(twitter_research, '_SearchTweets__save'):
-                            with self.assertLogs('SEARCH', level='INFO') as cm:
+                            with self.assertLogs('SEARCH', level='DEBUG') as cm:
                                 twitter_research.search()
-        self.assertTrue('INFO:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
+        self.assertTrue('DEBUG:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
         # failed on gitlab ci
         # self.assertEqual(twitter_research.total_result, 10)
 
@@ -145,11 +145,11 @@ class TwitterSearchTestCase(unittest.TestCase):
                     with patch.object(twitter_research, '_SearchTweets__twitter_keyword',
                                       new_callable=PropertyMock(return_value="Eurovision")):
                         with patch.object(twitter_research, '_SearchTweets__save'):
-                            with self.assertLogs('SEARCH', level='INFO') as cm:
+                            with self.assertLogs('SEARCH', level='DEBUG') as cm:
                                 twitter_research.search()
-        self.assertTrue('INFO:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
-        self.assertTrue('INFO:SEARCH:SEARCH FOR: GabrielChoulet' in cm.output)
-        self.assertTrue('INFO:SEARCH:SEARCH FOR: JoArilenaStan' in cm.output)
+        self.assertTrue('DEBUG:SEARCH:SEARCH FOR: eldesmarque' in cm.output)
+        self.assertTrue('DEBUG:SEARCH:SEARCH FOR: GabrielChoulet' in cm.output)
+        self.assertTrue('DEBUG:SEARCH:SEARCH FOR: JoArilenaStan' in cm.output)
 
     def test_no_next_token(self):
         """ Test the correct behavior when there is no next_token in the twitter response"""
@@ -171,7 +171,7 @@ class TwitterSearchTestCase(unittest.TestCase):
                                     thing.search()
 
         self.assertEqual(mock_method.call_count, 1)
-        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
         self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
 
     def test_no_next_token_2calls(self):
@@ -196,7 +196,7 @@ class TwitterSearchTestCase(unittest.TestCase):
                                     thing.search()
 
         self.assertEqual(mock_method.call_count, 2)
-        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
         self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
 
     def test_all_tweets(self):
@@ -226,8 +226,8 @@ class TwitterSearchTestCase(unittest.TestCase):
                                         thing.search()
 
         self.assertEqual(mock_method.call_count, 4)
-        self.assertTrue("INFO:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
-        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
         self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
 
     def test_all_tweets2(self):
@@ -254,8 +254,8 @@ class TwitterSearchTestCase(unittest.TestCase):
                                     thing.search()
 
         self.assertEqual(mock_method.call_count, 4)
-        self.assertTrue("INFO:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
-        self.assertTrue("INFO:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:ASKING FOR NEXT PAGE" in cm.output)
+        self.assertTrue("DEBUG:SEARCH:THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED" in cm.output)
         self.assertTrue("DEBUG:SEARCH:NO NEXT TOKEN IN RESPONSE:INTERRUPTING" in cm.output)
 
     @unittest.skip
