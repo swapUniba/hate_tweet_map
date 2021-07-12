@@ -88,22 +88,23 @@ The mandatory section is this one:
 .. code:: yaml
 
    search:
-           # MANDATORY:
-           # Please fill at least one of the following fields. If both fields are set it's possible to search for a twitter with the given keyword tweeted by the specific user.
+         # MANDATORY:
+         # Please fill at least one of the following fields. If both fields are set it's possible to search for a twitter with the given keyword tweeted by the specific user.
 
-           # enter the keyword/s to search for on twitter. It's also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.
-           # the AND operator is handle by a space, so to search "Joe AND Trump" just write "Joe Trump", the OR operator is "OR".
-           # for example: "Joe Biden", "Biden OR Trump", "(Biden OR Trump) whitehouse" (the last query means: "(Biden OR Trump) AND whitehouse").
-           keyword:
+         # enter the keyword/s to search for on twitter. It's also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.
+         # the AND operator is handle by a space, so to search "Joe AND Trump" just write "Joe Trump", the OR operator is "OR".
+         # for example: "Joe Biden", "Biden OR Trump", "(Biden OR Trump) whitehouse" (the last query means: "(Biden OR Trump) AND whitehouse").
+         keyword:
 
-           # enter the username or the user id to search for tweets of a specific user.
-           user:
+         # enter the username or the user id to search for tweets of a specific user. To search tweets from more users insert the user id or the username seperated by a comma
+         # example: VolsTeeJ,FuddausS,DiegoV1056
+         user:
 
 As explained in the comments in the keywords section it is possible
 set the keyword (s) that tweets must contain. To search using the logical operator
 just use the parentheses and the keyword OR and the space for AND.
 
-In the user field you can enter the user's ID or username.
+In the user field you can enter the user's ID or username. It's possible also insert more than one user Id or username separated by a comma, in this case will ber perform a search for each user insert.
 Note that at least one of these two fields must be set.
 It is also possible to set both fields, which means "search
 tweets containing this [keyword] from this [user]".

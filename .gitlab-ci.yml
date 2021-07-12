@@ -24,6 +24,8 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
   - pip install pytest pytest-cov
+  - pip3 install https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.1.0/en_core_web_lg-3.1.0.tar.gz
+  - pip3 install https://github.com/explosion/spacy-models/releases/download/lt_core_news_lg-3.1.0/lt_core_news_lg-3.1.0.tar.gz
   - pip install -r requirements.txt
   - python setup.py install
   - python setup.py install_lib

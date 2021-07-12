@@ -4,7 +4,7 @@ from concurrent import futures
 import logging
 import math
 import time
-from concurrent.futures import Future
+from concurrent.futures import Future, as_completed
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -139,13 +139,19 @@ class SearchTweets:
         if self.__twitter_place_country:
             self.__query['query'] += " place_country:" + self.__twitter_place_country
         if self.__twitter_all_tweets:
-            self.__query['max_results'] = str(500)
+            if self.__twitter_context_annotations:
+                self.__query['max_results'] = str(100)
+            else:
+                self.__query['max_results'] = str(500)
 
         # if is specified a number of result to request
         elif self.__twitter_n_results:
             # if the specified number is greater than 500 set the max_result query field to the max value possible so
             # 500.
-            if self.__twitter_n_results > 500:
+            if self.__twitter_context_annotations:
+                if self.__twitter_n_results > 100:
+                    self.__query['max_results'] = str(100)
+            elif self.__twitter_n_results > 500:
                 self.__query['max_results'] = str(500)
             # if the specified number is less than 10 set the max_result field to the min value possible so 10
             elif self.__twitter_n_results < 10:
@@ -168,8 +174,6 @@ class SearchTweets:
 
         if self.__twitter_context_annotations:
             self.__query['tweet.fields'] += ',context_annotations'
-            if self.__twitter_n_results > 100:
-                self.__query['max_results'] = str(100)
         if self.__twitter_start_time:
             self.__query['start_time'] = str(self.__twitter_start_time)
         if self.__twitter_end_time:
@@ -258,7 +262,7 @@ class SearchTweets:
         response = requests.request("GET", self.__twitter_end_point, headers=self.__headers, params=self.__query)
         if response.status_code == 200:
             t = response.headers.get('date')
-            self.log.info("RECEIVED VALID RESPONSE")
+            self.log.debug("RECEIVED VALID RESPONSE")
             return response.json()
         # if the response status code is 429 and the value of retried is False wait for 1 second and retry to send the request
         if response.status_code == 429 and not retried:
@@ -267,7 +271,7 @@ class SearchTweets:
             return self.__connect_to_endpoint(retried=True)
         # if the response status code is 429 and the retried value is True it means it is at least the second attempt in a row after receiving a 429 error
         elif response.status_code == 429 and retried:
-            self.log.info("RATE LIMITS REACHED: WAITING")
+            self.log.warning("RATE LIMITS REACHED: WAITING")
             # save the current time
             now = time.time()
             # transform it in utc format
@@ -297,7 +301,7 @@ class SearchTweets:
             self.log.critical("GET BAD RESPONSE FROM TWITTER: {}: {}".format(response.status_code, response.text))
             raise Exception(response.status_code, response.text)
 
-    def __make(self) -> None:
+    def __make(self, bar) -> None:
         """
         This method sends the request to twitter, elaborates it and saves the response.
         After the first search the number of tweets contained in the response are checked,
@@ -310,6 +314,8 @@ class SearchTweets:
         Moreover if the all_tweets parameters is set to True on the file config this method resend the request to twitter
         asking for 500 tweets per time (max_result = 500) until the end of the result is not reached.
 
+        :param bar:
+        :type bar:
         :return: None
         """
         # call the method to send the request to twitter
@@ -317,16 +323,18 @@ class SearchTweets:
         self.response = self.__connect_to_endpoint()
         # while there are tweets in the response
         while "meta" in self.response:
-            self.log.info("RECEIVED: {} TWEETS".format(self.response['meta']['result_count']))
+            self.log.debug("RECEIVED: {} TWEETS".format(self.response['meta']['result_count']))
             # save the tweets received
+            #save_bar = tqdm(desc="Saving", leave=False, position=1)
             self.__save()
             # update the value of the total result obtained
             self.total_result += self.response['meta']['result_count']
+            bar.update(self.response['meta']['result_count'])
             # check if there is another page fot the research performed
             if "next_token" in self.response['meta']:
                 # if there is a next page and all_tweets are set to True to reach all tweets
                 if self.__twitter_all_tweets:
-                    self.log.info("ASKING FOR NEXT PAGE")
+                    self.log.debug("ASKING FOR NEXT PAGE")
                     # set the max_results query field to 500.
                     if self.__twitter_context_annotations:
                         self.__query['max_results'] = str(100)
@@ -347,7 +355,7 @@ class SearchTweets:
                         results_to_request = 100
                     elif results_to_request > 500:
                         results_to_request = 500
-                    self.log.info("ASKING FOR: {} TWEETS".format(results_to_request))
+                    self.log.debug("ASKING FOR: {} TWEETS".format(results_to_request))
                     self.__query['max_results'] = results_to_request
                 # retrieve from the response the next token and pass it to the next query
                 self.__next_page(next_token=self.response["meta"]["next_token"])
@@ -356,8 +364,9 @@ class SearchTweets:
             # if there is not a next token stop the loop
             else:
                 self.log.debug("NO NEXT TOKEN IN RESPONSE:INTERRUPTING")
+                bar.close()
                 break
-        self.log.info("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
+        self.log.debug("THERE ARE NO OTHER PAGE AVAILABLE. ALL TWEETS REACHED")
 
     def search(self) -> int:
         """
@@ -369,15 +378,52 @@ class SearchTweets:
         :return: the number of the total tweets saved
         :rtype: int
         """
-        if self.__multi_user:
-            self.log.info("MULTI-USERS SEARCH")
+        bar1 = None
+        no_user = True
+        multi_user = False
+        one_user = False
+        bar = None
+
+        if  len(self.__twitter_users) > 0:
+            no_user = False
+            if len(self.__twitter_users) == 1:
+                one_user = True
+            else:
+                multi_user = True
+
+        if multi_user:
+            self.log.debug("MULTI-USERS SEARCH")
+            bar1 = tqdm(total=len(self.__twitter_users), leave=False, position=0, desc="INFO:MULTI-USERS SEARCH:SEARCHING")
+        elif one_user:
+            bar1 = tqdm(total=len(self.__twitter_users), leave=False, position=0, desc="INFO:SEARCH:SEARCHING FOR {}".format(self.__twitter_users[0]))
         for us in self.__twitter_users:
-            self.log.info("SEARCH FOR: {}".format(us))
+            if multi_user:
+                bar1.set_description("INFO:MULTI-USERS SEARCH:SEARCHING FOR: {}".format(us))
+            self.log.debug("SEARCH FOR: {}".format(us))
             self.__build_query(user=us)
-            self.__make()
-        if len(self.__twitter_users) == 0:
+            if self.__twitter_n_results:
+                bar = tqdm(total=self.__twitter_n_results, desc="INFO:SEARCH:SEARCHING", leave=False, position=1)
+            else:
+                bar = tqdm(desc="INFO:SEARCH:SEARCHING", leave=False, position=1)
+            self.__make(bar)
+            bar.close()
+            bar1.update(1)
+        if no_user:
             self.__build_query()
-            self.__make()
+            if self.__twitter_n_results:
+                bar = tqdm(total=self.__twitter_n_results, desc="INFO:SEARCH:SEARCHING", leave=False, position=0)
+            else:
+                bar = tqdm(desc="INFO:SEARCH:SEARCHING", leave=False, position=0)
+            self.__make(bar)
+        #time.sleep(0.1)
+        #if bar is not None:
+        #    bar.close()
+        print('\n')
+        self.log.info('CREATING NECESSARY INDEXES ON DB')
+        self.log.setLevel(logging.DEBUG)
+        self.log.debug(self.mongodb.create_indexes())
+
+
         return self.total_result
 
     def __save(self):
@@ -388,10 +434,10 @@ class SearchTweets:
 
         :return: None
         """
-        self.log.info("SAVING TWEETS")
+        self.log.debug("SAVING TWEETS")
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = []
-            for tweet in (self.response['data']):
+            for tweet in self.response.get('data', []):
                 if not self.mongodb.is_in(tweet['id']):
                     self.log.debug(tweet)
                     # process each tweet ib parallel
@@ -399,8 +445,11 @@ class SearchTweets:
                     fut.add_done_callback(self.__save_callback)
                     futures.append(fut)
                 else:
-                    # if the tweet is already in the db not save it and uodate the value of the number of tweets saved.
+                    # if the tweet is already in the db not save it and update the value of the number of tweets saved.
                     self.total_result -= 1
+        for job in tqdm(as_completed(futures), total=len(futures), desc="INFO:SEARCH:SAVING", leave=False, position=1):
+            pass
+
         self.mongodb.save_many(self._all)
         # clean the list populate with these tweets processed.
         self._all = []

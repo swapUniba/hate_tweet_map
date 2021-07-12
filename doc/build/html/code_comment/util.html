@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Util &#8212; Hate Tweet Map 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User Guide" href="../guide/guide.html" />
+    <link rel="prev" title="Database" href="database.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="util">
+<h1>Util<a class="headerlink" href="#util" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="id1">
+<h2>Util<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-hate_tweet_map.util"></span><dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.util.pre_process_tweets_response">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.util.</span></span><span class="sig-name descname"><span class="pre">pre_process_tweets_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">includes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#hate_tweet_map.util.pre_process_tweets_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method take an input a dict representing a tweet (in the Twitter original format) and create a dict containing the usefull information of the tweet reorganized usign different criteria and if necessary renaming the fields.</p>
+<p>Here there is an example of the result of this processing:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1411354087682097159&quot;</span><span class="p">,</span>
+<span class="nt">&quot;raw_text&quot;</span><span class="p">:</span> <span class="s2">&quot;@suncapaldi che cazzo di ragionamento è; io seguo il calcio ma anche se non lo seguissi guarderei i mondiali e gli europei&quot;</span><span class="p">,</span>
+<span class="nt">&quot;author_id&quot;</span><span class="p">:</span> <span class="s2">&quot;1176108556057227271&quot;</span><span class="p">,</span>
+<span class="nt">&quot;author_name&quot;</span><span class="p">:</span> <span class="s2">&quot;elisa⁹⁴🦕|| -427; -1&quot;</span><span class="p">,</span>
+<span class="nt">&quot;author_username&quot;</span><span class="p">:</span> <span class="s2">&quot;CH3RRV91&quot;</span><span class="p">,</span>
+<span class="nt">&quot;created_at&quot;</span><span class="p">:</span> <span class="s2">&quot;2021-07-03T16:00:10.000Z&quot;</span><span class="p">,</span>
+<span class="nt">&quot;lang&quot;</span><span class="p">:</span> <span class="s2">&quot;it&quot;</span><span class="p">,</span>
+<span class="nt">&quot;possibly_sensitive&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="nt">&quot;referenced_tweets&quot;</span><span class="p">:</span> <span class="p">[{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;1411242299993083909&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;replied_to&quot;</span>
+<span class="p">}],</span>
+<span class="nt">&quot;twitter_entities&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;mentions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;suncapaldi&quot;</span><span class="p">]</span>
+<span class="p">},</span>
+<span class="nt">&quot;geo&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;user_location&quot;</span><span class="p">:</span> <span class="s2">&quot;h, l, n, z, l ➳in 1d’s arms home (n.) louis yellow (n.) harry sun (n.) niall happy place (n.) zayn safe place (n.) liam fati, ale e fab&quot;</span>
+<span class="p">},</span>
+<span class="nt">&quot;metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;retweet_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;reply_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;like_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;quote_count&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">},</span>
+<span class="nt">&quot;processed&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tweet</strong> (<em>dict</em>) – the tweet in Twitter original format</p></li>
+<li><p><strong>includes</strong> (<em>dict</em>) – the includes dict returned by Twitter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict representing a tweet with the useful information</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="hate_tweet_map.util.pre_process_user_response">
+<span class="sig-prename descclassname"><span class="pre">hate_tweet_map.util.</span></span><span class="sig-name descname"><span class="pre">pre_process_user_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usr</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#hate_tweet_map.util.pre_process_user_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method take an input a dict representing an user (in the Twitter original format) and create a dict containing the usefull information of the user reorganized usign different criteria and if necessary renaming the fields.</p>
+<p>Here there is an example of the result of this processing:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="nt">&quot;_id&quot;</span><span class="p">:</span> <span class="s2">&quot;714034850&quot;</span><span class="p">,</span>
+<span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;TeeJ&quot;</span><span class="p">,</span>
+<span class="nt">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;VolsTeeJ&quot;</span><span class="p">,</span>
+<span class="nt">&quot;public_metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;followers_count&quot;</span><span class="p">:</span> <span class="mi">457</span><span class="p">,</span>
+    <span class="nt">&quot;following_count&quot;</span><span class="p">:</span> <span class="mi">326</span><span class="p">,</span>
+    <span class="nt">&quot;tweet_count&quot;</span><span class="p">:</span> <span class="mi">32541</span><span class="p">,</span>
+    <span class="nt">&quot;listed_count&quot;</span><span class="p">:</span> <span class="mi">5</span>
+<span class="p">},</span>
+<span class="nt">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;Rocky Top, TN&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>usr</strong> (<em>dict</em>) – the user in Twitter original format</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a dict representing a user with the useful information</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Hate Tweet Map</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="code_comment.html">Code Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tweet_processor.html">Tweets Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tweet_search.html">Tweets Searcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_search.html">Users Searcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manage_tweets.html">Manage Tweets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Util</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/guide.html">User Guide</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="code_comment.html">Code Documentation</a><ul>
+      <li>Previous: <a href="database.html" title="previous chapter">Database</a></li>
+      <li>Next: <a href="../guide/guide.html" title="next chapter">User Guide</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Dario Amoroso d'Aragona.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/code_comment/util.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

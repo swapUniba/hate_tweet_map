@@ -9,6 +9,8 @@ import urllib3.exceptions
 import yaml
 from feel_it import EmotionClassifier, SentimentClassifier
 import spacy
+import en_core_web_lg
+import it_core_news_lg
 
 from hate_tweet_map.database import DataBase
 from hate_tweet_map.tweets_processor.EntityLinker import EntityLinker
@@ -221,7 +223,7 @@ class ProcessTweet:
                 if len(ita_tweets_to_nlp) > 0:
                     # load the italian spacy model
                     self.log.info("SPACY PHASE: LOADING ITA MODEL")
-                    self.nlp_module = spacy.load('it_core_news_lg')
+                    self.nlp_module = it_core_news_lg.load()
                     # send all tweets extracted to process function, so pass the list of the italian
                     # tweets, the function to apply on the tweets, process_text_with_spacy, and the name of the phase.
                     # N.B process save the result of the analyses on the db
@@ -229,7 +231,7 @@ class ProcessTweet:
                 if len(eng_tweets_to_nlp) > 0:
                     # load the english spacy model
                     self.log.info("SPACY PHASE: LOADING ENG MODEL")
-                    self.nlp_module = spacy.load('en_core_web_lg')
+                    self.nlp_module = en_core_web_lg.load()
                     # send all tweets extracted to process function, so pass the list of the english
                     # tweets, the function to apply on the tweets, process_text_with_spacy, and the name of the phase.
                     # N.B process save the result of the analyses on the db
