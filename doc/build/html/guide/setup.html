@@ -55,6 +55,11 @@ so just open a terminal, clone the repository: move into the root directory of t
 <p>Nota that the project requires python3, so make sure that your python version is 3 or higher, if you have more than one python version installed maybe
 in the above commands you have to substitute “python” with “python3” and “pip” with “pip3”.</p>
 <p>If after this you have some problems try to run the above commands with root privileges (sudo for linux system and cmd as administrator for win system)</p>
+<p>If launching the script you get error about the spacy models (etc. ModuleNotFoundError) try to run this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">spacy</span> <span class="n">download</span> <span class="n">it_core_news_lg</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">spacy</span> <span class="n">download</span> <span class="n">en_core_web_lg</span>
+</pre></div>
+</div>
 <p>That’s all.</p>
 </section>
 </section>
