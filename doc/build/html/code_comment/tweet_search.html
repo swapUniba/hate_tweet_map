@@ -87,7 +87,7 @@ The possibles status codes in the twitter response are:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.tweets_searcher.SearchTweets.SearchTweets.__make">
-<span class="sig-name descname"><span class="pre">__make</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#hate_tweet_map.tweets_searcher.SearchTweets.SearchTweets.__make" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__make</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bar</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#hate_tweet_map.tweets_searcher.SearchTweets.SearchTweets.__make" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method sends the request to twitter, elaborates it and saves the response.
 After the first search the number of tweets contained in the response are checked,
 if this number is equal to the number of result wanted set in the config file the method stop to send request.
@@ -99,8 +99,11 @@ if is less than 10 the max_result query field for the next request is set to 10.
 Moreover if the all_tweets parameters is set to True on the file config this method resend the request to twitter
 asking for 500 tweets per time (max_result = 500) until the end of the result is not reached.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>None</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bar</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
