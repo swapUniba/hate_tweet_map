@@ -4,7 +4,7 @@ setup(name='Hate Tweet Map',
       version='1.0',
       description='Python Distribution Utilities',
       author='Dario Amoroso d\'Aragona',
-      packages=['hate_tweet_map.database', 'hate_tweet_map.util','hate_tweet_map', 'hate_tweet_map.tweets_searcher', 'hate_tweet_map.tweets_processor',
+      packages=['hate_tweet_map', 'hate_tweet_map.tweets_searcher', 'hate_tweet_map.tweets_processor',
                 'hate_tweet_map.users_searcher'],
       install_requires=[
           'geocoder == 1.38.1',
