@@ -1,3 +1,5 @@
+from typing import List
+
 import pymongo
 import yaml
 from pymongo import MongoClient
@@ -28,27 +30,27 @@ class DataBase:
         for tweet in self.__collection.find(query):
             return tweet
 
-    def extract(self, query: dict) -> list[dict]:
+    def extract(self, query: dict) -> List[dict]:
         """
         Extract the tweets that match the query from the collection.
 
         :param query: a query to use to extract tweets from the collection
         :type query: dict
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
         result = []
         for tweet in self.__collection.find(query):
             result.append(tweet)
         return result
 
-    def extract_tweets_not_processed(self) -> list[dict]:
+    def extract_tweets_not_processed(self) -> List[dict]:
         """
         Extract all the tweets where tha value of the field "processed" is False.
         This means that this tweets have not yet been processed by SpaCy.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         query = {'processed': False}
@@ -57,12 +59,12 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_all_tweets(self) -> list[dict]:
+    def extract_all_tweets(self) -> List[dict]:
         """
         Extract all the tweets in the collection sorting it by language.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -70,13 +72,13 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_all_tweets_to_geo(self) -> list[dict]:
+    def extract_all_tweets_to_geo(self) -> List[dict]:
         """
         Extract all tweets, already processed or not (nby SpaCy), that contain Twitter geographic information,
         then tweets that have a user_location field or a city and country field.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -86,14 +88,14 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_new_tweets_to_geo(self) -> list[dict]:
+    def extract_new_tweets_to_geo(self) -> List[dict]:
         """
         Extract all tweets, not already processed, that contain Twitter geographic information,
         then tweets not processed (by SpaCy), that have a user_location field or a city and country field, and
         that not have the coordinates.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -104,12 +106,12 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_new_tweets_to_nlp(self) -> list[dict]:
+    def extract_new_tweets_to_nlp(self) -> List[dict]:
         """
         Extract all tweets, not already processed (by SpaCY).
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
         result = []
         query = {"processed": False}
@@ -117,13 +119,13 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_new_tweets_to_sentit(self) -> list[dict]:
+    def extract_new_tweets_to_sentit(self) -> List[dict]:
         """
         Extract all tweets, not already processed (by SpaCy), that have not yet been analyzed by sent-it,
         so the tweets that not contains the field "sentiment.sent-it" and where the field "processed" is False.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -132,13 +134,13 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_new_tweets_to_tag(self) -> list[dict]:
+    def extract_new_tweets_to_tag(self) -> List[dict]:
         """
         Extract all tweets, not already processed (by SpaCy), that have not yet been analyzed by TagMe,
         so the tweets that not contains the field "tags.tag_me" and where the field "processed" is False.
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -147,14 +149,14 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_new_tweets_to_feel_it(self) -> list[dict]:
+    def extract_new_tweets_to_feel_it(self) -> List[dict]:
         """
         Extract all italian tweets, not already processed (by SpaCy), that have not yet been analyzed by feel-it,
         so the tweets that not contains the field "sentiment.feel-it" and where the field "processed" is False and
         where the "lang" field is "it".
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -163,13 +165,13 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def extract_all_tweets_to_feel_it(self) -> list[dict]:
+    def extract_all_tweets_to_feel_it(self) -> List[dict]:
         """
         Extract all italian tweets, already processed (by SpaCy) or not, that have not yet been analyzed by feel-it,
         so the tweets where the "lang" field is "it".
 
         :return: the tweets extract
-        :rtype: list[dict]
+        :rtype: List[dict]
         """
 
         result = []
@@ -178,13 +180,13 @@ class DataBase:
             result.append(tweet)
         return result
 
-    def save_many(self, tweets: list) -> None:
+    def save_many(self, tweets: List) -> None:
         """
         Save more than one tweets in the collection.
 
 
         :param tweets: the tweets to save
-        :type tweets: list
+        :type tweets: List
         :return: None
         """
 
@@ -249,33 +251,33 @@ class DataBase:
 
         return self.__collection.delete_many(query).deleted_count
 
-    def get_users_id(self) -> list[int]:
+    def get_users_id(self) -> List[int]:
         """
         For each tweet in tbe collection retrieves the id of the user that posted the tweet.
 
-        :return: a list containing the user's id
-        :rtype: list[int]
+        :return: a List containing the user's id
+        :rtype: List[int]
         """
 
         result = []
         query = {"author_id": 1, "_id": 0}
         for tweet in self.__collection.find({}, query):
-            result.append(list(tweet.values())[0])
-        return list(set(result))
+            result.append(List(tweet.values())[0])
+        return List(set(result))
 
-    def get_users(self) -> list[int]:
+    def get_users(self) -> List[int]:
         """
          For each user in tbe collection retrieves the id of the user.
 
-         :return: a list containing the user's id
-         :rtype: list[int]
+         :return: a List containing the user's id
+         :rtype: List[int]
          """
 
         result = []
         query = {"_id": 1}
         for tweet in self.__collection.find({}, query):
-            result.append(list(tweet.values())[0])
-        return list(set(result))
+            result.append(List(tweet.values())[0])
+        return List(set(result))
 
     def __create_lang_index(self):
         return self.__collection.create_index([('lang', pymongo.DESCENDING)])
