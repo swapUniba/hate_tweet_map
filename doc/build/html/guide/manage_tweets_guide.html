@@ -51,6 +51,7 @@ The possible criteria are:</p>
 <li><p>contains some specific word/words. In this case it is possible or write a list of words separated by comma in the words field, or use a txt file and write it path in the path field.</p></li>
 <li><p>contains a specific sentiment</p></li>
 <li><p>contains a word with a specific Part Of Speech (POS)</p></li>
+<li><p>contains a word with a specific Morphology</p></li>
 <li><p>raw criteria: a query written in mongodb style</p></li>
 </ul>
 </div></blockquote>
@@ -76,6 +77,7 @@ The configuration file looks like this:</p>
     <span class="nt">words</span><span class="p">:</span>
     <span class="nt">path</span><span class="p">:</span>
   <span class="nt">postag</span><span class="p">:</span>
+  <span class="nt">morph</span><span class="p">:</span>
   <span class="c1">#a raw NoSql query</span>
   <span class="nt">raw_query</span><span class="p">:</span>
   <span class="c1">#possible value: and or. This field specify with which logical operator the fields must be connected</span>
@@ -148,6 +150,7 @@ The configuration file looks like this:</p>
 </div>
 <p>This section set the criteria to find the tweets in the db (to delete or extract it)</p>
 <blockquote>
+<div><blockquote>
 <div><ul>
 <li><dl>
 <dt><code class="code docutils literal notranslate"><span class="pre">sentiment:</span></code>:</dt><dd><div class="line-block">
@@ -211,11 +214,51 @@ The configuration file looks like this:</p>
 <div class="line-block">
 <div class="line"><strong>Possible values:</strong> any valid POS value</div>
 <div class="line"><strong>Example value:</strong> ADV</div>
+<div class="line"><strong>Example value:</strong> VERB</div>
+<div class="line"><strong>Example value:</strong> NOUN</div>
+<div class="line"><strong>Example value:</strong> AUX</div>
+<div class="line"><strong>Optional</strong></div>
+</div>
+<p>In this field it’s possible uses Perl compatible regular expressions (i.e. “PCRE” ) version 8.42 with UTF-8 support.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><dl>
+<dt><code class="code docutils literal notranslate"><span class="pre">morph:</span></code>:</dt><dd><div class="line-block">
+<div class="line">setting this field it’s possible retrieve tweets that contains a word with a specific morphology.</div>
+<div class="line">For more info see:</div>
+</div>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://spacy.io/usage/linguistic-features">here for a generic understanding</a></p></li>
+<li><p><a class="reference external" href="https://spacy.io/models/it#it_core_news_lg-labels">here for a complete list of italian SpaCy’s POS values (see labels scheme section in it_core_news_lg)</a></p></li>
+<li><p><a class="reference external" href="https://spacy.io/models/en#en_core_web_lg-labels">here for a complete list of english SpaCy’s POS values (see labels scheme section in en_core_web_lg)</a></p></li>
+</ul>
+</div></blockquote>
+<div class="line-block">
+<div class="line"><strong>Possible values:</strong> any valid morph value</div>
+<div class="line"><strong>Example value:</strong> PronType=Neg</div>
+<div class="line"><strong>Example value:</strong> Mood=Ind-Number=Sing-Person=3-Tense=Pres-VerbForm=Fin</div>
+<div class="line"><strong>Example value:</strong> Gender=Masc-Number=Sing</div>
+<div class="line"><strong>Example value:</strong> Mood=Cnd-Number=Sing-Person=3-Tense=Pres-VerbForm=Fin</div>
+<div class="line"><strong>Example value:</strong> Mood=Ind-Number=Sing-Person=3</div>
+<div class="line"><strong>Example value:</strong> Mood=Ind</div>
+<div class="line"><strong>Example value:</strong> Number=Sing</div>
+</div>
+<p>As you can see in the documentation the morph information are separated by a <code class="code docutils literal notranslate"><span class="pre">|</span></code> but as you can see in the examples it’s necessary replace <code class="code docutils literal notranslate"><span class="pre">|</span></code> symbol with <code class="code docutils literal notranslate"><span class="pre">-</span></code> symbol.
+In fact in the <code class="code docutils literal notranslate"><span class="pre">morph</span></code> field it’s possible insert a Perl compatible regular expressions (i.e. “PCRE” ) version 8.42 with UTF-8 support (and symbol <code class="code docutils literal notranslate"><span class="pre">|</span></code> means ‘or’).</p>
+<div class="line-block">
 <div class="line"><strong>Optional</strong></div>
 </div>
 </dd>
 </dl>
 </li>
+</ul>
+<blockquote>
+<div><ul>
 <li><dl>
 <dt><code class="code docutils literal notranslate"><span class="pre">raw_query:</span></code>:</dt><dd><div class="line-block">
 <div class="line">setting this field it’s possible to write a own query.</div>
@@ -237,6 +280,7 @@ The configuration file looks like this:</p>
 </dl>
 </li>
 </ul>
+</div></blockquote>
 </div></blockquote>
 </section>
 </section>
