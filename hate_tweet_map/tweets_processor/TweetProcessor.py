@@ -168,7 +168,7 @@ class ProcessTweet:
                         if check:
                             tweet["geo"]["coordinates"] = result
                         elif usr_location is not None:
-                            tweet.pop("user_location")
+                            tweet.pop("geo")
                     self.mongo_db.update_one(tweet)
             else:
                 self.log.info("GEOCODING PHASE: NO TWEETS FOUND TO GEOCODE")
@@ -455,7 +455,7 @@ class ProcessTweet:
 
         # for each token remained save the lemma, the pos information adn the morphology
         for token in filtered_sentence:
-            lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " MORPH : " + token.morph.__str__())
+            lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " ; MORPH : " + token.morph.__str__().replace("|", "-"))
 
         entities = []
         # retrieve the entities recognized from spacy

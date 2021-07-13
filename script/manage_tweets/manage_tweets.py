@@ -43,6 +43,7 @@ def main():
         _words = []
         logical_operator = cfg['criteria']['logical_operator']
         postag = cfg['criteria']['postag']
+        morph = cfg['criteria']['morph']
         raw_query = cfg['criteria']['raw_query']
 
     # validate the config file
@@ -98,9 +99,16 @@ def main():
         # adds a raw query if setted
         values.append(raw_query)
     # if a postag is set
-    if postag:
-        # check if after the string " POS :" there is the value given using the regex.
-        values.append({"spacy.processed_text": {"$regex": ".* POS : {}.*".format(postag.strip()), "$options": "i"}})
+    if postag and morph and logical_operator == "and":
+        values.append({"spacy.processed_text": {"$regex": ".* POS : {} ; MORPH : .*{}.*".format(postag.strip(), morph.strip()), "$options": "i"}})
+    # se non sono settati entrambi o se sono settati entrambi e sono in or
+    else:
+        if postag:
+            # check if after the string " POS :" there is the value given using the regex.
+            values.append({"spacy.processed_text": {"$regex": ".* POS : {}.*".format(postag.strip()), "$options": "i"}})
+        if morph:
+            values.append({"spacy.processed_text": {"$regex": ".* MORPH : {}.*".format(morph.strip()), "$options": "i"}})
+
     # if the mode is delete
     if mode == 'delete':
         log.info("MODE: DELETE")
