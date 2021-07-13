@@ -262,8 +262,8 @@ class DataBase:
         result = []
         query = {"author_id": 1, "_id": 0}
         for tweet in self.__collection.find({}, query):
-            result.append(List(tweet.values())[0])
-        return List(set(result))
+            result.append(list(tweet.values())[0])
+        return list(set(result))
 
     def get_users(self) -> List[int]:
         """
@@ -276,8 +276,8 @@ class DataBase:
         result = []
         query = {"_id": 1}
         for tweet in self.__collection.find({}, query):
-            result.append(List(tweet.values())[0])
-        return List(set(result))
+            result.append(list(tweet.values())[0])
+        return list(set(result))
 
     def __create_lang_index(self):
         return self.__collection.create_index([('lang', pymongo.DESCENDING)])
