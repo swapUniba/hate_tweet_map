@@ -77,7 +77,7 @@ containing tweets and the operation on the collection containing the users.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract">
-<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the tweets that match the query from the collection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -87,28 +87,28 @@ containing tweets and the operation on the collection containing the users.</p>
 <dd class="field-even"><p>the tweets extract</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list[dict]</p>
+<dd class="field-odd"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_all_tweets">
-<span class="sig-name descname"><span class="pre">extract_all_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_all_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all the tweets in the collection sorting it by language.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_all_tweets_to_feel_it">
-<span class="sig-name descname"><span class="pre">extract_all_tweets_to_feel_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets_to_feel_it" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_all_tweets_to_feel_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets_to_feel_it" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all italian tweets, already processed (by SpaCy) or not, that have not yet been analyzed by feel-it,
 so the tweets where the “lang” field is “it”.</p>
 <dl class="field-list simple">
@@ -116,14 +116,14 @@ so the tweets where the “lang” field is “it”.</p>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_all_tweets_to_geo">
-<span class="sig-name descname"><span class="pre">extract_all_tweets_to_geo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets_to_geo" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_all_tweets_to_geo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_all_tweets_to_geo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, already processed or not (nby SpaCy), that contain Twitter geographic information,
 then tweets that have a user_location field or a city and country field.</p>
 <dl class="field-list simple">
@@ -131,14 +131,14 @@ then tweets that have a user_location field or a city and country field.</p>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_feel_it">
-<span class="sig-name descname"><span class="pre">extract_new_tweets_to_feel_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_feel_it" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_new_tweets_to_feel_it</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_feel_it" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all italian tweets, not already processed (by SpaCy), that have not yet been analyzed by feel-it,
 so the tweets that not contains the field “sentiment.feel-it” and where the field “processed” is False and
 where the “lang” field is “it”.</p>
@@ -147,14 +147,14 @@ where the “lang” field is “it”.</p>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_geo">
-<span class="sig-name descname"><span class="pre">extract_new_tweets_to_geo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_geo" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_new_tweets_to_geo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_geo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, not already processed, that contain Twitter geographic information,
 then tweets not processed (by SpaCy), that have a user_location field or a city and country field, and
 that not have the coordinates.</p>
@@ -163,28 +163,28 @@ that not have the coordinates.</p>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_nlp">
-<span class="sig-name descname"><span class="pre">extract_new_tweets_to_nlp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_nlp" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_new_tweets_to_nlp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_nlp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, not already processed (by SpaCY).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_sentit">
-<span class="sig-name descname"><span class="pre">extract_new_tweets_to_sentit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_sentit" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_new_tweets_to_sentit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_sentit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, not already processed (by SpaCy), that have not yet been analyzed by sent-it,
 so the tweets that not contains the field “sentiment.sent-it” and where the field “processed” is False.</p>
 <dl class="field-list simple">
@@ -192,14 +192,14 @@ so the tweets that not contains the field “sentiment.sent-it” and where the 
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_tag">
-<span class="sig-name descname"><span class="pre">extract_new_tweets_to_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_tag" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_new_tweets_to_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, not already processed (by SpaCy), that have not yet been analyzed by TagMe,
 so the tweets that not contains the field “tags.tag_me” and where the field “processed” is False.</p>
 <dl class="field-list simple">
@@ -207,14 +207,14 @@ so the tweets that not contains the field “tags.tag_me” and where the field 
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_tweets_not_processed">
-<span class="sig-name descname"><span class="pre">extract_tweets_not_processed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_tweets_not_processed" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">extract_tweets_not_processed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_tweets_not_processed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all the tweets where tha value of the field “processed” is False.
 This means that this tweets have not yet been processed by SpaCy.</p>
 <dl class="field-list simple">
@@ -222,35 +222,35 @@ This means that this tweets have not yet been processed by SpaCy.</p>
 <dd class="field-odd"><p>the tweets extract</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[dict]</p>
+<dd class="field-even"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.get_users">
-<span class="sig-name descname"><span class="pre">get_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.get_users" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.get_users" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each user in tbe collection retrieves the id of the user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a list containing the user’s id</p>
+<dd class="field-odd"><p>a List containing the user’s id</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[int]</p>
+<dd class="field-even"><p>List[int]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.get_users_id">
-<span class="sig-name descname"><span class="pre">get_users_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.get_users_id" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_users_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#hate_tweet_map.database.DataBase.get_users_id" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each tweet in tbe collection retrieves the id of the user that posted the tweet.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a list containing the user’s id</p>
+<dd class="field-odd"><p>a List containing the user’s id</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list[int]</p>
+<dd class="field-even"><p>List[int]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -274,11 +274,11 @@ This means that this tweets have not yet been processed by SpaCy.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.save_many">
-<span class="sig-name descname"><span class="pre">save_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.save_many" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweets</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.save_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save more than one tweets in the collection.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tweets</strong> (<em>list</em>) – the tweets to save</p>
+<dd class="field-odd"><p><strong>tweets</strong> (<em>List</em>) – the tweets to save</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>None</p>

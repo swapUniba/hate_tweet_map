@@ -34,5 +34,13 @@ in the above commands you have to substitute "python" with "python3" and "pip" w
 
 If after this you have some problems try to run the above commands with root privileges (sudo for linux system and cmd as administrator for win system)
 
+If launching the script you get error about the spacy models (etc. ModuleNotFoundError) try to run this:
+
+.. code::
+
+   python -m spacy download it_core_news_lg
+   python -m spacy download en_core_web_lg
+
+
 That's all.
 
