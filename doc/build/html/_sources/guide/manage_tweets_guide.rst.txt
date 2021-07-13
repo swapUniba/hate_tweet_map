@@ -21,6 +21,7 @@ The possible criteria are:
    - contains some specific word/words. In this case it is possible or write a list of words separated by comma in the words field, or use a txt file and write it path in the path field.
    - contains a specific sentiment
    - contains a word with a specific Part Of Speech (POS)
+   - contains a word with a specific Morphology
    - raw criteria: a query written in mongodb style
 
 These criteria and the words specified in the relative field/file are connected with the "OR" logical operator
@@ -51,6 +52,7 @@ The configuration file looks like this:
         words:
         path:
       postag:
+      morph:
       #a raw NoSql query
       raw_query:
       #possible value: and or. This field specify with which logical operator the fields must be connected
@@ -167,7 +169,38 @@ This section set the criteria to find the tweets in the db (to delete or extract
 
       | **Possible values:** any valid POS value
       | **Example value:** ADV
+      | **Example value:** VERB
+      | **Example value:** NOUN
+      | **Example value:** AUX
       | **Optional**
+
+      In this field it's possible uses Perl compatible regular expressions (i.e. "PCRE" ) version 8.42 with UTF-8 support.
+
+  * :code:`morph:`:
+      | setting this field it's possible retrieve tweets that contains a word with a specific morphology.
+      | For more info see:
+
+         * `here for a generic understanding <https://spacy.io/usage/linguistic-features>`_
+         * `here for a complete list of italian SpaCy's POS values (see labels scheme section in it_core_news_lg) <https://spacy.io/models/it#it_core_news_lg-labels>`_
+         * `here for a complete list of english SpaCy's POS values (see labels scheme section in en_core_web_lg) <https://spacy.io/models/en#en_core_web_lg-labels>`_
+
+      | **Possible values:** any valid morph value
+      | **Example value:** PronType=Neg
+      | **Example value:** Mood=Ind-Number=Sing-Person=3-Tense=Pres-VerbForm=Fin
+      | **Example value:** Gender=Masc-Number=Sing
+      | **Example value:** Mood=Cnd-Number=Sing-Person=3-Tense=Pres-VerbForm=Fin
+      | **Example value:** Mood=Ind-Number=Sing-Person=3
+      | **Example value:** Mood=Ind
+      | **Example value:** Number=Sing
+
+
+      As you can see in the documentation the morph information are separated by a :code:`|` but as you can see in the examples it's necessary replace :code:`|` symbol with :code:`-` symbol.
+      In fact in the :code:`morph` field it's possible insert a Perl compatible regular expressions (i.e. "PCRE" ) version 8.42 with UTF-8 support (and symbol :code:`|` means 'or').
+
+
+      | **Optional**
+
+
 
    * :code:`raw_query:`:
       | setting this field it's possible to write a own query.

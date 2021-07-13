@@ -109,22 +109,23 @@ The configuration file looks like this:</p>
 <h3>Mandatory Section<a class="headerlink" href="#mandatory-section" title="Permalink to this headline">¶</a></h3>
 <p>The mandatory section is this one:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">search</span><span class="p">:</span>
-        <span class="c1"># MANDATORY:</span>
-        <span class="c1"># Please fill at least one of the following fields. If both fields are set it&#39;s possible to search for a twitter with the given keyword tweeted by the specific user.</span>
+      <span class="c1"># MANDATORY:</span>
+      <span class="c1"># Please fill at least one of the following fields. If both fields are set it&#39;s possible to search for a twitter with the given keyword tweeted by the specific user.</span>
 
-        <span class="c1"># enter the keyword/s to search for on twitter. It&#39;s also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.</span>
-        <span class="c1"># the AND operator is handle by a space, so to search &quot;Joe AND Trump&quot; just write &quot;Joe Trump&quot;, the OR operator is &quot;OR&quot;.</span>
-        <span class="c1"># for example: &quot;Joe Biden&quot;, &quot;Biden OR Trump&quot;, &quot;(Biden OR Trump) whitehouse&quot; (the last query means: &quot;(Biden OR Trump) AND whitehouse&quot;).</span>
-        <span class="nt">keyword</span><span class="p">:</span>
+      <span class="c1"># enter the keyword/s to search for on twitter. It&#39;s also possible use logical operators. If no logical operator are specified all keywords will be searched in AND.</span>
+      <span class="c1"># the AND operator is handle by a space, so to search &quot;Joe AND Trump&quot; just write &quot;Joe Trump&quot;, the OR operator is &quot;OR&quot;.</span>
+      <span class="c1"># for example: &quot;Joe Biden&quot;, &quot;Biden OR Trump&quot;, &quot;(Biden OR Trump) whitehouse&quot; (the last query means: &quot;(Biden OR Trump) AND whitehouse&quot;).</span>
+      <span class="nt">keyword</span><span class="p">:</span>
 
-        <span class="c1"># enter the username or the user id to search for tweets of a specific user.</span>
-        <span class="nt">user</span><span class="p">:</span>
+      <span class="c1"># enter the username or the user id to search for tweets of a specific user. To search tweets from more users insert the user id or the username seperated by a comma</span>
+      <span class="c1"># example: VolsTeeJ,FuddausS,DiegoV1056</span>
+      <span class="nt">user</span><span class="p">:</span>
 </pre></div>
 </div>
 <p>As explained in the comments in the keywords section it is possible
 set the keyword (s) that tweets must contain. To search using the logical operator
 just use the parentheses and the keyword OR and the space for AND.</p>
-<p>In the user field you can enter the user’s ID or username.
+<p>In the user field you can enter the user’s ID or username. It’s possible also insert more than one user Id or username separated by a comma, in this case will ber perform a search for each user insert.
 Note that at least one of these two fields must be set.
 It is also possible to set both fields, which means “search
 tweets containing this [keyword] from this [user]”.</p>

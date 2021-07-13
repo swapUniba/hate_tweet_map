@@ -12,11 +12,18 @@ Initialization
 
 Setup
 -----
-To use the Hate Tweet Map tools it's sufficient install the requires module,
-so just open a terminal, move into the root directory of the project and run:
+To use the Hate Tweet Map tools it's sufficient install it and  the requires module,
+so just open a terminal, clone the repository: move into the root directory of the project and run the se
 
 .. code::
 
+   git clone https://github.com/swapUniba/hate_tweet_map.git hate_tweet_map
+
+Then run:
+
+.. code::
+
+   cd hate_tweet_map
    pip install -r requirements.txt
    pip install setuptools
    python setup.py install

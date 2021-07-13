@@ -156,7 +156,8 @@ where the “lang” field is “it”.</p>
 <dt class="sig sig-object py" id="hate_tweet_map.database.DataBase.extract_new_tweets_to_geo">
 <span class="sig-name descname"><span class="pre">extract_new_tweets_to_geo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="headerlink" href="#hate_tweet_map.database.DataBase.extract_new_tweets_to_geo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract all tweets, not already processed, that contain Twitter geographic information,
-then tweets not processed (by SpaCy) that have a user_location field or a city and country field.</p>
+then tweets not processed (by SpaCy), that have a user_location field or a city and country field, and
+that not have the coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the tweets extract</p>

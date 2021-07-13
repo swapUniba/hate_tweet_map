@@ -39,12 +39,22 @@
 </div>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
-<p>To use the Hate Tweet Map tools it’s sufficient install the requires module,
-so just open a terminal, move into the root directory of the project and run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+<p>To use the Hate Tweet Map tools it’s sufficient install it and  the requires module,
+so just open a terminal, clone the repository: move into the root directory of the project and run the se</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">swapUniba</span><span class="o">/</span><span class="n">hate_tweet_map</span><span class="o">.</span><span class="n">git</span> <span class="n">hate_tweet_map</span>
+</pre></div>
+</div>
+<p>Then run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">hate_tweet_map</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
 <span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install_lib</span>
 </pre></div>
 </div>
+<p>Nota that the project requires python3, so make sure that your python version is 3 or higher, if you have more than one python version installed maybe
+in the above commands you have to substitute “python” with “python3” and “pip” with “pip3”.</p>
+<p>If after this you have some problems try to run the above commands with root privileges (sudo for linux system and cmd as administrator for win system)</p>
 <p>That’s all.</p>
 </section>
 </section>
