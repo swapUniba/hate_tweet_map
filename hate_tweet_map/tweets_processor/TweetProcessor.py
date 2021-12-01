@@ -448,14 +448,14 @@ class ProcessTweet:
         lemmas_with_postag = []
         filtered_sentence = []
         # remove space, punct and stopwords from the tweet text
-        for word in doc:
-            lexeme = self.nlp_module.vocab[word.lemma_]
-            if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
-                filtered_sentence.append(word)
+        # for word in doc:
+        #     lexeme = self.nlp_module.vocab[word.lemma_]
+        #     if not lexeme.is_stop and not lexeme.is_space and not lexeme.is_punct:
+        #         filtered_sentence.append(word)
 
         # for each token remained save the lemma, the pos information adn the morphology
-        for token in filtered_sentence:
-            lemmas_with_postag.append(token.lemma_ + " POS : " + token.pos_ + " ; MORPH : " + token.morph.__str__().replace("|", "-"))
+        for token in doc:
+            lemmas_with_postag.append(token.text + " POS : " + token.pos_ + " ; MORPH : " + token.morph.__str__().replace("|", "-"))
 
         entities = []
         # retrieve the entities recognized from spacy
