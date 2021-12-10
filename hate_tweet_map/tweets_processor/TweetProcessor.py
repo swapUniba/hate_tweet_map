@@ -455,7 +455,7 @@ class ProcessTweet:
 
         # for each token remained save the lemma, the pos information adn the morphology
         for token in doc:
-            lemmas_with_postag.append(token.text + " POS : " + token.pos_ + " ; MORPH : " + token.morph.__str__().replace("|", "-"))
+            lemmas_with_postag.append(token.text + " | POS : " + token.pos_ + " | DEP : " + token.dep_ + " | MORPH : " + token.morph.__str__().replace("|", "-"))
 
         entities = []
         # retrieve the entities recognized from spacy
