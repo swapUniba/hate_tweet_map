@@ -10,8 +10,11 @@ def runtimePos(path):
     with open(path) as f:
         dataset = json.load(f)
     pos=[]
+    sentences = []
     for tweet in dataset:
         df = tweet['spacy']
+        raw_text = tweet['raw_text']
+        sentences.append((raw_text))
         pos.append(df)
 
     #mette il pos tagging in una lista, senza le entità
@@ -36,5 +39,5 @@ def runtimePos(path):
             phrase_pos.append((split[1], split[2], split[3], phrase_dict))
 
         pos_tagging.append(phrase_pos)
-
-    return pos_tagging
+    print(pos_tagging)
+    return sentences, pos_tagging
